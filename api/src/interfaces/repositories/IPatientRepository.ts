@@ -1,6 +1,12 @@
-import { Patient, Prisma } from '@logmydose/shared/prisma';
+import { Patient, Prisma, EmailVerificationToken } from '@logmydose/shared/prisma';
 import { IBaseRepository, FindManyOptions } from './IBaseRepository.js';
 import { PaginatedResponse } from '../../types/index.js';
+
+export interface CreateVerificationTokenInput {
+  patientId: string;
+  token: string;
+  expiresAt: Date;
+}
 
 export interface CreatePatientInput {
   email: string;
@@ -44,4 +50,10 @@ export interface IPatientRepository extends IBaseRepository<Patient, CreatePatie
   incrementTokenVersion(id: string): Promise<void>;
   linkToClinic(patientId: string, clinicId: string, controlLevel: string): Promise<Patient>;
   unlinkFromClinic(patientId: string): Promise<Patient>;
+  // Email verification methods
+  createVerificationToken(input: CreateVerificationTokenInput): Promise<EmailVerificationToken>;
+  findVerificationToken(token: string): Promise<EmailVerificationToken | null>;
+  markVerificationTokenUsed(token: string): Promise<void>;
+  markEmailVerified(patientId: string): Promise<Patient>;
+  deleteExpiredVerificationTokens(patientId: string): Promise<void>;
 }

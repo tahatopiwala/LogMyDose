@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import {
   IAuthService,
   RegisterPatientInput,
@@ -11,15 +12,18 @@ import {
 } from '../interfaces/services/IAuthService.js';
 import { IUserRepository } from '../interfaces/repositories/IUserRepository.js';
 import { IPatientRepository } from '../interfaces/repositories/IPatientRepository.js';
+import { IQueueService } from '../interfaces/services/IQueueService.js';
 import { hashPassword, verifyPassword } from '../lib/password.js';
 import { generateTokenPair, verifyRefreshToken, TokenPayload } from '../lib/jwt.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { Patient, User } from '@logmydose/shared/prisma';
+import { env } from '../lib/env.js';
 
 export class AuthService implements IAuthService {
   constructor(
     private readonly userRepository: IUserRepository,
-    private readonly patientRepository: IPatientRepository
+    private readonly patientRepository: IPatientRepository,
+    private readonly queueService: IQueueService
   ) {}
 
   async registerPatient(input: RegisterPatientInput): Promise<PatientAuthResponse> {
@@ -38,6 +42,35 @@ export class AuthService implements IAuthService {
       lastName: input.lastName,
       accountType: 'd2c',
       subscriptionTier: 'free',
+    });
+
+    // Generate email verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+    await this.patientRepository.createVerificationToken({
+      patientId: patient.id,
+      token: verificationToken,
+      expiresAt,
+    });
+
+    const verificationUrl = `${env.APP_URL}/verify-email?token=${verificationToken}`;
+
+    // Queue welcome email
+    await this.queueService.addWelcomeEmailJob({
+      to: patient.email,
+      patientId: patient.id,
+      firstName: patient.firstName || undefined,
+    });
+
+    // Queue email verification email
+    await this.queueService.addVerifyEmailJob({
+      to: patient.email,
+      patientId: patient.id,
+      firstName: patient.firstName || undefined,
+      verificationToken,
+      verificationUrl,
+      expiresAt: expiresAt.toISOString(),
     });
 
     const tokenPayload: TokenPayload = {
@@ -209,6 +242,62 @@ export class AuthService implements IAuthService {
   async getCurrentUser(id: string): Promise<Omit<User, 'passwordHash' | 'tokenVersion'> | null> {
     const user = await this.userRepository.findById(id);
     return user ? this.sanitizeUser(user) : null;
+  }
+
+  async verifyEmail(token: string): Promise<void> {
+    const verificationToken = await this.patientRepository.findVerificationToken(token);
+
+    if (!verificationToken) {
+      throw new AppError(400, 'Invalid verification token', 'INVALID_TOKEN');
+    }
+
+    if (verificationToken.usedAt) {
+      throw new AppError(400, 'Token has already been used', 'TOKEN_USED');
+    }
+
+    if (verificationToken.expiresAt < new Date()) {
+      throw new AppError(400, 'Verification token has expired', 'TOKEN_EXPIRED');
+    }
+
+    await this.patientRepository.markVerificationTokenUsed(token);
+    await this.patientRepository.markEmailVerified(verificationToken.patientId);
+  }
+
+  async resendVerificationEmail(patientId: string): Promise<void> {
+    const patient = await this.patientRepository.findById(patientId);
+
+    if (!patient) {
+      throw new AppError(404, 'Patient not found', 'NOT_FOUND');
+    }
+
+    if (patient.emailVerifiedAt) {
+      throw new AppError(400, 'Email is already verified', 'ALREADY_VERIFIED');
+    }
+
+    // Clean up old tokens
+    await this.patientRepository.deleteExpiredVerificationTokens(patientId);
+
+    // Generate new verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+    await this.patientRepository.createVerificationToken({
+      patientId: patient.id,
+      token: verificationToken,
+      expiresAt,
+    });
+
+    const verificationUrl = `${env.APP_URL}/verify-email?token=${verificationToken}`;
+
+    // Queue verification email
+    await this.queueService.addVerifyEmailJob({
+      to: patient.email,
+      patientId: patient.id,
+      firstName: patient.firstName || undefined,
+      verificationToken,
+      verificationUrl,
+      expiresAt: expiresAt.toISOString(),
+    });
   }
 
   private sanitizePatient(patient: Patient): Omit<Patient, 'passwordHash' | 'tokenVersion'> {

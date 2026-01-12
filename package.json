@@ -7,7 +7,9 @@
     "packages/*",
     "api",
     "web-landing",
-    "web-app"
+    "web-app",
+    "admin-app",
+    "workers"
   ],
   "scripts": {
     "build": "npm run build:ui && npm run build --workspaces --if-present",
@@ -19,6 +21,12 @@
     "dev:api": "npm run dev -w logmydose-api",
     "dev:landing": "npm run build:ui && npm run dev -w @logmydose/web-landing",
     "dev:app": "npm run build:ui && npm run dev -w @logmydose/web-app",
+    "build:admin": "npm run build:ui && npm run build -w @logmydose/admin-app",
+    "dev:admin": "npm run build:ui && npm run dev -w @logmydose/admin-app",
+    "lint:admin": "npm run lint -w @logmydose/admin-app",
+    "build:workers": "npm run build -w @logmydose/workers",
+    "dev:workers": "npm run dev -w @logmydose/workers",
+    "start:workers": "npm run start -w @logmydose/workers",
     "lint": "npm run lint --workspaces --if-present",
     "lint:ui": "npm run lint -w @logmydose/ui",
     "lint:landing": "npm run lint -w @logmydose/web-landing",

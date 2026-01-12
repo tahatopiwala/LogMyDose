@@ -1,4 +1,4 @@
-import { PrismaClient, Patient } from '@logmydose/shared/prisma';
+import { PrismaClient, Patient, EmailVerificationToken } from '@logmydose/shared/prisma';
 import {
   IPatientRepository,
   CreatePatientInput,
@@ -6,6 +6,7 @@ import {
   PatientWithClinic,
   FindClinicPatientsOptions,
   FindManyOptions,
+  CreateVerificationTokenInput,
 } from '../interfaces/repositories/index.js';
 import { PaginatedResponse } from '../types/index.js';
 
@@ -167,6 +168,49 @@ export class PatientRepository implements IPatientRepository {
         clinicLinkedAt: null,
         clinicControlLevel: null,
         accountType: 'd2c',
+      },
+    });
+  }
+
+  // Email verification methods
+  async createVerificationToken(input: CreateVerificationTokenInput): Promise<EmailVerificationToken> {
+    return this.prisma.emailVerificationToken.create({
+      data: {
+        patientId: input.patientId,
+        token: input.token,
+        expiresAt: input.expiresAt,
+      },
+    });
+  }
+
+  async findVerificationToken(token: string): Promise<EmailVerificationToken | null> {
+    return this.prisma.emailVerificationToken.findUnique({
+      where: { token },
+    });
+  }
+
+  async markVerificationTokenUsed(token: string): Promise<void> {
+    await this.prisma.emailVerificationToken.update({
+      where: { token },
+      data: { usedAt: new Date() },
+    });
+  }
+
+  async markEmailVerified(patientId: string): Promise<Patient> {
+    return this.prisma.patient.update({
+      where: { id: patientId },
+      data: { emailVerifiedAt: new Date() },
+    });
+  }
+
+  async deleteExpiredVerificationTokens(patientId: string): Promise<void> {
+    await this.prisma.emailVerificationToken.deleteMany({
+      where: {
+        patientId,
+        OR: [
+          { expiresAt: { lt: new Date() } },
+          { usedAt: { not: null } },
+        ],
       },
     });
   }

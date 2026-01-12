@@ -29,6 +29,10 @@
     "./prisma": {
       "types": "./dist/prisma/index.d.ts",
       "import": "./dist/prisma/index.js"
+    },
+    "./queues": {
+      "types": "./dist/queues/index.d.ts",
+      "import": "./dist/queues/index.js"
     }
   },
   "scripts": {

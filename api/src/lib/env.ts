@@ -17,6 +17,14 @@ const envSchema = z.object({
   // CORS
   CORS_ORIGIN: z.string().default('http://localhost:5173'),
 
+  // Redis (for BullMQ job queues)
+  REDIS_HOST: z.string().default('localhost'),
+  REDIS_PORT: z.coerce.number().default(6379),
+  REDIS_PASSWORD: z.string().optional(),
+
+  // App URL (for email verification links)
+  APP_URL: z.string().url().default('http://localhost:5173'),
+
   // Rate Limiting
   RATE_LIMIT_WINDOW_MS: z.coerce.number().default(900000), // 15 minutes
   RATE_LIMIT_MAX: z.coerce.number().default(100),

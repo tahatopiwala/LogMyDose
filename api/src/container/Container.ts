@@ -28,6 +28,7 @@ import {
   ISubstanceService,
   IProtocolService,
   IDoseService,
+  IQueueService,
 } from '../interfaces/services/index.js';
 
 // Service implementations
@@ -38,7 +39,10 @@ import {
   SubstanceService,
   ProtocolService,
   DoseService,
+  QueueService,
 } from '../services/index.js';
+
+import { env } from '../lib/env.js';
 
 export class Container {
   private static instance: Container;
@@ -58,6 +62,7 @@ export class Container {
   readonly substanceService: ISubstanceService;
   readonly protocolService: IProtocolService;
   readonly doseService: IDoseService;
+  readonly queueService: IQueueService;
 
   private constructor(prisma: PrismaClient) {
     // Initialize repositories
@@ -68,8 +73,19 @@ export class Container {
     this.protocolRepository = new ProtocolRepository(prisma);
     this.doseRepository = new DoseRepository(prisma);
 
+    // Initialize queue service
+    this.queueService = new QueueService({
+      host: env.REDIS_HOST,
+      port: env.REDIS_PORT,
+      password: env.REDIS_PASSWORD,
+    });
+
     // Initialize services with repository dependencies
-    this.authService = new AuthService(this.userRepository, this.patientRepository);
+    this.authService = new AuthService(
+      this.userRepository,
+      this.patientRepository,
+      this.queueService
+    );
 
     this.patientService = new PatientService(
       this.patientRepository,

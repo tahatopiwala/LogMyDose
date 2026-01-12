@@ -89,10 +89,12 @@ model Patient {
   consentSignedAt      DateTime? @map("consent_signed_at")
   settings             Json?
   tokenVersion         Int       @default(0) @map("token_version")
+  emailVerifiedAt      DateTime? @map("email_verified_at")
   createdAt            DateTime  @default(now()) @map("created_at")
 
   // Relations
   clinic               Tenant?           @relation(fields: [clinicId], references: [id])
+  emailVerificationTokens EmailVerificationToken[]
   protocols            Protocol[]
   doses                Dose[]
   sideEffects          SideEffect[]
@@ -103,6 +105,22 @@ model Patient {
   aiReports            AiReport[]
 
   @@map("patients")
+}
+
+model EmailVerificationToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  patientId String    @map("patient_id") @db.Uuid
+  token     String    @unique @db.VarChar(255)
+  expiresAt DateTime  @map("expires_at")
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  patient   Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([patientId])
+  @@map("email_verification_tokens")
 }
 
 model ClinicInvitation {

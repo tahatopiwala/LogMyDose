@@ -34,3 +34,4 @@ export {
   GetSideEffectsQuery,
   GetStatsQuery,
 } from './IDoseService.js';
+export { IQueueService, JobOptions } from './IQueueService.js';

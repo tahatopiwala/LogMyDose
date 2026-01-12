@@ -17,6 +17,35 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:7-alpine
+    container_name: logmydose-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: redis-server --appendonly yes
+
+  # Optional: Redis Commander for queue management
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: logmydose-redis-commander
+    restart: unless-stopped
+    environment:
+      REDIS_HOSTS: local:redis:6379
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+    profiles:
+      - tools
+
   # Optional: pgAdmin for database management
   pgadmin:
     image: dpage/pgadmin4:latest
@@ -35,3 +64,4 @@ services:
 
 volumes:
   postgres_data:
+  redis_data:

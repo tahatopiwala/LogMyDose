@@ -8,6 +8,7 @@ export type {
   User,
   Patient,
   ClinicInvitation,
+  EmailVerificationToken,
   SubstanceCategory,
   Substance,
   ProtocolTemplate,

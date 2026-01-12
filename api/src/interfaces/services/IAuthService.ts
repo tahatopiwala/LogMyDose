@@ -60,4 +60,6 @@ export interface IAuthService {
   logout(currentUser: CurrentUser): Promise<void>;
   getCurrentPatient(id: string): Promise<Omit<Patient, 'passwordHash' | 'tokenVersion'> | null>;
   getCurrentUser(id: string): Promise<Omit<User, 'passwordHash' | 'tokenVersion'> | null>;
+  verifyEmail(token: string): Promise<void>;
+  resendVerificationEmail(patientId: string): Promise<void>;
 }

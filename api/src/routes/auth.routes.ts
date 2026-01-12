@@ -158,4 +158,36 @@ router.get('/me', authenticate, async (req, res, next) => {
   }
 });
 
+// GET /api/v1/auth/verify-email
+router.get('/verify-email', async (req, res, next) => {
+  try {
+    const { token } = z.object({ token: z.string().min(1) }).parse(req.query);
+    const authService = getContainer().authService;
+
+    await authService.verifyEmail(token);
+
+    res.json({ message: 'Email verified successfully' });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// POST /api/v1/auth/resend-verification
+router.post('/resend-verification', authenticate, async (req, res, next) => {
+  try {
+    const authService = getContainer().authService;
+
+    // Only patients can request verification emails
+    if (req.user!.role !== 'patient') {
+      return res.status(403).json({ error: 'Only patients can request verification emails' });
+    }
+
+    await authService.resendVerificationEmail(req.user!.id);
+
+    res.json({ message: 'Verification email sent' });
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default router;
