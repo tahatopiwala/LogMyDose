@@ -4,6 +4,8 @@ import {
   GetTemplatesQuery,
   CreateProtocolInput,
   ProtocolSchedule,
+  CreateTemplateInput,
+  UpdateTemplateInput,
 } from '../interfaces/services/IProtocolService.js';
 import { CurrentUser } from '../interfaces/services/IAuthService.js';
 import {
@@ -44,6 +46,90 @@ export class ProtocolService implements IProtocolService {
     }
 
     return template;
+  }
+
+  async createTemplate(input: CreateTemplateInput): Promise<TemplateWithRelations> {
+    // Validate category exists if provided
+    if (input.categoryId) {
+      const category = await this.substanceRepository.findCategoryById(input.categoryId);
+      if (!category) {
+        throw new AppError(400, 'Category not found', 'CATEGORY_NOT_FOUND');
+      }
+    }
+
+    // Validate substance exists if provided
+    if (input.substanceId) {
+      const substance = await this.substanceRepository.findById(input.substanceId);
+      if (!substance) {
+        throw new AppError(400, 'Substance not found', 'SUBSTANCE_NOT_FOUND');
+      }
+    }
+
+    return this.protocolRepository.createTemplate({
+      name: input.name,
+      description: input.description,
+      categoryId: input.categoryId,
+      substanceId: input.substanceId,
+      defaultDose: input.defaultDose,
+      doseUnit: input.doseUnit,
+      frequency: input.frequency,
+      titrationPlan: input.titrationPlan as Prisma.InputJsonValue,
+      cycleOnWeeks: input.cycleOnWeeks,
+      cycleOffWeeks: input.cycleOffWeeks,
+      difficultyLevel: input.difficultyLevel,
+      tags: input.tags,
+      isPublic: input.isPublic,
+    });
+  }
+
+  async updateTemplate(id: string, input: UpdateTemplateInput): Promise<TemplateWithRelations> {
+    const existingTemplate = await this.protocolRepository.findTemplateById(id);
+
+    if (!existingTemplate) {
+      throw new AppError(404, 'Template not found', 'NOT_FOUND');
+    }
+
+    // Validate category exists if provided
+    if (input.categoryId) {
+      const category = await this.substanceRepository.findCategoryById(input.categoryId);
+      if (!category) {
+        throw new AppError(400, 'Category not found', 'CATEGORY_NOT_FOUND');
+      }
+    }
+
+    // Validate substance exists if provided
+    if (input.substanceId) {
+      const substance = await this.substanceRepository.findById(input.substanceId);
+      if (!substance) {
+        throw new AppError(400, 'Substance not found', 'SUBSTANCE_NOT_FOUND');
+      }
+    }
+
+    return this.protocolRepository.updateTemplate(id, {
+      name: input.name,
+      description: input.description,
+      categoryId: input.categoryId,
+      substanceId: input.substanceId,
+      defaultDose: input.defaultDose,
+      doseUnit: input.doseUnit,
+      frequency: input.frequency,
+      titrationPlan: input.titrationPlan as Prisma.InputJsonValue,
+      cycleOnWeeks: input.cycleOnWeeks,
+      cycleOffWeeks: input.cycleOffWeeks,
+      difficultyLevel: input.difficultyLevel,
+      tags: input.tags,
+      isPublic: input.isPublic,
+    });
+  }
+
+  async deleteTemplate(id: string): Promise<void> {
+    const existingTemplate = await this.protocolRepository.findTemplateById(id);
+
+    if (!existingTemplate) {
+      throw new AppError(404, 'Template not found', 'NOT_FOUND');
+    }
+
+    await this.protocolRepository.deleteTemplate(id);
   }
 
   async createProtocol(

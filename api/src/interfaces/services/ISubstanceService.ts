@@ -3,6 +3,8 @@ import {
   SubstanceWithCategory,
   CreateSubstanceInput,
   UpdateSubstanceInput,
+  CreateCategoryInput,
+  UpdateCategoryInput,
 } from '../repositories/ISubstanceRepository.js';
 import { PaginatedResponse } from '../../types/index.js';
 
@@ -15,7 +17,12 @@ export interface GetSubstancesQuery {
 }
 
 export interface ISubstanceService {
+  // Category methods
   getCategories(): Promise<SubstanceCategory[]>;
+  createCategory(data: CreateCategoryInput): Promise<SubstanceCategory>;
+  updateCategory(id: string, data: UpdateCategoryInput): Promise<SubstanceCategory>;
+
+  // Substance methods
   getSubstances(query: GetSubstancesQuery): Promise<PaginatedResponse<SubstanceWithCategory>>;
   getSubstanceById(id: string): Promise<SubstanceWithCategory | null>;
   createSubstance(data: CreateSubstanceInput): Promise<Substance>;

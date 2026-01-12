@@ -1,4 +1,4 @@
-import { Protocol } from '@logmydose/shared/prisma';
+import { Protocol, ProtocolTemplate } from '@logmydose/shared/prisma';
 import {
   ProtocolWithDetails,
   TemplateWithRelations,
@@ -51,9 +51,47 @@ export interface ProtocolSchedule {
   endDate: Date;
 }
 
+export interface CreateTemplateInput {
+  name: string;
+  description?: string;
+  categoryId?: string;
+  substanceId?: string;
+  defaultDose?: number;
+  doseUnit?: string;
+  frequency?: string;
+  titrationPlan?: Record<string, unknown>;
+  cycleOnWeeks?: number;
+  cycleOffWeeks?: number;
+  difficultyLevel?: string;
+  tags?: string[];
+  isPublic?: boolean;
+}
+
+export interface UpdateTemplateInput {
+  name?: string;
+  description?: string;
+  categoryId?: string;
+  substanceId?: string;
+  defaultDose?: number;
+  doseUnit?: string;
+  frequency?: string;
+  titrationPlan?: Record<string, unknown>;
+  cycleOnWeeks?: number;
+  cycleOffWeeks?: number;
+  difficultyLevel?: string;
+  tags?: string[];
+  isPublic?: boolean;
+}
+
 export interface IProtocolService {
+  // Template methods
   getTemplates(query: GetTemplatesQuery): Promise<PaginatedResponse<TemplateWithRelations>>;
   getTemplateById(id: string): Promise<TemplateWithRelations | null>;
+  createTemplate(input: CreateTemplateInput): Promise<TemplateWithRelations>;
+  updateTemplate(id: string, input: UpdateTemplateInput): Promise<TemplateWithRelations>;
+  deleteTemplate(id: string): Promise<void>;
+
+  // Protocol methods
   createProtocol(patientId: string, input: CreateProtocolInput): Promise<ProtocolWithDetails>;
   getProtocolById(id: string, currentUser: CurrentUser): Promise<ProtocolWithDetails | null>;
   updateProtocol(id: string, data: UpdateProtocolInput, currentUser: CurrentUser): Promise<Protocol>;

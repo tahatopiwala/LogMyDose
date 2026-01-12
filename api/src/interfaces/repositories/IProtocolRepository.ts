@@ -56,6 +56,39 @@ export interface FindTemplatesOptions extends FindManyOptions {
   isPublic?: boolean;
 }
 
+export interface CreateTemplateInput {
+  name: string;
+  description?: string;
+  categoryId?: string;
+  substanceId?: string;
+  defaultDose?: Prisma.Decimal | number;
+  doseUnit?: string;
+  frequency?: string;
+  titrationPlan?: Prisma.InputJsonValue;
+  cycleOnWeeks?: number;
+  cycleOffWeeks?: number;
+  difficultyLevel?: string;
+  tags?: string[];
+  isPublic?: boolean;
+  createdByClinicId?: string;
+}
+
+export interface UpdateTemplateInput {
+  name?: string;
+  description?: string;
+  categoryId?: string;
+  substanceId?: string;
+  defaultDose?: Prisma.Decimal | number;
+  doseUnit?: string;
+  frequency?: string;
+  titrationPlan?: Prisma.InputJsonValue;
+  cycleOnWeeks?: number;
+  cycleOffWeeks?: number;
+  difficultyLevel?: string;
+  tags?: string[];
+  isPublic?: boolean;
+}
+
 export interface TemplateWithRelations extends ProtocolTemplate {
   category?: { id: string; name: string; displayName: string } | null;
   substance?: { id: string; name: string; doseUnit: string | null } | null;
@@ -65,6 +98,9 @@ export interface IProtocolRepository extends IBaseRepository<Protocol, CreatePro
   // Template methods
   findTemplates(options?: FindTemplatesOptions): Promise<PaginatedResponse<TemplateWithRelations>>;
   findTemplateById(id: string): Promise<TemplateWithRelations | null>;
+  createTemplate(data: CreateTemplateInput): Promise<TemplateWithRelations>;
+  updateTemplate(id: string, data: UpdateTemplateInput): Promise<TemplateWithRelations>;
+  deleteTemplate(id: string): Promise<void>;
   incrementTemplateUseCount(id: string): Promise<void>;
 
   // Protocol methods

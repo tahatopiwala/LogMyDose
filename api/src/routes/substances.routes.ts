@@ -7,6 +7,23 @@ import { paginationSchema } from '../types/index.js';
 const router = Router();
 
 // Validation schemas
+const createCategorySchema = z.object({
+  name: z.string().min(1).max(100),
+  displayName: z.string().min(1).max(100),
+  description: z.string().optional(),
+  icon: z.string().max(50).optional(),
+  sortOrder: z.number().int().optional(),
+});
+
+const updateCategorySchema = z.object({
+  name: z.string().min(1).max(100).optional(),
+  displayName: z.string().min(1).max(100).optional(),
+  description: z.string().optional(),
+  icon: z.string().max(50).optional(),
+  sortOrder: z.number().int().optional(),
+  isActive: z.boolean().optional(),
+});
+
 const createSubstanceSchema = z.object({
   categoryId: z.string().uuid(),
   name: z.string().min(1).max(100),
@@ -38,6 +55,35 @@ router.get('/categories', async (_req, res, next) => {
     const categories = await substanceService.getCategories();
 
     res.json({ categories });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// POST /api/v1/substances/categories (super admin only)
+router.post('/categories', authenticate, requireSuperAdmin, async (req, res, next) => {
+  try {
+    const data = createCategorySchema.parse(req.body);
+    const substanceService = getContainer().substanceService;
+
+    const category = await substanceService.createCategory(data);
+
+    res.status(201).json({ category });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// PUT /api/v1/substances/categories/:id (super admin only)
+router.put('/categories/:id', authenticate, requireSuperAdmin, async (req, res, next) => {
+  try {
+    const id = req.params.id as string;
+    const data = updateCategorySchema.parse(req.body);
+    const substanceService = getContainer().substanceService;
+
+    const category = await substanceService.updateCategory(id, data);
+
+    res.json({ category });
   } catch (error) {
     next(error);
   }

@@ -347,6 +347,391 @@ async function main() {
 
   console.log(`Seeded ${substanceCount} peptides`);
 
+  // Seed hormones
+  const hormoneCategory = await prisma.substanceCategory.findUnique({
+    where: { id: '00000000-0000-0000-0000-000000000002' },
+  });
+
+  const hormones = [
+    {
+      name: 'Testosterone Cypionate',
+      aliases: ['Test Cyp', 'Depo-Testosterone'],
+      subcategory: 'androgen',
+      defaultDose: 100,
+      doseUnit: 'mg',
+      defaultFrequency: 'weekly',
+      administrationRoute: 'injection_im',
+      preparationInstructions: 'Draw with 18g needle, inject with 25g needle. Warm vial to body temperature before injection.',
+      storageTemp: 'Room temperature (15-30°C)',
+      storageNotes: 'Protect from light. Do not refrigerate.',
+      shelfLifeDays: 730,
+      requiresCycling: false,
+      contraindications: ['Prostate cancer', 'Breast cancer in men', 'Pregnancy', 'Polycythemia'],
+      commonSideEffects: ['Acne', 'Hair loss', 'Increased hematocrit', 'Testicular atrophy', 'Mood changes'],
+      interactions: ['Blood thinners', 'Insulin', 'Corticosteroids'],
+      onsetTimeline: '2-4 weeks for initial effects, 3-6 months for full benefits',
+      isPrescriptionRequired: true,
+    },
+    {
+      name: 'Testosterone Enanthate',
+      aliases: ['Test E', 'Delatestryl'],
+      subcategory: 'androgen',
+      defaultDose: 100,
+      doseUnit: 'mg',
+      defaultFrequency: 'weekly',
+      administrationRoute: 'injection_im',
+      preparationInstructions: 'Draw with 18g needle, inject with 25g needle. Can be injected IM or subcutaneously.',
+      storageTemp: 'Room temperature (15-30°C)',
+      storageNotes: 'Protect from light. Do not refrigerate.',
+      shelfLifeDays: 730,
+      requiresCycling: false,
+      contraindications: ['Prostate cancer', 'Breast cancer in men', 'Pregnancy', 'Severe cardiac disease'],
+      commonSideEffects: ['Acne', 'Hair loss', 'Increased hematocrit', 'Testicular atrophy', 'Water retention'],
+      interactions: ['Blood thinners', 'Insulin', 'Corticosteroids'],
+      onsetTimeline: '2-4 weeks for initial effects, 3-6 months for full benefits',
+      isPrescriptionRequired: true,
+    },
+    {
+      name: 'Estradiol',
+      aliases: ['E2', 'Estrace', '17β-estradiol'],
+      subcategory: 'estrogen',
+      defaultDose: 1,
+      doseUnit: 'mg',
+      defaultFrequency: 'daily',
+      administrationRoute: 'oral',
+      preparationInstructions: 'Take orally with or without food. Also available as patch, gel, or injection.',
+      storageTemp: 'Room temperature (15-30°C)',
+      storageNotes: 'Store in original container. Protect from moisture.',
+      shelfLifeDays: 730,
+      requiresCycling: false,
+      contraindications: ['History of blood clots', 'Estrogen-sensitive cancers', 'Liver disease', 'Undiagnosed vaginal bleeding'],
+      commonSideEffects: ['Breast tenderness', 'Headache', 'Nausea', 'Bloating', 'Mood changes'],
+      interactions: ['Aromatase inhibitors', 'Thyroid medications', 'St. Johns Wort'],
+      onsetTimeline: '2-4 weeks for symptom improvement',
+      isPrescriptionRequired: true,
+    },
+    {
+      name: 'Progesterone',
+      aliases: ['Prometrium', 'Micronized Progesterone'],
+      subcategory: 'progestogen',
+      defaultDose: 100,
+      doseUnit: 'mg',
+      defaultFrequency: 'daily',
+      administrationRoute: 'oral',
+      preparationInstructions: 'Take at bedtime due to sedative effects. Can also be used vaginally.',
+      storageTemp: 'Room temperature (15-30°C)',
+      storageNotes: 'Store in original container.',
+      shelfLifeDays: 730,
+      requiresCycling: false,
+      contraindications: ['Peanut allergy (for oral capsules)', 'Breast cancer', 'Blood clots', 'Liver disease'],
+      commonSideEffects: ['Drowsiness', 'Dizziness', 'Breast tenderness', 'Headache', 'Mood changes'],
+      interactions: ['CYP3A4 inhibitors', 'Barbiturates', 'Rifampin'],
+      onsetTimeline: '1-2 weeks for sleep benefits, 2-4 weeks for other effects',
+      isPrescriptionRequired: true,
+    },
+    {
+      name: 'DHEA',
+      aliases: ['Dehydroepiandrosterone', 'Prasterone'],
+      subcategory: 'precursor',
+      defaultDose: 25,
+      doseUnit: 'mg',
+      defaultFrequency: 'daily',
+      administrationRoute: 'oral',
+      preparationInstructions: 'Take in the morning with food.',
+      storageTemp: 'Room temperature (15-30°C)',
+      storageNotes: 'Keep in cool, dry place.',
+      shelfLifeDays: 730,
+      requiresCycling: true,
+      commonCycleOnWeeks: 8,
+      commonCycleOffWeeks: 4,
+      contraindications: ['Hormone-sensitive cancers', 'Pregnancy', 'Breastfeeding', 'PCOS'],
+      commonSideEffects: ['Acne', 'Hair loss', 'Oily skin', 'Mood changes', 'Irregular periods'],
+      interactions: ['Estrogen therapy', 'Testosterone therapy', 'Antipsychotics'],
+      onsetTimeline: '4-8 weeks for noticeable effects',
+      isPrescriptionRequired: false,
+    },
+    {
+      name: 'Pregnenolone',
+      aliases: ['Preg'],
+      subcategory: 'precursor',
+      defaultDose: 50,
+      doseUnit: 'mg',
+      defaultFrequency: 'daily',
+      administrationRoute: 'oral',
+      preparationInstructions: 'Take in the morning with food.',
+      storageTemp: 'Room temperature (15-30°C)',
+      storageNotes: 'Keep in cool, dry place.',
+      shelfLifeDays: 730,
+      requiresCycling: true,
+      commonCycleOnWeeks: 8,
+      commonCycleOffWeeks: 4,
+      contraindications: ['Hormone-sensitive cancers', 'Pregnancy', 'Seizure disorders'],
+      commonSideEffects: ['Headache', 'Irritability', 'Acne', 'Insomnia'],
+      interactions: ['Hormone therapies', 'CNS depressants'],
+      onsetTimeline: '2-4 weeks for cognitive effects',
+      isPrescriptionRequired: false,
+    },
+    {
+      name: 'Liothyronine',
+      aliases: ['T3', 'Cytomel', 'Triiodothyronine'],
+      subcategory: 'thyroid',
+      defaultDose: 5,
+      doseUnit: 'mcg',
+      defaultFrequency: 'daily',
+      administrationRoute: 'oral',
+      preparationInstructions: 'Take on empty stomach, 30-60 minutes before breakfast. Consistent timing important.',
+      storageTemp: 'Room temperature (15-30°C)',
+      storageNotes: 'Protect from light and moisture.',
+      shelfLifeDays: 730,
+      requiresCycling: false,
+      contraindications: ['Untreated adrenal insufficiency', 'Thyrotoxicosis', 'Acute MI'],
+      commonSideEffects: ['Palpitations', 'Anxiety', 'Weight loss', 'Insomnia', 'Heat intolerance'],
+      interactions: ['Blood thinners', 'Diabetes medications', 'Digoxin', 'Antidepressants'],
+      onsetTimeline: '24-72 hours for initial effects, 2-4 weeks for stable levels',
+      isPrescriptionRequired: true,
+    },
+    {
+      name: 'HCG',
+      aliases: ['Human Chorionic Gonadotropin', 'Pregnyl', 'Novarel'],
+      subcategory: 'gonadotropin',
+      defaultDose: 500,
+      doseUnit: 'iu',
+      defaultFrequency: '2x_weekly',
+      administrationRoute: 'injection_subq',
+      preparationInstructions: 'Reconstitute with bacteriostatic water. Refrigerate after mixing.',
+      storageTemp: '2-8°C (refrigerated)',
+      storageNotes: 'Must refrigerate after reconstitution. Use within 60 days.',
+      shelfLifeDays: 730,
+      shelfLifeReconstitutedDays: 60,
+      requiresCycling: false,
+      contraindications: ['Hormone-sensitive cancers', 'Precocious puberty', 'Pregnancy'],
+      commonSideEffects: ['Headache', 'Irritability', 'Restlessness', 'Injection site pain'],
+      interactions: ['Gonadotropin-releasing hormones'],
+      onsetTimeline: '1-2 weeks for testicular response',
+      isPrescriptionRequired: true,
+    },
+  ];
+
+  let hormoneCount = 0;
+  for (const hormone of hormones) {
+    const existing = await prisma.substance.findFirst({
+      where: { name: hormone.name },
+    });
+
+    let substance;
+    if (existing) {
+      substance = await prisma.substance.update({
+        where: { id: existing.id },
+        data: {
+          categoryId: hormoneCategory!.id,
+          ...hormone,
+        },
+      });
+    } else {
+      substance = await prisma.substance.create({
+        data: {
+          categoryId: hormoneCategory!.id,
+          ...hormone,
+        },
+      });
+    }
+    substanceIds[hormone.name] = substance.id;
+    hormoneCount++;
+  }
+
+  console.log(`Seeded ${hormoneCount} hormones`);
+
+  // Seed supplements
+  const supplementCategory = await prisma.substanceCategory.findUnique({
+    where: { id: '00000000-0000-0000-0000-000000000003' },
+  });
+
+  const supplements = [
+    {
+      name: 'Vitamin D3',
+      aliases: ['Cholecalciferol', 'D3'],
+      subcategory: 'vitamin',
+      defaultDose: 5000,
+      doseUnit: 'iu',
+      defaultFrequency: 'daily',
+      administrationRoute: 'oral',
+      preparationInstructions: 'Take with a meal containing fat for better absorption.',
+      storageTemp: 'Room temperature (15-30°C)',
+      storageNotes: 'Keep in cool, dry place. Protect from light.',
+      shelfLifeDays: 730,
+      requiresCycling: false,
+      contraindications: ['Hypercalcemia', 'Hypervitaminosis D', 'Kidney disease'],
+      commonSideEffects: ['Nausea (high doses)', 'Constipation', 'Weakness'],
+      interactions: ['Thiazide diuretics', 'Steroids', 'Cholesterol medications'],
+      onsetTimeline: '4-8 weeks for blood level changes, 3+ months for full benefits',
+      isPrescriptionRequired: false,
+    },
+    {
+      name: 'Vitamin B12',
+      aliases: ['Methylcobalamin', 'Cobalamin', 'B12'],
+      subcategory: 'vitamin',
+      defaultDose: 1000,
+      doseUnit: 'mcg',
+      defaultFrequency: 'daily',
+      administrationRoute: 'oral',
+      preparationInstructions: 'Sublingual form absorbs better. Can be taken any time.',
+      storageTemp: 'Room temperature (15-30°C)',
+      storageNotes: 'Protect from light and moisture.',
+      shelfLifeDays: 730,
+      requiresCycling: false,
+      contraindications: ['Cobalt allergy', "Leber's disease"],
+      commonSideEffects: ['Generally well tolerated', 'Mild diarrhea (rare)'],
+      interactions: ['Metformin', 'Proton pump inhibitors', 'Colchicine'],
+      onsetTimeline: '2-4 weeks for energy improvements',
+      isPrescriptionRequired: false,
+    },
+    {
+      name: 'Magnesium Glycinate',
+      aliases: ['Mag Glycinate', 'Chelated Magnesium'],
+      subcategory: 'mineral',
+      defaultDose: 400,
+      doseUnit: 'mg',
+      defaultFrequency: 'daily',
+      administrationRoute: 'oral',
+      preparationInstructions: 'Take in the evening for sleep benefits. Can be split into 2 doses.',
+      storageTemp: 'Room temperature (15-30°C)',
+      storageNotes: 'Keep in cool, dry place.',
+      shelfLifeDays: 730,
+      requiresCycling: false,
+      contraindications: ['Severe kidney disease', 'Heart block', 'Myasthenia gravis'],
+      commonSideEffects: ['Loose stools', 'Stomach upset', 'Drowsiness'],
+      interactions: ['Antibiotics', 'Bisphosphonates', 'Blood pressure medications'],
+      onsetTimeline: '1-2 weeks for sleep and relaxation benefits',
+      isPrescriptionRequired: false,
+    },
+    {
+      name: 'Zinc',
+      aliases: ['Zinc Picolinate', 'Zinc Gluconate'],
+      subcategory: 'mineral',
+      defaultDose: 30,
+      doseUnit: 'mg',
+      defaultFrequency: 'daily',
+      administrationRoute: 'oral',
+      preparationInstructions: 'Take with food to avoid stomach upset. Do not take with copper supplements.',
+      storageTemp: 'Room temperature (15-30°C)',
+      storageNotes: 'Keep in cool, dry place.',
+      shelfLifeDays: 730,
+      requiresCycling: true,
+      commonCycleOnWeeks: 8,
+      commonCycleOffWeeks: 4,
+      contraindications: ['Copper deficiency (without copper supplementation)'],
+      commonSideEffects: ['Nausea', 'Metallic taste', 'Stomach upset'],
+      interactions: ['Antibiotics', 'Penicillamine', 'Thiazide diuretics'],
+      onsetTimeline: '2-4 weeks for immune benefits',
+      isPrescriptionRequired: false,
+    },
+    {
+      name: 'Omega-3 Fish Oil',
+      aliases: ['Fish Oil', 'EPA/DHA', 'Omega-3'],
+      subcategory: 'fatty_acid',
+      defaultDose: 2000,
+      doseUnit: 'mg',
+      defaultFrequency: 'daily',
+      administrationRoute: 'oral',
+      preparationInstructions: 'Take with meals to reduce fishy aftertaste. Keep refrigerated after opening.',
+      storageTemp: '2-8°C (refrigerated)',
+      storageNotes: 'Refrigerate after opening. Discard if smells rancid.',
+      shelfLifeDays: 365,
+      requiresCycling: false,
+      contraindications: ['Fish/shellfish allergy', 'Bleeding disorders'],
+      commonSideEffects: ['Fishy burps', 'Loose stools', 'Mild nausea'],
+      interactions: ['Blood thinners', 'Blood pressure medications'],
+      onsetTimeline: '8-12 weeks for cardiovascular benefits',
+      isPrescriptionRequired: false,
+    },
+    {
+      name: 'CoQ10',
+      aliases: ['Coenzyme Q10', 'Ubiquinone', 'Ubiquinol'],
+      subcategory: 'antioxidant',
+      defaultDose: 100,
+      doseUnit: 'mg',
+      defaultFrequency: 'daily',
+      administrationRoute: 'oral',
+      preparationInstructions: 'Take with a meal containing fat. Ubiquinol form is better absorbed.',
+      storageTemp: 'Room temperature (15-30°C)',
+      storageNotes: 'Protect from heat and light.',
+      shelfLifeDays: 730,
+      requiresCycling: false,
+      contraindications: ['None significant'],
+      commonSideEffects: ['Mild GI upset', 'Insomnia (if taken late)', 'Headache (rare)'],
+      interactions: ['Blood thinners', 'Blood pressure medications', 'Chemotherapy drugs'],
+      onsetTimeline: '4-12 weeks for energy benefits',
+      isPrescriptionRequired: false,
+    },
+    {
+      name: 'Glutathione',
+      aliases: ['GSH', 'L-Glutathione', 'Reduced Glutathione'],
+      subcategory: 'antioxidant',
+      defaultDose: 500,
+      doseUnit: 'mg',
+      defaultFrequency: 'daily',
+      administrationRoute: 'oral',
+      preparationInstructions: 'Liposomal form has better absorption. Take on empty stomach.',
+      storageTemp: '2-8°C (refrigerated)',
+      storageNotes: 'Refrigerate liposomal forms. Protect from light.',
+      shelfLifeDays: 365,
+      requiresCycling: false,
+      contraindications: ['None significant'],
+      commonSideEffects: ['Generally well tolerated', 'Mild GI upset (rare)'],
+      interactions: ['Chemotherapy drugs', 'Acetaminophen'],
+      onsetTimeline: '4-8 weeks for detoxification benefits',
+      isPrescriptionRequired: false,
+    },
+    {
+      name: 'Vitamin K2',
+      aliases: ['MK-7', 'Menaquinone-7', 'K2'],
+      subcategory: 'vitamin',
+      defaultDose: 100,
+      doseUnit: 'mcg',
+      defaultFrequency: 'daily',
+      administrationRoute: 'oral',
+      preparationInstructions: 'Take with vitamin D3 and a meal containing fat.',
+      storageTemp: 'Room temperature (15-30°C)',
+      storageNotes: 'Protect from light.',
+      shelfLifeDays: 730,
+      requiresCycling: false,
+      contraindications: ['Warfarin use (requires monitoring)'],
+      commonSideEffects: ['Generally well tolerated'],
+      interactions: ['Blood thinners (especially warfarin)'],
+      onsetTimeline: '8-12 weeks for bone health benefits',
+      isPrescriptionRequired: false,
+    },
+  ];
+
+  let supplementCount = 0;
+  for (const supplement of supplements) {
+    const existing = await prisma.substance.findFirst({
+      where: { name: supplement.name },
+    });
+
+    let substance;
+    if (existing) {
+      substance = await prisma.substance.update({
+        where: { id: existing.id },
+        data: {
+          categoryId: supplementCategory!.id,
+          ...supplement,
+        },
+      });
+    } else {
+      substance = await prisma.substance.create({
+        data: {
+          categoryId: supplementCategory!.id,
+          ...supplement,
+        },
+      });
+    }
+    substanceIds[supplement.name] = substance.id;
+    supplementCount++;
+  }
+
+  console.log(`Seeded ${supplementCount} supplements`);
+
   // Seed some protocol templates
   const templates = [
     {
@@ -422,11 +807,152 @@ async function main() {
       cycleOnWeeks: 6,
       cycleOffWeeks: 4,
     },
+    // Hormone Protocol Templates
+    {
+      name: 'TRT Standard Protocol',
+      description: 'Standard testosterone replacement therapy protocol for men with low testosterone.',
+      substanceName: 'Testosterone Cypionate',
+      categoryName: 'hormone',
+      defaultDose: 100,
+      doseUnit: 'mg',
+      frequency: 'weekly',
+      difficultyLevel: 'intermediate',
+      tags: ['trt', 'testosterone', 'hormone-replacement', 'men'],
+      titrationPlan: {
+        weeks: [
+          { week: 1, dose: 100, unit: 'mg', frequency: 'weekly', notes: 'Starting dose' },
+          { week: 2, dose: 100, unit: 'mg', frequency: 'weekly' },
+          { week: 3, dose: 100, unit: 'mg', frequency: 'weekly' },
+          { week: 4, dose: 100, unit: 'mg', frequency: 'weekly' },
+          { week: 5, dose: 100, unit: 'mg', frequency: 'weekly', notes: 'Check labs' },
+          { week: 6, dose: 100, unit: 'mg', frequency: 'weekly' },
+          { week: 7, dose: 100, unit: 'mg', frequency: 'weekly' },
+          { week: 8, dose: 100, unit: 'mg', frequency: 'weekly', notes: 'Adjust dose based on labs' },
+        ],
+      },
+    },
+    {
+      name: 'TRT + HCG Protocol',
+      description: 'Testosterone replacement with HCG to maintain fertility and testicular function.',
+      substanceName: 'Testosterone Cypionate',
+      categoryName: 'hormone',
+      defaultDose: 100,
+      doseUnit: 'mg',
+      frequency: 'weekly',
+      difficultyLevel: 'intermediate',
+      tags: ['trt', 'testosterone', 'hcg', 'fertility', 'men'],
+      titrationPlan: {
+        weeks: [
+          { week: 1, dose: 100, unit: 'mg', frequency: 'weekly', notes: 'Start with Test + HCG 500iu 2x/week' },
+          { week: 2, dose: 100, unit: 'mg', frequency: 'weekly' },
+          { week: 3, dose: 100, unit: 'mg', frequency: 'weekly' },
+          { week: 4, dose: 100, unit: 'mg', frequency: 'weekly' },
+          { week: 5, dose: 100, unit: 'mg', frequency: 'weekly', notes: 'Check labs' },
+          { week: 6, dose: 100, unit: 'mg', frequency: 'weekly' },
+          { week: 7, dose: 100, unit: 'mg', frequency: 'weekly' },
+          { week: 8, dose: 100, unit: 'mg', frequency: 'weekly', notes: 'Adjust dose based on labs' },
+        ],
+      },
+    },
+    {
+      name: 'Female HRT Protocol',
+      description: 'Hormone replacement protocol for perimenopausal and menopausal women.',
+      substanceName: 'Estradiol',
+      categoryName: 'hormone',
+      defaultDose: 1,
+      doseUnit: 'mg',
+      frequency: 'daily',
+      difficultyLevel: 'intermediate',
+      tags: ['hrt', 'estrogen', 'progesterone', 'menopause', 'women'],
+      titrationPlan: {
+        weeks: [
+          { week: 1, dose: 0.5, unit: 'mg', frequency: 'daily', notes: 'Low starting dose' },
+          { week: 2, dose: 0.5, unit: 'mg', frequency: 'daily' },
+          { week: 3, dose: 1, unit: 'mg', frequency: 'daily', notes: 'Increase to standard dose' },
+          { week: 4, dose: 1, unit: 'mg', frequency: 'daily' },
+          { week: 5, dose: 1, unit: 'mg', frequency: 'daily', notes: 'Add progesterone if using' },
+          { week: 6, dose: 1, unit: 'mg', frequency: 'daily' },
+          { week: 7, dose: 1, unit: 'mg', frequency: 'daily' },
+          { week: 8, dose: 1, unit: 'mg', frequency: 'daily', notes: 'Check labs and adjust' },
+        ],
+      },
+    },
+    {
+      name: 'Thyroid Optimization Protocol',
+      description: 'Low-dose T3 protocol for thyroid optimization alongside T4 therapy.',
+      substanceName: 'Liothyronine',
+      categoryName: 'hormone',
+      defaultDose: 5,
+      doseUnit: 'mcg',
+      frequency: 'daily',
+      difficultyLevel: 'advanced',
+      tags: ['thyroid', 't3', 'metabolism', 'energy'],
+      titrationPlan: {
+        weeks: [
+          { week: 1, dose: 5, unit: 'mcg', frequency: 'daily', notes: 'Starting low dose' },
+          { week: 2, dose: 5, unit: 'mcg', frequency: 'daily' },
+          { week: 3, dose: 5, unit: 'mcg', frequency: 'daily', notes: 'Check symptoms' },
+          { week: 4, dose: 5, unit: 'mcg', frequency: 'daily' },
+          { week: 5, dose: 10, unit: 'mcg', frequency: 'daily', notes: 'Increase if tolerated' },
+          { week: 6, dose: 10, unit: 'mcg', frequency: 'daily' },
+          { week: 7, dose: 10, unit: 'mcg', frequency: 'daily' },
+          { week: 8, dose: 10, unit: 'mcg', frequency: 'daily', notes: 'Check labs' },
+        ],
+      },
+    },
+    // Supplement Protocol Templates
+    {
+      name: 'Basic Supplement Stack',
+      description: 'Foundation supplement stack for overall health optimization.',
+      substanceName: 'Vitamin D3',
+      categoryName: 'supplement',
+      defaultDose: 5000,
+      doseUnit: 'iu',
+      frequency: 'daily',
+      difficultyLevel: 'beginner',
+      tags: ['vitamins', 'minerals', 'foundation', 'health'],
+    },
+    {
+      name: 'Longevity Supplement Stack',
+      description: 'Advanced supplement protocol for longevity and anti-aging.',
+      substanceName: 'CoQ10',
+      categoryName: 'supplement',
+      defaultDose: 200,
+      doseUnit: 'mg',
+      frequency: 'daily',
+      difficultyLevel: 'intermediate',
+      tags: ['longevity', 'anti-aging', 'antioxidants', 'mitochondria'],
+    },
+    {
+      name: 'Sleep & Recovery Stack',
+      description: 'Supplement protocol to improve sleep quality and recovery.',
+      substanceName: 'Magnesium Glycinate',
+      categoryName: 'supplement',
+      defaultDose: 400,
+      doseUnit: 'mg',
+      frequency: 'daily',
+      difficultyLevel: 'beginner',
+      tags: ['sleep', 'recovery', 'relaxation', 'stress'],
+    },
   ];
+
+  // Map category names to IDs
+  const categoryMap: Record<string, string> = {
+    peptide: peptideCategory.id,
+    hormone: hormoneCategory!.id,
+    supplement: supplementCategory!.id,
+  };
 
   let templateCount = 0;
   for (const template of templates) {
-    const { substanceName, ...templateData } = template;
+    const { substanceName, categoryName, ...templateData } = template as {
+      substanceName: string;
+      categoryName?: string;
+      [key: string]: unknown;
+    };
+
+    // Determine the category ID - use categoryName if provided, otherwise default to peptide
+    const categoryId = categoryName ? categoryMap[categoryName] : peptideCategory.id;
 
     // Check if template exists by name
     const existing = await prisma.protocolTemplate.findFirst({
@@ -438,7 +964,7 @@ async function main() {
         where: { id: existing.id },
         data: {
           ...templateData,
-          categoryId: peptideCategory.id,
+          categoryId,
           substanceId: substanceIds[substanceName],
         },
       });
@@ -446,7 +972,7 @@ async function main() {
       await prisma.protocolTemplate.create({
         data: {
           ...templateData,
-          categoryId: peptideCategory.id,
+          categoryId,
           substanceId: substanceIds[substanceName],
         },
       });

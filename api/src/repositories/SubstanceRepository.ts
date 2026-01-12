@@ -6,6 +6,8 @@ import {
   SubstanceWithCategory,
   FindSubstancesOptions,
   FindManyOptions,
+  CreateCategoryInput,
+  UpdateCategoryInput,
 } from '../interfaces/repositories/index.js';
 import { PaginatedResponse } from '../types/index.js';
 
@@ -126,6 +128,32 @@ export class SubstanceRepository implements ISubstanceRepository {
 
   async findCategoryById(id: string): Promise<SubstanceCategory | null> {
     return this.prisma.substanceCategory.findUnique({ where: { id } });
+  }
+
+  async createCategory(data: CreateCategoryInput): Promise<SubstanceCategory> {
+    return this.prisma.substanceCategory.create({
+      data: {
+        name: data.name,
+        displayName: data.displayName,
+        description: data.description,
+        icon: data.icon,
+        sortOrder: data.sortOrder ?? 0,
+      },
+    });
+  }
+
+  async updateCategory(id: string, data: UpdateCategoryInput): Promise<SubstanceCategory> {
+    return this.prisma.substanceCategory.update({
+      where: { id },
+      data: {
+        name: data.name,
+        displayName: data.displayName,
+        description: data.description,
+        icon: data.icon,
+        sortOrder: data.sortOrder,
+        isActive: data.isActive,
+      },
+    });
   }
 
   async create(data: CreateSubstanceInput): Promise<Substance> {

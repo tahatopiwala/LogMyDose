@@ -7,6 +7,8 @@ import {
   FindTemplatesOptions,
   TemplateWithRelations,
   FindManyOptions,
+  CreateTemplateInput,
+  UpdateTemplateInput,
 } from '../interfaces/repositories/index.js';
 import { PaginatedResponse } from '../types/index.js';
 
@@ -217,6 +219,60 @@ export class ProtocolRepository implements IProtocolRepository {
         substance: true,
       },
     });
+  }
+
+  async createTemplate(data: CreateTemplateInput): Promise<TemplateWithRelations> {
+    return this.prisma.protocolTemplate.create({
+      data: {
+        name: data.name,
+        description: data.description,
+        categoryId: data.categoryId,
+        substanceId: data.substanceId,
+        defaultDose: data.defaultDose,
+        doseUnit: data.doseUnit,
+        frequency: data.frequency,
+        titrationPlan: data.titrationPlan,
+        cycleOnWeeks: data.cycleOnWeeks,
+        cycleOffWeeks: data.cycleOffWeeks,
+        difficultyLevel: data.difficultyLevel,
+        tags: data.tags || [],
+        isPublic: data.isPublic ?? true,
+        createdByClinicId: data.createdByClinicId,
+      },
+      include: {
+        category: true,
+        substance: true,
+      },
+    });
+  }
+
+  async updateTemplate(id: string, data: UpdateTemplateInput): Promise<TemplateWithRelations> {
+    return this.prisma.protocolTemplate.update({
+      where: { id },
+      data: {
+        name: data.name,
+        description: data.description,
+        categoryId: data.categoryId,
+        substanceId: data.substanceId,
+        defaultDose: data.defaultDose,
+        doseUnit: data.doseUnit,
+        frequency: data.frequency,
+        titrationPlan: data.titrationPlan,
+        cycleOnWeeks: data.cycleOnWeeks,
+        cycleOffWeeks: data.cycleOffWeeks,
+        difficultyLevel: data.difficultyLevel,
+        tags: data.tags,
+        isPublic: data.isPublic,
+      },
+      include: {
+        category: true,
+        substance: true,
+      },
+    });
+  }
+
+  async deleteTemplate(id: string): Promise<void> {
+    await this.prisma.protocolTemplate.delete({ where: { id } });
   }
 
   async incrementTemplateUseCount(id: string): Promise<void> {
