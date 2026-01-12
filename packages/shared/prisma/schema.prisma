@@ -1,0 +1,469 @@
+// Prisma Schema for LogMyDose
+// Peptide therapy tracking platform with D2C + Clinic model
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// =============================================================================
+// TENANTS & USERS (Clinic/Admin Side)
+// =============================================================================
+
+// Clinic/white-label instances
+model Tenant {
+  id                 String    @id @default(uuid()) @db.Uuid
+  name               String    @db.VarChar(255)
+  slug               String    @unique @db.VarChar(100) // for white-label URLs
+  branding           Json?     // logo_url, primary_color, secondary_color, app_name
+  subscriptionTier   String?   @map("subscription_tier") @db.VarChar(50)
+  subscriptionStatus String?   @map("subscription_status") @db.VarChar(50)
+  stripeCustomerId   String?   @map("stripe_customer_id") @db.VarChar(255)
+  settings           Json?
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  users              User[]
+  patients           Patient[]
+  protocols          Protocol[]
+  clinicInvitations  ClinicInvitation[]
+  protocolTemplates  ProtocolTemplate[]
+  auditLogs          AuditLog[]
+
+  @@map("tenants")
+}
+
+// Users (providers, admins, super admins) - NOT patients
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  tenantId     String?  @map("tenant_id") @db.Uuid
+  email        String   @unique @db.VarChar(255)
+  passwordHash String   @map("password_hash") @db.VarChar(255)
+  role         String   @db.VarChar(50) // super_admin, clinic_admin, provider
+  firstName    String?  @map("first_name") @db.VarChar(100)
+  lastName     String?  @map("last_name") @db.VarChar(100)
+  credentials  String?  @db.VarChar(255) // MD, DO, NP, etc.
+  permissions  Json?
+  isActive     Boolean  @default(true) @map("is_active")
+  tokenVersion Int      @default(0) @map("token_version") // For refresh token invalidation
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  // Relations
+  tenant            Tenant?    @relation(fields: [tenantId], references: [id])
+  assignedProtocols Protocol[] @relation("AssignedProvider")
+  approvedProtocols Protocol[] @relation("ApprovedBy")
+
+  @@map("users")
+}
+
+// =============================================================================
+// PATIENTS (D2C and Clinic-managed)
+// =============================================================================
+
+model Patient {
+  id                   String    @id @default(uuid()) @db.Uuid
+  email                String    @unique @db.VarChar(255)
+  passwordHash         String    @map("password_hash") @db.VarChar(255)
+  firstName            String?   @map("first_name") @db.VarChar(100)
+  lastName             String?   @map("last_name") @db.VarChar(100)
+  dateOfBirth          DateTime? @map("date_of_birth") @db.Date
+  phone                String?   @db.VarChar(20)
+
+  // Account type
+  accountType          String    @default("d2c") @map("account_type") @db.VarChar(50) // d2c, clinic_managed, hybrid
+
+  // D2C subscription
+  subscriptionTier     String?   @map("subscription_tier") @db.VarChar(50) // free, pro
+  subscriptionStatus   String?   @map("subscription_status") @db.VarChar(50)
+  stripeCustomerId     String?   @map("stripe_customer_id") @db.VarChar(255)
+
+  // Clinic link (optional)
+  clinicId             String?   @map("clinic_id") @db.Uuid // NULL = D2C user
+  clinicLinkedAt       DateTime? @map("clinic_linked_at")
+  clinicControlLevel   String?   @map("clinic_control_level") @db.VarChar(50) // view_only, can_modify, full_control
+
+  consentSignedAt      DateTime? @map("consent_signed_at")
+  settings             Json?
+  tokenVersion         Int       @default(0) @map("token_version")
+  createdAt            DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  clinic               Tenant?           @relation(fields: [clinicId], references: [id])
+  protocols            Protocol[]
+  doses                Dose[]
+  sideEffects          SideEffect[]
+  progressEntries      ProgressEntry[]
+  alerts               Alert[]
+  aiInsights           AiInsight[]
+  aiAnnotations        AiAnnotation[]
+  aiReports            AiReport[]
+
+  @@map("patients")
+}
+
+model ClinicInvitation {
+  id         String   @id @default(uuid()) @db.Uuid
+  clinicId   String   @map("clinic_id") @db.Uuid
+  email      String   @db.VarChar(255)
+  inviteCode String   @unique @map("invite_code") @db.VarChar(50)
+  status     String   @default("pending") @db.VarChar(50) // pending, accepted, expired
+  expiresAt  DateTime @map("expires_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  clinic     Tenant   @relation(fields: [clinicId], references: [id])
+
+  @@map("clinic_invitations")
+}
+
+// =============================================================================
+// SUBSTANCES & PROTOCOLS
+// =============================================================================
+
+// Substance categories (extensible for future verticals)
+model SubstanceCategory {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String   @db.VarChar(100) // peptide, hormone, supplement, nootropic, medication
+  displayName String   @map("display_name") @db.VarChar(100)
+  description String?  @db.Text
+  icon        String?  @db.VarChar(50)
+  isActive    Boolean  @default(true) @map("is_active")
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  substances        Substance[]
+  protocolTemplates ProtocolTemplate[]
+
+  @@map("substance_categories")
+}
+
+// Substances database (peptides, hormones, supplements, etc.)
+model Substance {
+  id                          String   @id @default(uuid()) @db.Uuid
+  categoryId                  String   @map("category_id") @db.Uuid
+  name                        String   @db.VarChar(100)
+  aliases                     String[] // alternative names
+  subcategory                 String?  @db.VarChar(100) // healing, gh_secretagogue, vitamin, etc.
+
+  // Dosing info
+  defaultDose                 Decimal? @map("default_dose")
+  doseUnit                    String?  @map("dose_unit") @db.VarChar(20) // mcg, mg, ml, iu, capsule
+  defaultFrequency            String?  @map("default_frequency") @db.VarChar(50)
+
+  // Administration
+  administrationRoute         String?  @map("administration_route") @db.VarChar(50) // injection_subq, injection_im, oral, topical, sublingual
+  preparationInstructions     String?  @map("preparation_instructions") @db.Text
+
+  // Storage
+  storageTemp                 String?  @map("storage_temp") @db.VarChar(50)
+  storageNotes                String?  @map("storage_notes") @db.Text
+  shelfLifeDays               Int?     @map("shelf_life_days")
+  shelfLifeReconstitutedDays  Int?     @map("shelf_life_reconstituted_days")
+
+  // Cycling (optional)
+  requiresCycling             Boolean  @default(false) @map("requires_cycling")
+  commonCycleOnWeeks          Int?     @map("common_cycle_on_weeks")
+  commonCycleOffWeeks         Int?     @map("common_cycle_off_weeks")
+
+  // Safety info
+  contraindications           String[]
+  commonSideEffects           String[] @map("common_side_effects")
+  interactions                String[]
+  onsetTimeline               String?  @map("onset_timeline") @db.VarChar(100)
+
+  // Metadata
+  isPrescriptionRequired      Boolean  @default(false) @map("is_prescription_required")
+  isActive                    Boolean  @default(true) @map("is_active")
+  createdAt                   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  category                    SubstanceCategory    @relation(fields: [categoryId], references: [id])
+  protocolTemplates           ProtocolTemplate[]
+  protocolSubstances          ProtocolSubstance[]
+  doses                       Dose[]
+  sideEffects                 SideEffect[]
+
+  @@map("substances")
+}
+
+// Protocol templates (public library)
+model ProtocolTemplate {
+  id              String    @id @default(uuid()) @db.Uuid
+  name            String    @db.VarChar(255)
+  description     String?   @db.Text
+  categoryId      String?   @map("category_id") @db.Uuid
+  substanceId     String?   @map("substance_id") @db.Uuid
+  defaultDose     Decimal?  @map("default_dose")
+  doseUnit        String?   @map("dose_unit") @db.VarChar(20)
+  frequency       String?   @db.VarChar(50)
+  titrationPlan   Json?     @map("titration_plan")
+  cycleOnWeeks    Int?      @map("cycle_on_weeks")
+  cycleOffWeeks   Int?      @map("cycle_off_weeks")
+  difficultyLevel String?   @map("difficulty_level") @db.VarChar(50) // beginner, intermediate, advanced
+  tags            String[]
+  useCount        Int       @default(0) @map("use_count")
+  isPublic        Boolean   @default(true) @map("is_public")
+  createdByClinicId String? @map("created_by_clinic_id") @db.Uuid
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  category        SubstanceCategory? @relation(fields: [categoryId], references: [id])
+  substance       Substance?         @relation(fields: [substanceId], references: [id])
+  createdByClinic Tenant?            @relation(fields: [createdByClinicId], references: [id])
+  protocols       Protocol[]
+
+  @@map("protocol_templates")
+}
+
+// Patient protocols (user's active protocols)
+model Protocol {
+  id              String    @id @default(uuid()) @db.Uuid
+  patientId       String    @map("patient_id") @db.Uuid
+
+  // Source tracking
+  source          String    @db.VarChar(50) // template, clinic_assigned, custom
+  templateId      String?   @map("template_id") @db.Uuid
+
+  // Clinic management (optional)
+  clinicId        String?   @map("clinic_id") @db.Uuid
+  providerId      String?   @map("provider_id") @db.Uuid
+  clinicCanModify Boolean   @default(false) @map("clinic_can_modify")
+
+  status          String    @default("active") @db.VarChar(50) // draft, active, paused, completed
+  startDate       DateTime? @map("start_date") @db.Date
+  endDate         DateTime? @map("end_date") @db.Date
+  notes           String?   @db.Text
+  approvedAt      DateTime? @map("approved_at")
+  approvedById    String?   @map("approved_by") @db.Uuid
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  patient         Patient           @relation(fields: [patientId], references: [id])
+  template        ProtocolTemplate? @relation(fields: [templateId], references: [id])
+  clinic          Tenant?           @relation(fields: [clinicId], references: [id])
+  provider        User?             @relation("AssignedProvider", fields: [providerId], references: [id])
+  approvedBy      User?             @relation("ApprovedBy", fields: [approvedById], references: [id])
+  substances      ProtocolSubstance[]
+
+  @@map("protocols")
+}
+
+// Protocol substances (many-to-many with dosing details)
+model ProtocolSubstance {
+  id                   String    @id @default(uuid()) @db.Uuid
+  protocolId           String    @map("protocol_id") @db.Uuid
+  substanceId          String    @map("substance_id") @db.Uuid
+  dose                 Decimal
+  doseUnit             String?   @map("dose_unit") @db.VarChar(20)
+  frequency            String?   @db.VarChar(50) // daily, 2x_daily, 3x_weekly, etc.
+  schedule             Json?     // specific days/times
+  titrationPlan        Json?     @map("titration_plan") // week-by-week dose changes
+  cycleOnWeeks         Int?      @map("cycle_on_weeks")
+  cycleOffWeeks        Int?      @map("cycle_off_weeks")
+
+  // Inventory tracking
+  currentSupplyAmount  Decimal?  @map("current_supply_amount")
+  supplyUnit           String?   @map("supply_unit") @db.VarChar(20)
+  supplyExpirationDate DateTime? @map("supply_expiration_date") @db.Date
+
+  notes                String?   @db.Text
+
+  // Relations
+  protocol             Protocol  @relation(fields: [protocolId], references: [id], onDelete: Cascade)
+  substance            Substance @relation(fields: [substanceId], references: [id])
+  doses                Dose[]
+
+  @@map("protocol_substances")
+}
+
+// =============================================================================
+// TRACKING (Doses, Side Effects, Progress)
+// =============================================================================
+
+model Dose {
+  id                   String    @id @default(uuid()) @db.Uuid
+  patientId            String    @map("patient_id") @db.Uuid
+  protocolSubstanceId  String?   @map("protocol_substance_id") @db.Uuid
+  substanceId          String    @map("substance_id") @db.Uuid
+  dose                 Decimal
+  doseUnit             String?   @map("dose_unit") @db.VarChar(20)
+  scheduledAt          DateTime? @map("scheduled_at")
+  loggedAt             DateTime  @default(now()) @map("logged_at")
+  status               String    @default("taken") @db.VarChar(50) // taken, missed, skipped
+  administrationSite   String?   @map("administration_site") @db.VarChar(50) // injection site
+  notes                String?   @db.Text
+  photoUrl             String?   @map("photo_url") @db.VarChar(500)
+
+  // Relations
+  patient              Patient            @relation(fields: [patientId], references: [id])
+  protocolSubstance    ProtocolSubstance? @relation(fields: [protocolSubstanceId], references: [id])
+  substance            Substance          @relation(fields: [substanceId], references: [id])
+  sideEffects          SideEffect[]
+
+  @@map("doses")
+}
+
+model SideEffect {
+  id            String   @id @default(uuid()) @db.Uuid
+  patientId     String   @map("patient_id") @db.Uuid
+  doseId        String?  @map("dose_id") @db.Uuid
+  substanceId   String?  @map("substance_id") @db.Uuid
+  symptom       String   @db.VarChar(100)
+  severity      Int      // 1-10
+  durationHours Decimal? @map("duration_hours")
+  notes         String?  @db.Text
+  reportedAt    DateTime @default(now()) @map("reported_at")
+
+  // Relations
+  patient       Patient    @relation(fields: [patientId], references: [id])
+  dose          Dose?      @relation(fields: [doseId], references: [id])
+  substance     Substance? @relation(fields: [substanceId], references: [id])
+
+  @@map("side_effects")
+}
+
+model ProgressEntry {
+  id               String   @id @default(uuid()) @db.Uuid
+  patientId        String   @map("patient_id") @db.Uuid
+  type             String   @db.VarChar(50) // photo, bloodwork, measurement
+  data             Json?    // flexible storage for different types
+  fileUrls         String[] @map("file_urls")
+  notes            String?  @db.Text
+  sharedWithClinic Boolean  @default(false) @map("shared_with_clinic")
+  recordedAt       DateTime @default(now()) @map("recorded_at")
+
+  // Relations
+  patient          Patient  @relation(fields: [patientId], references: [id])
+
+  @@map("progress_entries")
+}
+
+// =============================================================================
+// ALERTS & NOTIFICATIONS
+// =============================================================================
+
+model Alert {
+  id           String    @id @default(uuid()) @db.Uuid
+  patientId    String    @map("patient_id") @db.Uuid
+  type         String    @db.VarChar(50) // refill, expiration, storage, dose_reminder
+  title        String?   @db.VarChar(255)
+  message      String?   @db.Text
+  scheduledFor DateTime? @map("scheduled_for")
+  sentAt       DateTime? @map("sent_at")
+  dismissedAt  DateTime? @map("dismissed_at")
+  status       String    @default("pending") @db.VarChar(50)
+
+  // Relations
+  patient      Patient   @relation(fields: [patientId], references: [id])
+
+  @@map("alerts")
+}
+
+// =============================================================================
+// AI FEATURES
+// =============================================================================
+
+// Pre-generated insights for fast retrieval
+model AiInsight {
+  id          String    @id @default(uuid()) @db.Uuid
+  patientId   String    @map("patient_id") @db.Uuid
+  type        String    @db.VarChar(50) // pattern, progress, alert, optimization
+  title       String    @db.VarChar(255)
+  content     String    @db.Text
+  actions     Json?     // available actions user can take
+  priority    Int       @default(0)
+  contextData Json?     @map("context_data") // data that generated this insight
+  expiresAt   DateTime? @map("expires_at")
+  dismissedAt DateTime? @map("dismissed_at")
+  actedOnAt   DateTime? @map("acted_on_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  patient     Patient   @relation(fields: [patientId], references: [id])
+
+  @@map("ai_insights")
+}
+
+// Cached annotations for viewed data
+model AiAnnotation {
+  id          String   @id @default(uuid()) @db.Uuid
+  patientId   String   @map("patient_id") @db.Uuid
+  entityType  String   @map("entity_type") @db.VarChar(50) // dose, bloodwork, progress
+  entityId    String   @map("entity_id") @db.Uuid
+  annotation  String   @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  patient     Patient  @relation(fields: [patientId], references: [id])
+
+  @@map("ai_annotations")
+}
+
+// Generated reports
+model AiReport {
+  id          String   @id @default(uuid()) @db.Uuid
+  patientId   String   @map("patient_id") @db.Uuid
+  type        String   @db.VarChar(50) // weekly, monthly
+  periodStart DateTime @map("period_start") @db.Date
+  periodEnd   DateTime @map("period_end") @db.Date
+  content     String   @db.Text
+  sections    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  patient     Patient  @relation(fields: [patientId], references: [id])
+
+  @@map("ai_reports")
+}
+
+// =============================================================================
+// CONTENT & EDUCATION
+// =============================================================================
+
+model Content {
+  id           String   @id @default(uuid()) @db.Uuid
+  type         String   @db.VarChar(50) // video, article, guide
+  title        String   @db.VarChar(255)
+  description  String?  @db.Text
+  contentUrl   String?  @map("content_url") @db.VarChar(500) // for videos
+  contentBody  String?  @map("content_body") @db.Text // for articles
+  thumbnailUrl String?  @map("thumbnail_url") @db.VarChar(500)
+  tags         String[]
+  categoryIds  String[] @map("category_ids") @db.Uuid // related substance categories
+  substanceIds String[] @map("substance_ids") @db.Uuid // related substances
+  isGlobal     Boolean  @default(false) @map("is_global")
+  tenantIds    String[] @map("tenant_ids") @db.Uuid // specific tenant access
+  isPublished  Boolean  @default(false) @map("is_published")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("content")
+}
+
+// =============================================================================
+// AUDIT & LOGGING
+// =============================================================================
+
+model AuditLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  tenantId   String?  @map("tenant_id") @db.Uuid
+  userId     String?  @map("user_id") @db.Uuid
+  patientId  String?  @map("patient_id") @db.Uuid
+  action     String   @db.VarChar(100)
+  tableName  String?  @map("table_name") @db.VarChar(100)
+  recordId   String?  @map("record_id") @db.Uuid
+  oldValues  Json?    @map("old_values")
+  newValues  Json?    @map("new_values")
+  ipAddress  String?  @map("ip_address") @db.VarChar(45)
+  userAgent  String?  @map("user_agent") @db.Text
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  tenant     Tenant?  @relation(fields: [tenantId], references: [id])
+
+  @@map("audit_logs")
+}

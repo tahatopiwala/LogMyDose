@@ -1,0 +1,43 @@
+{
+  "name": "logmydose-api",
+  "version": "1.0.0",
+  "description": "LogMyDose API - Peptide therapy tracking platform",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "db:generate": "npm run db:generate -w @peptiderx/shared",
+    "db:push": "npm run db:push -w @peptiderx/shared",
+    "db:migrate": "npm run db:migrate -w @peptiderx/shared",
+    "db:migrate:prod": "npm run db:migrate:prod -w @peptiderx/shared",
+    "db:seed": "npm run db:seed -w @peptiderx/shared",
+    "db:studio": "npm run db:studio -w @peptiderx/shared",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@peptiderx/shared": "*",
+    "@prisma/adapter-pg": "^7.2.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/node": "^22.10.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

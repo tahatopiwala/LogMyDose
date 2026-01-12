@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.whois.com)",
+      "WebSearch",
+      "WebFetch(domain:instantdomainsearch.com)",
+      "Bash(python3:*)",
+      "Bash(pip3 install:*)",
+      "Bash(npm install)",
+      "Bash(docker compose:*)",
+      "Bash(npx prisma:*)",
+      "Bash(npm run db:seed:*)",
+      "Bash(npm run dev:*)",
+      "Bash(curl:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run typecheck:*)",
+      "Bash(npm run build:shared:*)",
+      "Bash(npm run build:api:*)",
+      "Bash(git checkout:*)"
+    ]
+  }
+}

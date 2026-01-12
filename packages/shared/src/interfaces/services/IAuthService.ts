@@ -1,0 +1,66 @@
+import { SafePatient, SafeUser } from '../../entities/index.js';
+
+export interface RegisterPatientInput {
+  email: string;
+  password: string;
+  firstName?: string;
+  lastName?: string;
+}
+
+export interface RegisterUserInput {
+  email: string;
+  password: string;
+  firstName?: string;
+  lastName?: string;
+  role: 'provider' | 'clinic_admin';
+  tenantId: string;
+  credentials?: string;
+}
+
+export interface LoginInput {
+  email: string;
+  password: string;
+  userType: 'patient' | 'user';
+}
+
+export interface TokenPair {
+  accessToken: string;
+  refreshToken: string;
+}
+
+export interface PatientAuthResponse {
+  patient: SafePatient;
+  accessToken: string;
+  refreshToken: string;
+}
+
+export interface UserAuthResponse {
+  user: SafeUser;
+  accessToken: string;
+  refreshToken: string;
+}
+
+export interface RefreshInput {
+  refreshToken: string;
+  userType: 'patient' | 'user';
+}
+
+export interface CurrentUser {
+  id: string;
+  email: string;
+  role: string;
+  tenantId?: string;
+}
+
+export interface IAuthService {
+  registerPatient(input: RegisterPatientInput): Promise<PatientAuthResponse>;
+  registerUser(
+    input: RegisterUserInput,
+    currentUser: CurrentUser
+  ): Promise<{ user: SafeUser }>;
+  login(input: LoginInput): Promise<PatientAuthResponse | UserAuthResponse>;
+  refresh(input: RefreshInput): Promise<TokenPair>;
+  logout(currentUser: CurrentUser): Promise<void>;
+  getCurrentPatient(id: string): Promise<SafePatient | null>;
+  getCurrentUser(id: string): Promise<SafeUser | null>;
+}
