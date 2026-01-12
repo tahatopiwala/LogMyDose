@@ -1,4 +1,4 @@
-import { PrismaClient, Protocol, ProtocolSubstance } from '@peptiderx/shared/prisma';
+import { PrismaClient, Protocol, ProtocolSubstance } from '@logmydose/shared/prisma';
 import {
   IProtocolRepository,
   CreateProtocolInput,

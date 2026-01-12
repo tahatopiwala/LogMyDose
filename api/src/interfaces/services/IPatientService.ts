@@ -1,4 +1,4 @@
-import { Patient, Protocol, Dose, Alert } from '@peptiderx/shared/prisma';
+import { Patient, Protocol, Dose, Alert } from '@logmydose/shared/prisma';
 import { PatientWithClinic, UpdatePatientInput } from '../repositories/IPatientRepository.js';
 import { ProtocolWithDetails } from '../repositories/IProtocolRepository.js';
 import { PaginatedResponse } from '../../types/index.js';

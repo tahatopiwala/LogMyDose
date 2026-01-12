@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { Prisma } from '@peptiderx/shared/prisma';
+import { Prisma } from '@logmydose/shared/prisma';
 import { prisma } from '../lib/db.js';
 
 interface AuditLogData {

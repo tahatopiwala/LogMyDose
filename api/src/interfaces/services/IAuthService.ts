@@ -1,4 +1,4 @@
-import { Patient, User } from '@peptiderx/shared/prisma';
+import { Patient, User } from '@logmydose/shared/prisma';
 
 export interface RegisterPatientInput {
   email: string;

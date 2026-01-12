@@ -1,4 +1,4 @@
-import { PrismaClient, Tenant, ClinicInvitation } from '@peptiderx/shared/prisma';
+import { PrismaClient, Tenant, ClinicInvitation } from '@logmydose/shared/prisma';
 import {
   ITenantRepository,
   CreateTenantInput,

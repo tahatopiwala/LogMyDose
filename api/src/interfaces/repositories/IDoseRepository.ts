@@ -1,4 +1,4 @@
-import { Dose, SideEffect, Alert, Prisma } from '@peptiderx/shared/prisma';
+import { Dose, SideEffect, Alert, Prisma } from '@logmydose/shared/prisma';
 import { IBaseRepository, FindManyOptions } from './IBaseRepository.js';
 import { PaginatedResponse } from '../../types/index.js';
 

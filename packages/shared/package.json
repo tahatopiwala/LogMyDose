@@ -1,7 +1,7 @@
 {
-  "name": "@peptiderx/shared",
+  "name": "@logmydose/shared",
   "version": "1.0.0",
-  "description": "Shared types, interfaces, DTOs, and Prisma client for PeptideRx platform",
+  "description": "Shared types, interfaces, DTOs, and Prisma client for LogMyDose platform",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",

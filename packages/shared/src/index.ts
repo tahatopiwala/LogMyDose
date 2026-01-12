@@ -10,5 +10,5 @@ export * from './interfaces/index.js';
 // DTOs
 export * from './dto/index.js';
 
-// Note: Prisma client and types are available via '@peptiderx/shared/prisma'
+// Note: Prisma client and types are available via '@logmydose/shared/prisma'
 // They are not re-exported here to avoid type conflicts with entities

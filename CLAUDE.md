@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-DoseTrack (also "LogMyDose" or "PepRX") is a peptide therapy tracking platform with a D2C-first model and optional clinic integration. The platform provides AI-powered ambient intelligence that proactively surfaces insights without requiring user prompts.
+LogMyDose is a peptide therapy tracking platform with a D2C-first model and optional clinic integration. The platform provides AI-powered ambient intelligence that proactively surfaces insights without requiring user prompts.
 
 **Current Status**: Planning phase - see `VISION.md` for product vision and `logmydose-plan.md` for detailed implementation plan.
 

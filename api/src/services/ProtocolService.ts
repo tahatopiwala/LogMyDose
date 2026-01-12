@@ -1,4 +1,4 @@
-import { Protocol, Prisma } from '@peptiderx/shared/prisma';
+import { Protocol, Prisma } from '@logmydose/shared/prisma';
 import {
   IProtocolService,
   GetTemplatesQuery,

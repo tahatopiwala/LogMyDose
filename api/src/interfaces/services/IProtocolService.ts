@@ -1,4 +1,4 @@
-import { Protocol } from '@peptiderx/shared/prisma';
+import { Protocol } from '@logmydose/shared/prisma';
 import {
   ProtocolWithDetails,
   TemplateWithRelations,

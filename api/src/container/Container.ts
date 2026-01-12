@@ -1,4 +1,4 @@
-import { PrismaClient } from '@peptiderx/shared/prisma';
+import { PrismaClient } from '@logmydose/shared/prisma';
 
 // Repository interfaces
 import {

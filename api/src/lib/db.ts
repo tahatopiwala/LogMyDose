@@ -1,4 +1,4 @@
-import { PrismaClient } from '@peptiderx/shared/prisma';
+import { PrismaClient } from '@logmydose/shared/prisma';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { env } from './env.js';
 

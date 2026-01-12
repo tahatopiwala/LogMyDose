@@ -1,4 +1,4 @@
-import { PrismaClient, Patient } from '@peptiderx/shared/prisma';
+import { PrismaClient, Patient } from '@logmydose/shared/prisma';
 import {
   IPatientRepository,
   CreatePatientInput,

@@ -1,4 +1,4 @@
-import { Tenant, ClinicInvitation, Prisma } from '@peptiderx/shared/prisma';
+import { Tenant, ClinicInvitation, Prisma } from '@logmydose/shared/prisma';
 import { IBaseRepository, FindManyOptions } from './IBaseRepository.js';
 import { PaginatedResponse } from '../../types/index.js';
 

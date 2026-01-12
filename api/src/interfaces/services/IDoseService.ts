@@ -1,4 +1,4 @@
-import { Dose } from '@peptiderx/shared/prisma';
+import { Dose } from '@logmydose/shared/prisma';
 import {
   DoseWithSubstance,
   DoseWithDetails,

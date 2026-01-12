@@ -1,4 +1,4 @@
-import { Protocol, ProtocolTemplate, ProtocolSubstance, Prisma } from '@peptiderx/shared/prisma';
+import { Protocol, ProtocolTemplate, ProtocolSubstance, Prisma } from '@logmydose/shared/prisma';
 import { IBaseRepository, FindManyOptions } from './IBaseRepository.js';
 import { PaginatedResponse } from '../../types/index.js';
 

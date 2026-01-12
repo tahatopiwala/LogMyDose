@@ -1,4 +1,4 @@
-import { Substance, SubstanceCategory } from '@peptiderx/shared/prisma';
+import { Substance, SubstanceCategory } from '@logmydose/shared/prisma';
 import {
   ISubstanceService,
   GetSubstancesQuery,

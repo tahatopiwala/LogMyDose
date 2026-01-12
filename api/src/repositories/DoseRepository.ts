@@ -1,4 +1,4 @@
-import { PrismaClient, Dose, Alert } from '@peptiderx/shared/prisma';
+import { PrismaClient, Dose, Alert } from '@logmydose/shared/prisma';
 import {
   IDoseRepository,
   CreateDoseInput,

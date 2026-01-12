@@ -1,4 +1,4 @@
-import { PrismaClient, User } from '@peptiderx/shared/prisma';
+import { PrismaClient, User } from '@logmydose/shared/prisma';
 import {
   IUserRepository,
   CreateUserInput,

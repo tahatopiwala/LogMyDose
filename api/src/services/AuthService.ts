@@ -14,7 +14,7 @@ import { IPatientRepository } from '../interfaces/repositories/IPatientRepositor
 import { hashPassword, verifyPassword } from '../lib/password.js';
 import { generateTokenPair, verifyRefreshToken, TokenPayload } from '../lib/jwt.js';
 import { AppError } from '../middleware/errorHandler.js';
-import { Patient, User } from '@peptiderx/shared/prisma';
+import { Patient, User } from '@logmydose/shared/prisma';
 
 export class AuthService implements IAuthService {
   constructor(

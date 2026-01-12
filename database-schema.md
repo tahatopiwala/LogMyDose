@@ -1,6 +1,6 @@
 # Database Schema Guide
 
-This document explains the database schema for the PepRX/LogMyDose peptide therapy tracking platform.
+This document explains the database schema for the LogMyDose peptide therapy tracking platform.
 
 ## Table of Contents
 

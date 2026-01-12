@@ -1,4 +1,4 @@
-import { Substance, SubstanceCategory, Prisma } from '@peptiderx/shared/prisma';
+import { Substance, SubstanceCategory, Prisma } from '@logmydose/shared/prisma';
 import { IBaseRepository, FindManyOptions } from './IBaseRepository.js';
 import { PaginatedResponse } from '../../types/index.js';
 

@@ -1,4 +1,4 @@
-import { User, Prisma } from '@peptiderx/shared/prisma';
+import { User, Prisma } from '@logmydose/shared/prisma';
 import { IBaseRepository } from './IBaseRepository.js';
 
 export interface CreateUserInput {
