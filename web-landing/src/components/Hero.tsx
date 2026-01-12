@@ -54,7 +54,7 @@ export function Hero() {
           </div>
 
           {/* Right Side - Visual Carousel */}
-          <div className="relative lg:h-[600px] flex items-center justify-center">
+          <div className="relative lg:h-[650px] flex items-center justify-center pb-12">
             {/* Dot Pattern */}
             <div
               className="absolute inset-0 opacity-[0.15]"
@@ -300,27 +300,36 @@ export function Hero() {
             </div>
 
             {/* Carousel Progress Indicators */}
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex justify-center gap-3 z-20">
-              {slides.map((_, index) => (
+            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex justify-center gap-6 z-20">
+              {slides.map((label, index) => (
                 <button
                   key={index}
                   onClick={() => handleSlideClick(index)}
-                  className="relative h-1.5 w-16 bg-gray-200 rounded-full overflow-hidden"
-                  aria-label={`Go to slide ${index + 1}`}
+                  className="flex flex-col items-center gap-2"
+                  aria-label={`Go to ${label} slide`}
                 >
-                  <div
-                    key={activeSlide === index ? progressKey : `static-${index}`}
-                    className={`absolute inset-y-0 left-0 rounded-full bg-primary-600 ${
-                      index < activeSlide ? 'w-full' : index > activeSlide ? 'w-0' : ''
+                  <div className="relative h-1.5 w-16 bg-gray-200 rounded-full overflow-hidden">
+                    <div
+                      key={activeSlide === index ? progressKey : `static-${index}`}
+                      className={`absolute inset-y-0 left-0 rounded-full bg-primary-600 ${
+                        index < activeSlide ? 'w-full' : index > activeSlide ? 'w-0' : ''
+                      }`}
+                      style={
+                        activeSlide === index
+                          ? {
+                              animation: `progress ${SLIDE_DURATION}ms linear forwards`,
+                            }
+                          : undefined
+                      }
+                    />
+                  </div>
+                  <span
+                    className={`text-xs font-medium transition-colors ${
+                      activeSlide === index ? 'text-primary-600' : 'text-gray-400'
                     }`}
-                    style={
-                      activeSlide === index
-                        ? {
-                            animation: `progress ${SLIDE_DURATION}ms linear forwards`,
-                          }
-                        : undefined
-                    }
-                  />
+                  >
+                    {label === 'mobile' ? 'Mobile' : 'Web'}
+                  </span>
                 </button>
               ))}
             </div>
