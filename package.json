@@ -5,13 +5,22 @@
   "description": "PeptideRx - Peptide therapy tracking platform",
   "workspaces": [
     "packages/*",
-    "api"
+    "api",
+    "web-landing",
+    "web-app"
   ],
   "scripts": {
-    "build": "npm run build --workspaces",
+    "build": "npm run build --workspaces --if-present",
     "build:shared": "npm run build -w @peptiderx/shared",
     "build:api": "npm run build -w logmydose-api",
+    "build:landing": "npm run build -w @peptiderx/web-landing",
+    "build:app": "npm run build -w @peptiderx/web-app",
     "dev:api": "npm run dev -w logmydose-api",
+    "dev:landing": "npm run dev -w @peptiderx/web-landing",
+    "dev:app": "npm run dev -w @peptiderx/web-app",
+    "lint": "npm run lint --workspaces --if-present",
+    "lint:landing": "npm run lint -w @peptiderx/web-landing",
+    "lint:app": "npm run lint -w @peptiderx/web-app",
     "typecheck": "npm run typecheck --workspaces --if-present"
   },
   "engines": {

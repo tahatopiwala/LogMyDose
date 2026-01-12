@@ -87,3 +87,11 @@ When implementing AI features:
 - Use language like "your data suggests" not "you have" or "you should"
 - Implement escalation triggers for severe side effects or concerning patterns
 - Include medical disclaimers on insights that could be interpreted as medical advice
+
+## Git Guidelines
+
+- Do not include "Co-Authored-By: Claude" or any Claude attribution in commit messages
+
+## Build Guidelines
+
+- Always run both build and lint when building the project (`npm run build && npm run lint`)
