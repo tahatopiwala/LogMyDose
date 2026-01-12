@@ -11,9 +11,9 @@ export function Navbar() {
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">D</span>
+                <span className="text-white font-bold text-sm">L</span>
               </div>
-              <span className="text-xl font-bold text-gray-900">DoseTrack</span>
+              <span className="text-xl font-bold text-gray-900">LogMyDose</span>
             </Link>
           </div>
 
@@ -31,13 +31,13 @@ export function Navbar() {
 
           <div className="hidden md:flex items-center space-x-4">
             <a
-              href="https://app.dosetrack.com/login"
+              href="https://app.logmydose.com/login"
               className="text-gray-600 hover:text-gray-900 transition-colors"
             >
               Sign In
             </a>
             <a
-              href="https://app.dosetrack.com/signup"
+              href="https://app.logmydose.com/signup"
               className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors"
             >
               Get Started
@@ -65,9 +65,9 @@ export function Navbar() {
               <a href="#how-it-works" className="text-gray-600 hover:text-gray-900">How It Works</a>
               <a href="#pricing" className="text-gray-600 hover:text-gray-900">Pricing</a>
               <hr className="border-gray-100" />
-              <a href="https://app.dosetrack.com/login" className="text-gray-600 hover:text-gray-900">Sign In</a>
+              <a href="https://app.logmydose.com/login" className="text-gray-600 hover:text-gray-900">Sign In</a>
               <a
-                href="https://app.dosetrack.com/signup"
+                href="https://app.logmydose.com/signup"
                 className="bg-primary-600 text-white px-4 py-2 rounded-lg text-center hover:bg-primary-700"
               >
                 Get Started

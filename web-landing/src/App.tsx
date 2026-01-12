@@ -24,7 +24,7 @@ function PrivacyPage() {
       <div className="prose prose-gray max-w-none">
         <p className="text-gray-600">
           Your privacy is important to us. This privacy policy explains how we collect,
-          use, and protect your personal information when you use DoseTrack.
+          use, and protect your personal information when you use LogMyDose.
         </p>
         <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">Information We Collect</h2>
         <p className="text-gray-600">
@@ -52,11 +52,11 @@ function TermsPage() {
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Terms of Service</h1>
       <div className="prose prose-gray max-w-none">
         <p className="text-gray-600">
-          By using DoseTrack, you agree to these terms of service. Please read them carefully.
+          By using LogMyDose, you agree to these terms of service. Please read them carefully.
         </p>
         <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">Medical Disclaimer</h2>
         <p className="text-gray-600">
-          DoseTrack is a tracking tool and does not provide medical advice.
+          LogMyDose is a tracking tool and does not provide medical advice.
           Always consult with your healthcare provider about your treatment.
           AI-generated insights are for informational purposes only.
         </p>

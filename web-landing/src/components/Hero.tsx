@@ -10,12 +10,12 @@ export function Hero() {
               <span className="text-primary-600">AI-Powered Insights</span>
             </h1>
             <p className="mt-6 text-xl text-gray-600">
-              DoseTrack helps you log doses, monitor progress, and get personalized insights
+              LogMyDose helps you log doses, monitor progress, and get personalized insights
               from your peptide therapy journey. Smart tracking that works for you.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
               <a
-                href="https://app.dosetrack.com/signup"
+                href="https://app.logmydose.com/signup"
                 className="bg-primary-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-primary-700 transition-colors shadow-lg shadow-primary-600/25 text-center"
               >
                 Start Free Trial

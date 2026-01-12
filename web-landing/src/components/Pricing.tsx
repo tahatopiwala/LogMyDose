@@ -12,7 +12,7 @@ const plans = [
       'Mobile app access',
     ],
     cta: 'Get Started Free',
-    ctaLink: 'https://app.dosetrack.com/signup',
+    ctaLink: 'https://app.logmydose.com/signup',
     highlighted: false,
   },
   {
@@ -29,7 +29,7 @@ const plans = [
       'Priority support',
     ],
     cta: 'Start Free Trial',
-    ctaLink: 'https://app.dosetrack.com/signup?plan=pro',
+    ctaLink: 'https://app.logmydose.com/signup?plan=pro',
     highlighted: true,
   },
   {
@@ -46,7 +46,7 @@ const plans = [
       'API access',
     ],
     cta: 'Contact Sales',
-    ctaLink: 'mailto:sales@dosetrack.com',
+    ctaLink: 'mailto:sales@logmydose.com',
     highlighted: false,
   },
 ]

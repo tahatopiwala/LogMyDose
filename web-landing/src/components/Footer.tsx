@@ -8,9 +8,9 @@ export function Footer() {
           <div className="col-span-1 md:col-span-2">
             <Link to="/" className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">D</span>
+                <span className="text-white font-bold text-sm">L</span>
               </div>
-              <span className="text-xl font-bold">DoseTrack</span>
+              <span className="text-xl font-bold">LogMyDose</span>
             </Link>
             <p className="mt-4 text-gray-400 max-w-md">
               Smart peptide therapy tracking with AI-powered insights.
@@ -23,7 +23,7 @@ export function Footer() {
             <ul className="space-y-3 text-gray-400">
               <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
               <li><a href="#pricing" className="hover:text-white transition-colors">Pricing</a></li>
-              <li><a href="https://app.dosetrack.com" className="hover:text-white transition-colors">App</a></li>
+              <li><a href="https://app.logmydose.com" className="hover:text-white transition-colors">App</a></li>
             </ul>
           </div>
 
@@ -32,13 +32,13 @@ export function Footer() {
             <ul className="space-y-3 text-gray-400">
               <li><Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
               <li><Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
-              <li><a href="mailto:support@dosetrack.com" className="hover:text-white transition-colors">Contact</a></li>
+              <li><a href="mailto:support@logmydose.com" className="hover:text-white transition-colors">Contact</a></li>
             </ul>
           </div>
         </div>
 
         <div className="mt-12 pt-8 border-t border-gray-800 text-center text-gray-400 text-sm">
-          <p>&copy; {new Date().getFullYear()} DoseTrack. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} LogMyDose. All rights reserved.</p>
           <p className="mt-2">
             Not medical advice. Always consult with your healthcare provider about your treatment.
           </p>
