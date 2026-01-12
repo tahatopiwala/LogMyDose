@@ -21,6 +21,15 @@ export default {
           950: '#082f49',
         },
       },
+      keyframes: {
+        progress: {
+          '0%': { width: '0%' },
+          '100%': { width: '100%' },
+        },
+      },
+      animation: {
+        progress: 'progress linear forwards',
+      },
     },
   },
   plugins: [],
