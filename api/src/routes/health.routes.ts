@@ -16,7 +16,7 @@ router.get('/', async (_req, res) => {
         database: 'connected',
       },
     });
-  } catch (error) {
+  } catch {
     res.status(503).json({
       status: 'unhealthy',
       timestamp: new Date().toISOString(),
