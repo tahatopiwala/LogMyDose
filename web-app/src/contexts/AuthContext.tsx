@@ -1,7 +1,18 @@
-import { createContext, useState, useEffect, useCallback, ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { apiClient } from '@/lib/api-client';
-import { Patient, LoginRequest, RegisterRequest, AuthResponse } from '@/types/auth';
+import {
+  createContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from "react";
+import { useNavigate } from "react-router-dom";
+import { apiClient } from "@/lib/api-client";
+import {
+  Patient,
+  LoginRequest,
+  RegisterRequest,
+  AuthResponse,
+} from "@/types/auth";
 
 interface AuthContextType {
   patient: Patient | null;
@@ -26,7 +37,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // Check for existing session on mount
   useEffect(() => {
     apiClient
-      .get<{ patient: Patient }>('/auth/me')
+      .get<{ patient: Patient }>("/auth/me")
       .then((res) => setPatient(res.patient))
       .catch(() => {
         // Not authenticated - this is expected for logged out users
@@ -36,33 +47,38 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const login = useCallback(
     async (data: LoginRequest) => {
-      const res = await apiClient.post<AuthResponse>('/auth/login', {
-        ...data,
-        userType: 'patient',
+      const res = await apiClient.post<AuthResponse>("/auth/login", {
+        email: data.email,
+        password: data.password,
+        userType: "patient",
+        rememberMe: data.rememberMe ?? false,
       });
       setPatient(res.patient);
-      navigate('/dashboard');
+      navigate("/dashboard");
     },
-    [navigate]
+    [navigate],
   );
 
   const register = useCallback(
     async (data: RegisterRequest) => {
-      const res = await apiClient.post<AuthResponse>('/auth/register/patient', data);
+      const res = await apiClient.post<AuthResponse>(
+        "/auth/register/patient",
+        data,
+      );
       setPatient(res.patient);
-      navigate('/dashboard');
+      navigate("/dashboard");
     },
-    [navigate]
+    [navigate],
   );
 
   const logout = useCallback(async () => {
     try {
-      await apiClient.post('/auth/logout', {});
+      await apiClient.post("/auth/logout", {});
     } catch {
       // Logout even if API call fails
     }
     setPatient(null);
-    navigate('/login');
+    navigate("/login");
   }, [navigate]);
 
   return (

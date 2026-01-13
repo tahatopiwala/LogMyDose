@@ -7,6 +7,7 @@ export function Login() {
   const { login, isAuthenticated, isLoading: authLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -30,7 +31,7 @@ export function Login() {
     setIsSubmitting(true);
 
     try {
-      await login({ email, password });
+      await login({ email, password, rememberMe });
     } catch (err) {
       const apiError = err as ApiError;
       setError(apiError.error || "Login failed. Please try again.");
@@ -157,6 +158,8 @@ export function Login() {
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
                   className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
                 />
                 <label
