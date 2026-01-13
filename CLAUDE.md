@@ -94,4 +94,4 @@ When implementing AI features:
 
 ## Build Guidelines
 
-- Always run build, lint when building the project (`npm run build && npm run lint`)
+- Always run build, lint and pretty print when building the project
