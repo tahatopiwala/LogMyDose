@@ -16,8 +16,10 @@ const envSchema = z.object({
     .enum(["development", "production", "test"])
     .default("development"),
 
-  // CORS
-  CORS_ORIGIN: z.string().default("http://localhost:5173"),
+  // CORS (comma-separated list of allowed origins)
+  CORS_ORIGINS: z
+    .string()
+    .default("http://localhost:5173,http://localhost:3000,http://localhost:3001"),
 
   // Redis (for BullMQ job queues)
   REDIS_HOST: z.string().default("localhost"),
