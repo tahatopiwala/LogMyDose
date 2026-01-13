@@ -59,14 +59,14 @@ export function Hero() {
             <div
               className="absolute inset-0 opacity-[0.15]"
               style={{
-                backgroundImage: 'radial-gradient(circle, #a855f7 1px, transparent 1px)',
+                backgroundImage: 'radial-gradient(circle, #BE3455 1px, transparent 1px)',
                 backgroundSize: '24px 24px',
               }}
             />
 
             {/* Gradient Blobs */}
             <div className="absolute w-[400px] h-[400px] bg-gradient-to-br from-primary-300/60 to-primary-100/40 rounded-full blur-3xl -top-10 -right-10" />
-            <div className="absolute w-[300px] h-[300px] bg-gradient-to-tr from-purple-300/50 to-pink-200/40 rounded-full blur-3xl top-1/3 -right-20" />
+            <div className="absolute w-[300px] h-[300px] bg-gradient-to-tr from-primary-300/50 to-primary-200/40 rounded-full blur-3xl top-1/3 -right-20" />
             <div className="absolute w-[250px] h-[250px] bg-gradient-to-bl from-emerald-200/50 to-teal-100/40 rounded-full blur-3xl bottom-10 right-20" />
             <div className="absolute w-[200px] h-[200px] bg-gradient-to-r from-amber-200/40 to-orange-100/30 rounded-full blur-3xl top-20 right-1/3" />
 
@@ -280,7 +280,7 @@ export function Hero() {
                       </div>
 
                       {/* AI Insight Card */}
-                      <div className="bg-gradient-to-r from-primary-50 to-purple-50 rounded-xl p-3 border border-primary-100">
+                      <div className="bg-gradient-to-r from-primary-50 to-primary-100 rounded-xl p-3 border border-primary-100">
                         <div className="flex items-start gap-2">
                           <div className="w-6 h-6 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
                             <svg className="w-3.5 h-3.5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

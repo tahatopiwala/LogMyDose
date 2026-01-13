@@ -26,7 +26,7 @@ export function renderWelcomeEmail(payload: WelcomeEmailPayload): EmailContent {
         <table role="presentation" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
           <!-- Header -->
           <tr>
-            <td style="padding: 40px 40px 20px; text-align: center; background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);">
+            <td style="padding: 40px 40px 20px; text-align: center; background: linear-gradient(135deg, #9b2341 0%, #BE3455 100%);">
               <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">LogMyDose</h1>
             </td>
           </tr>

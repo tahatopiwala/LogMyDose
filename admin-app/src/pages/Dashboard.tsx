@@ -35,7 +35,7 @@ export default function Dashboard() {
       name: 'Protocol Templates',
       value: templatesData?.pagination.total ?? 0,
       href: '/protocols',
-      color: 'bg-purple-500',
+      color: 'bg-primary-500',
     },
   ]
 

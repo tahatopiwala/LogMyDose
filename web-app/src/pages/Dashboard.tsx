@@ -57,7 +57,7 @@ export function Dashboard() {
         </div>
 
         <div className="bg-white rounded-xl p-6 border border-gray-200">
-          <div className="text-purple-600 font-semibold text-sm">Next Dose</div>
+          <div className="text-primary-600 font-semibold text-sm">Next Dose</div>
           <div className="text-xl font-bold text-gray-900 mt-2">BPC-157</div>
           <div className="text-gray-600 text-sm mt-1">Due at 8:00 PM</div>
         </div>

@@ -21,7 +21,7 @@ export function renderVerifyEmail(payload: VerifyEmailPayload): EmailContent {
         <table role="presentation" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
           <!-- Header -->
           <tr>
-            <td style="padding: 40px 40px 20px; text-align: center; background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);">
+            <td style="padding: 40px 40px 20px; text-align: center; background: linear-gradient(135deg, #9b2341 0%, #BE3455 100%);">
               <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">LogMyDose</h1>
             </td>
           </tr>
@@ -42,7 +42,7 @@ export function renderVerifyEmail(payload: VerifyEmailPayload): EmailContent {
               <!-- Button -->
               <table role="presentation" style="margin: 0 auto 30px;">
                 <tr>
-                  <td style="border-radius: 6px; background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);">
+                  <td style="border-radius: 6px; background: linear-gradient(135deg, #9b2341 0%, #BE3455 100%);">
                     <a href="${payload.verificationUrl}" target="_blank" style="display: inline-block; padding: 14px 30px; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 600;">
                       Verify Email
                     </a>
@@ -54,7 +54,7 @@ export function renderVerifyEmail(payload: VerifyEmailPayload): EmailContent {
                 Or copy and paste this link into your browser:
               </p>
 
-              <p style="margin: 0 0 30px; color: #7c3aed; font-size: 14px; word-break: break-all;">
+              <p style="margin: 0 0 30px; color: #BE3455; font-size: 14px; word-break: break-all;">
                 ${payload.verificationUrl}
               </p>
 
