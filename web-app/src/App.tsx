@@ -5,6 +5,7 @@ import { Dashboard } from "./pages/Dashboard";
 import { Login } from "./pages/Login";
 import { Signup } from "./pages/Signup";
 import { LogDose } from "./pages/LogDose";
+import { AddProtocol } from "./pages/AddProtocol";
 
 function History() {
   return (
@@ -53,6 +54,18 @@ function Settings() {
       <p className="text-gray-600 mt-1">Manage your account and preferences.</p>
       <div className="mt-8 bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-500">
         Settings coming soon...
+      </div>
+    </div>
+  );
+}
+
+function ProtocolDetail() {
+  return (
+    <div>
+      <h1 className="text-2xl font-bold text-gray-900">Protocol Details</h1>
+      <p className="text-gray-600 mt-1">View and manage this protocol.</p>
+      <div className="mt-8 bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-500">
+        Protocol details coming soon...
       </div>
     </div>
   );
@@ -112,6 +125,26 @@ export default function App() {
           <ProtectedRoute>
             <Layout>
               <Protocol />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/protocols/new"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <AddProtocol />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/protocols/:id"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <ProtocolDetail />
             </Layout>
           </ProtectedRoute>
         }
