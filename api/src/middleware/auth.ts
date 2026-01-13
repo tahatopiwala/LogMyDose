@@ -17,16 +17,24 @@ export function authenticate(
   next: NextFunction
 ) {
   try {
-    const authHeader = req.headers.authorization;
+    // Check Authorization header first, then fall back to cookies
+    let token: string | undefined;
 
-    if (!authHeader) {
-      throw new AppError(401, 'No authorization header', 'NO_AUTH_HEADER');
+    const authHeader = req.headers.authorization;
+    if (authHeader) {
+      const [bearer, headerToken] = authHeader.split(' ');
+      if (bearer === 'Bearer' && headerToken) {
+        token = headerToken;
+      }
     }
 
-    const [bearer, token] = authHeader.split(' ');
+    // Fall back to cookie if no valid Authorization header
+    if (!token && req.cookies?.access_token) {
+      token = req.cookies.access_token;
+    }
 
-    if (bearer !== 'Bearer' || !token) {
-      throw new AppError(401, 'Invalid authorization format', 'INVALID_AUTH_FORMAT');
+    if (!token) {
+      throw new AppError(401, 'No authentication token provided', 'NO_AUTH_TOKEN');
     }
 
     const payload = verifyAccessToken(token);

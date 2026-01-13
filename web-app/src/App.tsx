@@ -1,9 +1,10 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
-import { Layout } from './components/Layout'
-import { Dashboard } from './pages/Dashboard'
-import { Login } from './pages/Login'
-import { Signup } from './pages/Signup'
-import { LogDose } from './pages/LogDose'
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { Layout } from './components/Layout';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { Dashboard } from './pages/Dashboard';
+import { Login } from './pages/Login';
+import { Signup } from './pages/Signup';
+import { LogDose } from './pages/LogDose';
 
 function History() {
   return (
@@ -14,7 +15,7 @@ function History() {
         History view coming soon...
       </div>
     </div>
-  )
+  );
 }
 
 function Insights() {
@@ -26,7 +27,7 @@ function Insights() {
         AI insights coming soon...
       </div>
     </div>
-  )
+  );
 }
 
 function Protocol() {
@@ -38,7 +39,7 @@ function Protocol() {
         Protocol management coming soon...
       </div>
     </div>
-  )
+  );
 }
 
 function Settings() {
@@ -50,68 +51,80 @@ function Settings() {
         Settings coming soon...
       </div>
     </div>
-  )
+  );
 }
 
 export default function App() {
   return (
     <Routes>
-      {/* Auth routes (no layout) */}
+      {/* Auth routes (no layout, no protection) */}
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
 
-      {/* App routes (with layout) */}
+      {/* Protected app routes */}
       <Route
         path="/dashboard"
         element={
-          <Layout>
-            <Dashboard />
-          </Layout>
+          <ProtectedRoute>
+            <Layout>
+              <Dashboard />
+            </Layout>
+          </ProtectedRoute>
         }
       />
       <Route
         path="/log"
         element={
-          <Layout>
-            <LogDose />
-          </Layout>
+          <ProtectedRoute>
+            <Layout>
+              <LogDose />
+            </Layout>
+          </ProtectedRoute>
         }
       />
       <Route
         path="/history"
         element={
-          <Layout>
-            <History />
-          </Layout>
+          <ProtectedRoute>
+            <Layout>
+              <History />
+            </Layout>
+          </ProtectedRoute>
         }
       />
       <Route
         path="/insights"
         element={
-          <Layout>
-            <Insights />
-          </Layout>
+          <ProtectedRoute>
+            <Layout>
+              <Insights />
+            </Layout>
+          </ProtectedRoute>
         }
       />
       <Route
         path="/protocol"
         element={
-          <Layout>
-            <Protocol />
-          </Layout>
+          <ProtectedRoute>
+            <Layout>
+              <Protocol />
+            </Layout>
+          </ProtectedRoute>
         }
       />
       <Route
         path="/settings"
         element={
-          <Layout>
-            <Settings />
-          </Layout>
+          <ProtectedRoute>
+            <Layout>
+              <Settings />
+            </Layout>
+          </ProtectedRoute>
         }
       />
 
-      {/* Redirect root to dashboard */}
+      {/* Redirect root to dashboard (will redirect to login if not authenticated) */}
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
     </Routes>
-  )
+  );
 }

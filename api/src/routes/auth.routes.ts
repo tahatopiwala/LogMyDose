@@ -1,10 +1,35 @@
-import { Router } from 'express';
+import { Router, Response } from 'express';
 import { z } from 'zod';
 import { getContainer } from '../container/index.js';
 import { authenticate } from '../middleware/auth.js';
 import { createAuditLog } from '../middleware/auditLog.js';
+import { env } from '../lib/env.js';
 
 const router = Router();
+
+// Cookie configuration for auth tokens
+const COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: env.NODE_ENV === 'production',
+  sameSite: 'lax' as const,
+  path: '/',
+};
+
+function setAuthCookies(res: Response, accessToken: string, refreshToken: string) {
+  res.cookie('access_token', accessToken, {
+    ...COOKIE_OPTIONS,
+    maxAge: 15 * 60 * 1000, // 15 minutes
+  });
+  res.cookie('refresh_token', refreshToken, {
+    ...COOKIE_OPTIONS,
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  });
+}
+
+function clearAuthCookies(res: Response) {
+  res.clearCookie('access_token', COOKIE_OPTIONS);
+  res.clearCookie('refresh_token', COOKIE_OPTIONS);
+}
 
 // Validation schemas
 const registerPatientSchema = z.object({
@@ -49,6 +74,9 @@ router.post('/register/patient', async (req, res, next) => {
       recordId: result.patient.id,
       newValues: { email: result.patient.email },
     });
+
+    // Set httpOnly cookies for web clients
+    setAuthCookies(res, result.accessToken, result.refreshToken);
 
     res.status(201).json(result);
   } catch (error) {
@@ -97,6 +125,9 @@ router.post('/login', async (req, res, next) => {
       recordId: isPatient ? result.patient.id : result.user.id,
     });
 
+    // Set httpOnly cookies for web clients
+    setAuthCookies(res, result.accessToken, result.refreshToken);
+
     res.json(result);
   } catch (error) {
     next(error);
@@ -106,10 +137,17 @@ router.post('/login', async (req, res, next) => {
 // POST /api/v1/auth/refresh
 router.post('/refresh', async (req, res, next) => {
   try {
-    const data = refreshSchema.parse(req.body);
+    // Support refresh token from body or cookie
+    const refreshToken = req.body.refreshToken || req.cookies?.refresh_token;
+    const userType = req.body.userType || 'patient';
+
+    const data = refreshSchema.parse({ refreshToken, userType });
     const authService = getContainer().authService;
 
     const tokens = await authService.refresh(data);
+
+    // Set httpOnly cookies for web clients
+    setAuthCookies(res, tokens.accessToken, tokens.refreshToken);
 
     res.json(tokens);
   } catch (error) {
@@ -134,6 +172,9 @@ router.post('/logout', authenticate, async (req, res, next) => {
       tableName: req.user!.role === 'patient' ? 'patients' : 'users',
       recordId: req.user!.id,
     });
+
+    // Clear httpOnly cookies
+    clearAuthCookies(res);
 
     res.json({ message: 'Logged out successfully' });
   } catch (error) {

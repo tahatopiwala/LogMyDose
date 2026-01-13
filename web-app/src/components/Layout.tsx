@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 
 const navigation = [
   {
@@ -57,15 +58,26 @@ const navigation = [
       </svg>
     ),
   },
-]
+];
 
 interface LayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export function Layout({ children }: LayoutProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const location = useLocation()
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const location = useLocation();
+  const { patient, logout } = useAuth();
+
+  // Generate initials from patient name or email
+  const initials = patient
+    ? `${patient.firstName?.[0] || ''}${patient.lastName?.[0] || ''}`.toUpperCase() ||
+      patient.email[0].toUpperCase()
+    : 'U';
+
+  const handleLogout = () => {
+    logout();
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -86,9 +98,9 @@ export function Layout({ children }: LayoutProps) {
         <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
           <Link to="/dashboard" className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">D</span>
+              <span className="text-white font-bold text-sm">L</span>
             </div>
-            <span className="text-xl font-bold text-gray-900">DoseTrack</span>
+            <span className="text-xl font-bold text-gray-900">LogMyDose</span>
           </Link>
           <button onClick={() => setSidebarOpen(false)} className="p-2">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -113,6 +125,17 @@ export function Layout({ children }: LayoutProps) {
             </Link>
           ))}
         </nav>
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
+          <button
+            onClick={handleLogout}
+            className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            <span className="ml-3">Sign Out</span>
+          </button>
+        </div>
       </div>
 
       {/* Desktop sidebar */}
@@ -121,9 +144,9 @@ export function Layout({ children }: LayoutProps) {
           <div className="flex items-center h-16 px-4 border-b border-gray-200">
             <Link to="/dashboard" className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">D</span>
+                <span className="text-white font-bold text-sm">L</span>
               </div>
-              <span className="text-xl font-bold text-gray-900">DoseTrack</span>
+              <span className="text-xl font-bold text-gray-900">LogMyDose</span>
             </Link>
           </div>
           <nav className="flex-1 px-4 py-6 space-y-1">
@@ -143,7 +166,10 @@ export function Layout({ children }: LayoutProps) {
             ))}
           </nav>
           <div className="p-4 border-t border-gray-200">
-            <button className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg">
+            <button
+              onClick={handleLogout}
+              className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg"
+            >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
               </svg>
@@ -173,7 +199,7 @@ export function Layout({ children }: LayoutProps) {
                 </svg>
               </button>
               <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
-                <span className="text-primary-700 font-medium text-sm">JD</span>
+                <span className="text-primary-700 font-medium text-sm">{initials}</span>
               </div>
             </div>
           </div>
@@ -185,5 +211,5 @@ export function Layout({ children }: LayoutProps) {
         </main>
       </div>
     </div>
-  )
+  );
 }
