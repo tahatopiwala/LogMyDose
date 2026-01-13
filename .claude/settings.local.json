@@ -17,7 +17,26 @@
       "Bash(npm run typecheck:*)",
       "Bash(npm run build:shared:*)",
       "Bash(npm run build:api:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(npm run build:landing:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npm run build:app:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(npm run build:ui:*)",
+      "Bash(npm run lint:ui:*)",
+      "Bash(npm run dev:landing:*)",
+      "Bash(npm run dev:app:*)",
+      "Bash(git push:*)",
+      "Bash(find:*)",
+      "Skill(commit-commands:commit)",
+      "Bash(tree:*)",
+      "Bash(npm run build:admin:*)",
+      "Bash(DATABASE_URL=\"postgresql://logmydose:logmydose_dev@localhost:5433/logmydose?schema=public\" npx prisma migrate dev:*)",
+      "Bash(npm run lint:admin:*)",
+      "Bash(npm run build:workers:*)",
+      "Bash(npm view:*)",
+      "Bash(ls:*)"
     ]
   }
 }
