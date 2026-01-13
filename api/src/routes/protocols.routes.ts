@@ -1,15 +1,19 @@
-import { Router } from 'express';
-import { z } from 'zod';
-import { getContainer } from '../container/index.js';
-import { authenticate, requirePatient, requireSuperAdmin } from '../middleware/auth.js';
-import { createAuditLog } from '../middleware/auditLog.js';
-import { paginationSchema } from '../types/index.js';
+import { Router } from "express";
+import { z } from "zod";
+import { getContainer } from "../container/index.js";
+import {
+  authenticate,
+  requirePatient,
+  requireSuperAdmin,
+} from "../middleware/auth.js";
+import { createAuditLog } from "../middleware/auditLog.js";
+import { paginationSchema } from "../types/index.js";
 
 const router = Router();
 
 // Validation schemas
 const createProtocolSchema = z.object({
-  source: z.enum(['template', 'custom']),
+  source: z.enum(["template", "custom"]),
   templateId: z.string().uuid().optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
@@ -26,13 +30,13 @@ const createProtocolSchema = z.object({
         cycleOnWeeks: z.number().int().positive().optional(),
         cycleOffWeeks: z.number().int().positive().optional(),
         notes: z.string().optional(),
-      })
+      }),
     )
     .min(1),
 });
 
 const updateProtocolSchema = z.object({
-  status: z.enum(['draft', 'active', 'paused', 'completed']).optional(),
+  status: z.enum(["draft", "active", "paused", "completed"]).optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   notes: z.string().optional(),
@@ -49,7 +53,7 @@ const createTemplateSchema = z.object({
   titrationPlan: z.record(z.unknown()).optional(),
   cycleOnWeeks: z.number().int().positive().optional(),
   cycleOffWeeks: z.number().int().positive().optional(),
-  difficultyLevel: z.enum(['beginner', 'intermediate', 'advanced']).optional(),
+  difficultyLevel: z.enum(["beginner", "intermediate", "advanced"]).optional(),
   tags: z.array(z.string()).optional(),
   isPublic: z.boolean().optional(),
 });
@@ -65,13 +69,13 @@ const updateTemplateSchema = z.object({
   titrationPlan: z.record(z.unknown()).optional(),
   cycleOnWeeks: z.number().int().positive().optional(),
   cycleOffWeeks: z.number().int().positive().optional(),
-  difficultyLevel: z.enum(['beginner', 'intermediate', 'advanced']).optional(),
+  difficultyLevel: z.enum(["beginner", "intermediate", "advanced"]).optional(),
   tags: z.array(z.string()).optional(),
   isPublic: z.boolean().optional(),
 });
 
 // GET /api/v1/protocols/templates
-router.get('/templates', async (req, res, next) => {
+router.get("/templates", async (req, res, next) => {
   try {
     const { page, limit } = paginationSchema.parse(req.query);
     const { categoryId, substanceId, difficulty, search } = req.query;
@@ -96,7 +100,7 @@ router.get('/templates', async (req, res, next) => {
 });
 
 // GET /api/v1/protocols/templates/:id
-router.get('/templates/:id', async (req, res, next) => {
+router.get("/templates/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
     const protocolService = getContainer().protocolService;
@@ -110,70 +114,85 @@ router.get('/templates/:id', async (req, res, next) => {
 });
 
 // POST /api/v1/protocols/templates (super admin only)
-router.post('/templates', authenticate, requireSuperAdmin, async (req, res, next) => {
-  try {
-    const data = createTemplateSchema.parse(req.body);
-    const protocolService = getContainer().protocolService;
+router.post(
+  "/templates",
+  authenticate,
+  requireSuperAdmin,
+  async (req, res, next) => {
+    try {
+      const data = createTemplateSchema.parse(req.body);
+      const protocolService = getContainer().protocolService;
 
-    const template = await protocolService.createTemplate(data);
+      const template = await protocolService.createTemplate(data);
 
-    await createAuditLog(req, {
-      action: 'protocol_template.create',
-      tableName: 'protocol_templates',
-      recordId: template.id,
-      newValues: { name: data.name },
-    });
+      await createAuditLog(req, {
+        action: "protocol_template.create",
+        tableName: "protocol_templates",
+        recordId: template.id,
+        newValues: { name: data.name },
+      });
 
-    res.status(201).json({ template });
-  } catch (error) {
-    next(error);
-  }
-});
+      res.status(201).json({ template });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 // PUT /api/v1/protocols/templates/:id (super admin only)
-router.put('/templates/:id', authenticate, requireSuperAdmin, async (req, res, next) => {
-  try {
-    const id = req.params.id as string;
-    const data = updateTemplateSchema.parse(req.body);
-    const protocolService = getContainer().protocolService;
+router.put(
+  "/templates/:id",
+  authenticate,
+  requireSuperAdmin,
+  async (req, res, next) => {
+    try {
+      const id = req.params.id as string;
+      const data = updateTemplateSchema.parse(req.body);
+      const protocolService = getContainer().protocolService;
 
-    const template = await protocolService.updateTemplate(id, data);
+      const template = await protocolService.updateTemplate(id, data);
 
-    await createAuditLog(req, {
-      action: 'protocol_template.update',
-      tableName: 'protocol_templates',
-      recordId: template.id,
-      newValues: data as Record<string, unknown>,
-    });
+      await createAuditLog(req, {
+        action: "protocol_template.update",
+        tableName: "protocol_templates",
+        recordId: template.id,
+        newValues: data as Record<string, unknown>,
+      });
 
-    res.json({ template });
-  } catch (error) {
-    next(error);
-  }
-});
+      res.json({ template });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 // DELETE /api/v1/protocols/templates/:id (super admin only)
-router.delete('/templates/:id', authenticate, requireSuperAdmin, async (req, res, next) => {
-  try {
-    const id = req.params.id as string;
-    const protocolService = getContainer().protocolService;
+router.delete(
+  "/templates/:id",
+  authenticate,
+  requireSuperAdmin,
+  async (req, res, next) => {
+    try {
+      const id = req.params.id as string;
+      const protocolService = getContainer().protocolService;
 
-    await protocolService.deleteTemplate(id);
+      await protocolService.deleteTemplate(id);
 
-    await createAuditLog(req, {
-      action: 'protocol_template.delete',
-      tableName: 'protocol_templates',
-      recordId: id,
-    });
+      await createAuditLog(req, {
+        action: "protocol_template.delete",
+        tableName: "protocol_templates",
+        recordId: id,
+      });
 
-    res.status(204).send();
-  } catch (error) {
-    next(error);
-  }
-});
+      res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 // POST /api/v1/protocols (create from template or custom)
-router.post('/', authenticate, requirePatient, async (req, res, next) => {
+router.post("/", authenticate, requirePatient, async (req, res, next) => {
   try {
     const data = createProtocolSchema.parse(req.body);
     const protocolService = getContainer().protocolService;
@@ -181,8 +200,8 @@ router.post('/', authenticate, requirePatient, async (req, res, next) => {
     const protocol = await protocolService.createProtocol(req.user!.id, data);
 
     await createAuditLog(req, {
-      action: 'protocol.create',
-      tableName: 'protocols',
+      action: "protocol.create",
+      tableName: "protocols",
       recordId: protocol.id,
       newValues: { source: data.source, templateId: data.templateId },
     });
@@ -194,7 +213,7 @@ router.post('/', authenticate, requirePatient, async (req, res, next) => {
 });
 
 // GET /api/v1/protocols/:id
-router.get('/:id', authenticate, async (req, res, next) => {
+router.get("/:id", authenticate, async (req, res, next) => {
   try {
     const id = req.params.id as string;
     const protocolService = getContainer().protocolService;
@@ -213,7 +232,7 @@ router.get('/:id', authenticate, async (req, res, next) => {
 });
 
 // PUT /api/v1/protocols/:id
-router.put('/:id', authenticate, async (req, res, next) => {
+router.put("/:id", authenticate, async (req, res, next) => {
   try {
     const id = req.params.id as string;
     const data = updateProtocolSchema.parse(req.body);
@@ -232,12 +251,12 @@ router.put('/:id', authenticate, async (req, res, next) => {
         email: req.user!.email,
         role: req.user!.role,
         tenantId: req.user!.tenantId,
-      }
+      },
     );
 
     await createAuditLog(req, {
-      action: 'protocol.update',
-      tableName: 'protocols',
+      action: "protocol.update",
+      tableName: "protocols",
       recordId: protocol.id,
       newValues: data as Record<string, unknown>,
     });
@@ -249,7 +268,7 @@ router.put('/:id', authenticate, async (req, res, next) => {
 });
 
 // GET /api/v1/protocols/:id/schedule
-router.get('/:id/schedule', authenticate, async (req, res, next) => {
+router.get("/:id/schedule", authenticate, async (req, res, next) => {
   try {
     const id = req.params.id as string;
     const { startDate, endDate } = req.query;
@@ -264,7 +283,7 @@ router.get('/:id/schedule', authenticate, async (req, res, next) => {
         tenantId: req.user!.tenantId,
       },
       startDate as string,
-      endDate as string
+      endDate as string,
     );
 
     res.json(result);

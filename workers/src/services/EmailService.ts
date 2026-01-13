@@ -1,6 +1,10 @@
-import { Resend } from 'resend';
-import { env } from '../config/env.js';
-import type { IEmailService, SendEmailOptions, SendEmailResult } from './interfaces/IEmailService.js';
+import { Resend } from "resend";
+import { env } from "../config/env.js";
+import type {
+  IEmailService,
+  SendEmailOptions,
+  SendEmailResult,
+} from "./interfaces/IEmailService.js";
 
 export class ResendEmailService implements IEmailService {
   private client: Resend;

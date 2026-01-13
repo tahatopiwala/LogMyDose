@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 // Base email payload schema
 const baseEmailPayloadSchema = z.object({
@@ -28,7 +28,9 @@ export const passwordResetEmailPayloadSchema = baseEmailPayloadSchema.extend({
   firstName: z.string().optional(),
   expiresAt: z.string().datetime(),
 });
-export type PasswordResetEmailPayload = z.infer<typeof passwordResetEmailPayloadSchema>;
+export type PasswordResetEmailPayload = z.infer<
+  typeof passwordResetEmailPayloadSchema
+>;
 
 // Dose reminder payload
 export const doseReminderEmailPayloadSchema = baseEmailPayloadSchema.extend({
@@ -37,7 +39,9 @@ export const doseReminderEmailPayloadSchema = baseEmailPayloadSchema.extend({
   dose: z.string(),
   scheduledTime: z.string(),
 });
-export type DoseReminderEmailPayload = z.infer<typeof doseReminderEmailPayloadSchema>;
+export type DoseReminderEmailPayload = z.infer<
+  typeof doseReminderEmailPayloadSchema
+>;
 
 // Weekly summary payload
 export const weeklySummaryEmailPayloadSchema = baseEmailPayloadSchema.extend({
@@ -48,21 +52,23 @@ export const weeklySummaryEmailPayloadSchema = baseEmailPayloadSchema.extend({
   missedDoses: z.number(),
   adherenceRate: z.number(),
 });
-export type WeeklySummaryEmailPayload = z.infer<typeof weeklySummaryEmailPayloadSchema>;
+export type WeeklySummaryEmailPayload = z.infer<
+  typeof weeklySummaryEmailPayloadSchema
+>;
 
 // All email payload schemas for validation
 export const emailPayloadSchemas = {
-  'email:welcome': welcomeEmailPayloadSchema,
-  'email:verify': verifyEmailPayloadSchema,
-  'email:password-reset': passwordResetEmailPayloadSchema,
-  'email:dose-reminder': doseReminderEmailPayloadSchema,
-  'email:weekly-summary': weeklySummaryEmailPayloadSchema,
+  "email:welcome": welcomeEmailPayloadSchema,
+  "email:verify": verifyEmailPayloadSchema,
+  "email:password-reset": passwordResetEmailPayloadSchema,
+  "email:dose-reminder": doseReminderEmailPayloadSchema,
+  "email:weekly-summary": weeklySummaryEmailPayloadSchema,
 } as const;
 
 // Union type for all email payloads
 export type EmailPayload =
-  | { type: 'email:welcome'; data: WelcomeEmailPayload }
-  | { type: 'email:verify'; data: VerifyEmailPayload }
-  | { type: 'email:password-reset'; data: PasswordResetEmailPayload }
-  | { type: 'email:dose-reminder'; data: DoseReminderEmailPayload }
-  | { type: 'email:weekly-summary'; data: WeeklySummaryEmailPayload };
+  | { type: "email:welcome"; data: WelcomeEmailPayload }
+  | { type: "email:verify"; data: VerifyEmailPayload }
+  | { type: "email:password-reset"; data: PasswordResetEmailPayload }
+  | { type: "email:dose-reminder"; data: DoseReminderEmailPayload }
+  | { type: "email:weekly-summary"; data: WeeklySummaryEmailPayload };

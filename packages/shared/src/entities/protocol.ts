@@ -1,4 +1,4 @@
-import { Decimal, JsonValue } from '../types/database.js';
+import { Decimal, JsonValue } from "../types/database.js";
 
 /**
  * ProtocolTemplate entity - Public protocol library

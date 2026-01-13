@@ -4,9 +4,12 @@ import {
   TenantWithUsers,
   Patient,
   ClinicInvitation,
-} from '../../entities/index.js';
-import { CreateTenantInput, UpdateTenantInput } from '../repositories/ITenantRepository.js';
-import { PaginatedResponse } from '../../types/index.js';
+} from "../../entities/index.js";
+import {
+  CreateTenantInput,
+  UpdateTenantInput,
+} from "../repositories/ITenantRepository.js";
+import { PaginatedResponse } from "../../types/index.js";
 
 export interface GetClinicPatientsQuery {
   page?: number;
@@ -34,13 +37,19 @@ export interface ITenantService {
   updateMyClinic(tenantId: string, data: UpdateTenantInput): Promise<Tenant>;
   getClinicPatients(
     tenantId: string,
-    query: GetClinicPatientsQuery
+    query: GetClinicPatientsQuery,
   ): Promise<PaginatedResponse<Patient>>;
-  createInvitation(tenantId: string, input: CreateClinicInvitationInput): Promise<InvitationResponse>;
+  createInvitation(
+    tenantId: string,
+    input: CreateClinicInvitationInput,
+  ): Promise<InvitationResponse>;
   getInvitations(tenantId: string): Promise<ClinicInvitation[]>;
 
   // Super admin methods
-  getAllTenants(page?: number, limit?: number): Promise<PaginatedResponse<TenantWithCounts>>;
+  getAllTenants(
+    page?: number,
+    limit?: number,
+  ): Promise<PaginatedResponse<TenantWithCounts>>;
   createTenant(data: CreateTenantInput): Promise<Tenant>;
   getTenantById(id: string): Promise<TenantWithCounts | null>;
   getTenantWithUsers(id: string): Promise<TenantWithUsers | null>;

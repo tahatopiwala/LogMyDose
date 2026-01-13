@@ -1,4 +1,4 @@
-import { Dose } from '@logmydose/shared/prisma';
+import { Dose } from "@logmydose/shared/prisma";
 import {
   IDoseService,
   LogDoseInput,
@@ -7,42 +7,52 @@ import {
   GetDosesQuery,
   GetSideEffectsQuery,
   GetStatsQuery,
-} from '../interfaces/services/IDoseService.js';
+} from "../interfaces/services/IDoseService.js";
 import {
   IDoseRepository,
   DoseWithSubstance,
   DoseWithDetails,
   SideEffectWithRelations,
   DoseStats,
-} from '../interfaces/repositories/IDoseRepository.js';
-import { ISubstanceRepository } from '../interfaces/repositories/ISubstanceRepository.js';
-import { IProtocolRepository } from '../interfaces/repositories/IProtocolRepository.js';
-import { PaginatedResponse } from '../types/index.js';
-import { AppError } from '../middleware/errorHandler.js';
+} from "../interfaces/repositories/IDoseRepository.js";
+import { ISubstanceRepository } from "../interfaces/repositories/ISubstanceRepository.js";
+import { IProtocolRepository } from "../interfaces/repositories/IProtocolRepository.js";
+import { PaginatedResponse } from "../types/index.js";
+import { AppError } from "../middleware/errorHandler.js";
 
 export class DoseService implements IDoseService {
   constructor(
     private readonly doseRepository: IDoseRepository,
     private readonly substanceRepository: ISubstanceRepository,
-    private readonly protocolRepository: IProtocolRepository
+    private readonly protocolRepository: IProtocolRepository,
   ) {}
 
   async logDose(patientId: string, input: LogDoseInput): Promise<Dose> {
     // Verify substance exists
-    const substance = await this.substanceRepository.findById(input.substanceId);
+    const substance = await this.substanceRepository.findById(
+      input.substanceId,
+    );
 
     if (!substance) {
-      throw new AppError(404, 'Substance not found', 'SUBSTANCE_NOT_FOUND');
+      throw new AppError(404, "Substance not found", "SUBSTANCE_NOT_FOUND");
     }
 
     // If protocolSubstanceId provided, verify it belongs to patient's protocol
     if (input.protocolSubstanceId) {
-      const protocolSubstance = await this.protocolRepository.findProtocolSubstanceById(
-        input.protocolSubstanceId
-      );
+      const protocolSubstance =
+        await this.protocolRepository.findProtocolSubstanceById(
+          input.protocolSubstanceId,
+        );
 
-      if (!protocolSubstance || protocolSubstance.protocol.patientId !== patientId) {
-        throw new AppError(400, 'Invalid protocol substance', 'INVALID_PROTOCOL_SUBSTANCE');
+      if (
+        !protocolSubstance ||
+        protocolSubstance.protocol.patientId !== patientId
+      ) {
+        throw new AppError(
+          400,
+          "Invalid protocol substance",
+          "INVALID_PROTOCOL_SUBSTANCE",
+        );
       }
     }
 
@@ -53,7 +63,7 @@ export class DoseService implements IDoseService {
       dose: input.dose,
       doseUnit: input.doseUnit || substance.doseUnit || undefined,
       scheduledAt: input.scheduledAt ? new Date(input.scheduledAt) : undefined,
-      status: input.status || 'taken',
+      status: input.status || "taken",
       administrationSite: input.administrationSite,
       notes: input.notes,
       photoUrl: input.photoUrl,
@@ -62,7 +72,7 @@ export class DoseService implements IDoseService {
 
   async getDoses(
     patientId: string,
-    query: GetDosesQuery
+    query: GetDosesQuery,
   ): Promise<PaginatedResponse<DoseWithSubstance>> {
     return this.doseRepository.findManyByPatient({
       patientId,
@@ -79,29 +89,36 @@ export class DoseService implements IDoseService {
     return this.doseRepository.findTodayByPatient(patientId);
   }
 
-  async getDoseById(id: string, patientId: string): Promise<DoseWithDetails | null> {
+  async getDoseById(
+    id: string,
+    patientId: string,
+  ): Promise<DoseWithDetails | null> {
     const dose = await this.doseRepository.findByIdWithDetails(id);
 
     if (!dose) {
-      throw new AppError(404, 'Dose not found', 'NOT_FOUND');
+      throw new AppError(404, "Dose not found", "NOT_FOUND");
     }
 
     if (dose.patientId !== patientId) {
-      throw new AppError(403, 'Access denied', 'FORBIDDEN');
+      throw new AppError(403, "Access denied", "FORBIDDEN");
     }
 
     return dose;
   }
 
-  async updateDose(id: string, patientId: string, data: UpdateDoseInput): Promise<Dose> {
+  async updateDose(
+    id: string,
+    patientId: string,
+    data: UpdateDoseInput,
+  ): Promise<Dose> {
     const existingDose = await this.doseRepository.findById(id);
 
     if (!existingDose) {
-      throw new AppError(404, 'Dose not found', 'NOT_FOUND');
+      throw new AppError(404, "Dose not found", "NOT_FOUND");
     }
 
     if (existingDose.patientId !== patientId) {
-      throw new AppError(403, 'Access denied', 'FORBIDDEN');
+      throw new AppError(403, "Access denied", "FORBIDDEN");
     }
 
     return this.doseRepository.update(id, data);
@@ -109,14 +126,14 @@ export class DoseService implements IDoseService {
 
   async logSideEffect(
     patientId: string,
-    input: LogSideEffectInput
+    input: LogSideEffectInput,
   ): Promise<SideEffectWithRelations> {
     // Verify dose belongs to patient if provided
     if (input.doseId) {
       const dose = await this.doseRepository.findDoseById(input.doseId);
 
       if (!dose || dose.patientId !== patientId) {
-        throw new AppError(400, 'Invalid dose', 'INVALID_DOSE');
+        throw new AppError(400, "Invalid dose", "INVALID_DOSE");
       }
     }
 
@@ -133,7 +150,7 @@ export class DoseService implements IDoseService {
 
   async getSideEffects(
     patientId: string,
-    query: GetSideEffectsQuery
+    query: GetSideEffectsQuery,
   ): Promise<PaginatedResponse<SideEffectWithRelations>> {
     return this.doseRepository.findSideEffects({
       patientId,

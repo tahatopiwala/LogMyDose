@@ -1,33 +1,38 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const substances = [
-  { id: 1, name: 'BPC-157', defaultDose: '250', unit: 'mcg' },
-  { id: 2, name: 'TB-500', defaultDose: '2.5', unit: 'mg' },
-  { id: 3, name: 'GHK-Cu', defaultDose: '200', unit: 'mcg' },
-]
+  { id: 1, name: "BPC-157", defaultDose: "250", unit: "mcg" },
+  { id: 2, name: "TB-500", defaultDose: "2.5", unit: "mg" },
+  { id: 3, name: "GHK-Cu", defaultDose: "200", unit: "mcg" },
+];
 
 const injectionSites = [
-  'Subcutaneous - Abdomen',
-  'Subcutaneous - Thigh',
-  'Subcutaneous - Arm',
-  'Intramuscular - Deltoid',
-  'Intramuscular - Gluteal',
-]
+  "Subcutaneous - Abdomen",
+  "Subcutaneous - Thigh",
+  "Subcutaneous - Arm",
+  "Intramuscular - Deltoid",
+  "Intramuscular - Gluteal",
+];
 
 export function LogDose() {
-  const navigate = useNavigate()
-  const [selectedSubstance, setSelectedSubstance] = useState(substances[0])
-  const [dose, setDose] = useState(selectedSubstance.defaultDose)
-  const [site, setSite] = useState(injectionSites[0])
-  const [notes, setNotes] = useState('')
+  const navigate = useNavigate();
+  const [selectedSubstance, setSelectedSubstance] = useState(substances[0]);
+  const [dose, setDose] = useState(selectedSubstance.defaultDose);
+  const [site, setSite] = useState(injectionSites[0]);
+  const [notes, setNotes] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     // TODO: Implement dose logging
-    console.log('Log dose:', { substance: selectedSubstance, dose, site, notes })
-    navigate('/dashboard')
-  }
+    console.log("Log dose:", {
+      substance: selectedSubstance,
+      dose,
+      site,
+      notes,
+    });
+    navigate("/dashboard");
+  };
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -46,16 +51,18 @@ export function LogDose() {
                 key={substance.id}
                 type="button"
                 onClick={() => {
-                  setSelectedSubstance(substance)
-                  setDose(substance.defaultDose)
+                  setSelectedSubstance(substance);
+                  setDose(substance.defaultDose);
                 }}
                 className={`p-4 rounded-xl border-2 text-left transition-colors ${
                   selectedSubstance.id === substance.id
-                    ? 'border-primary-600 bg-primary-50'
-                    : 'border-gray-200 hover:border-gray-300'
+                    ? "border-primary-600 bg-primary-50"
+                    : "border-gray-200 hover:border-gray-300"
                 }`}
               >
-                <div className="font-medium text-gray-900">{substance.name}</div>
+                <div className="font-medium text-gray-900">
+                  {substance.name}
+                </div>
                 <div className="text-sm text-gray-500">
                   {substance.defaultDose} {substance.unit}
                 </div>
@@ -66,7 +73,10 @@ export function LogDose() {
 
         {/* Dose Amount */}
         <div>
-          <label htmlFor="dose" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="dose"
+            className="block text-sm font-medium text-gray-700"
+          >
             Dose Amount
           </label>
           <div className="mt-1 flex rounded-lg shadow-sm">
@@ -86,7 +96,10 @@ export function LogDose() {
 
         {/* Injection Site */}
         <div>
-          <label htmlFor="site" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="site"
+            className="block text-sm font-medium text-gray-700"
+          >
             Injection Site
           </label>
           <select
@@ -96,14 +109,19 @@ export function LogDose() {
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
           >
             {injectionSites.map((s) => (
-              <option key={s} value={s}>{s}</option>
+              <option key={s} value={s}>
+                {s}
+              </option>
             ))}
           </select>
         </div>
 
         {/* Notes */}
         <div>
-          <label htmlFor="notes" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="notes"
+            className="block text-sm font-medium text-gray-700"
+          >
             Notes (optional)
           </label>
           <textarea
@@ -120,7 +138,7 @@ export function LogDose() {
         <div className="flex gap-4">
           <button
             type="button"
-            onClick={() => navigate('/dashboard')}
+            onClick={() => navigate("/dashboard")}
             className="flex-1 py-3 px-4 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
             Cancel
@@ -134,5 +152,5 @@ export function LogDose() {
         </div>
       </form>
     </div>
-  )
+  );
 }

@@ -1,4 +1,8 @@
-import type { EmailJobType, WelcomeEmailPayload, VerifyEmailPayload } from '@logmydose/shared/queues';
+import type {
+  EmailJobType,
+  WelcomeEmailPayload,
+  VerifyEmailPayload,
+} from "@logmydose/shared/queues";
 
 export interface JobOptions {
   delay?: number;
@@ -6,8 +10,18 @@ export interface JobOptions {
 }
 
 export interface IQueueService {
-  addWelcomeEmailJob(payload: WelcomeEmailPayload, options?: JobOptions): Promise<void>;
-  addVerifyEmailJob(payload: VerifyEmailPayload, options?: JobOptions): Promise<void>;
-  addEmailJob(type: EmailJobType, payload: unknown, options?: JobOptions): Promise<void>;
+  addWelcomeEmailJob(
+    payload: WelcomeEmailPayload,
+    options?: JobOptions,
+  ): Promise<void>;
+  addVerifyEmailJob(
+    payload: VerifyEmailPayload,
+    options?: JobOptions,
+  ): Promise<void>;
+  addEmailJob(
+    type: EmailJobType,
+    payload: unknown,
+    options?: JobOptions,
+  ): Promise<void>;
   close(): Promise<void>;
 }

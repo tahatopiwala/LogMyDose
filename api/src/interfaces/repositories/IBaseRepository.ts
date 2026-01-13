@@ -1,9 +1,9 @@
-import { PaginatedResponse } from '../../types/index.js';
+import { PaginatedResponse } from "../../types/index.js";
 
 export interface FindManyOptions {
   page?: number;
   limit?: number;
-  orderBy?: Record<string, 'asc' | 'desc'>;
+  orderBy?: Record<string, "asc" | "desc">;
 }
 
 export interface IBaseRepository<T, CreateInput, UpdateInput> {

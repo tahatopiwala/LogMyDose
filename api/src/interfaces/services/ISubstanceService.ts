@@ -1,12 +1,12 @@
-import { Substance, SubstanceCategory } from '@logmydose/shared/prisma';
+import { Substance, SubstanceCategory } from "@logmydose/shared/prisma";
 import {
   SubstanceWithCategory,
   CreateSubstanceInput,
   UpdateSubstanceInput,
   CreateCategoryInput,
   UpdateCategoryInput,
-} from '../repositories/ISubstanceRepository.js';
-import { PaginatedResponse } from '../../types/index.js';
+} from "../repositories/ISubstanceRepository.js";
+import { PaginatedResponse } from "../../types/index.js";
 
 export interface GetSubstancesQuery {
   page?: number;
@@ -20,10 +20,15 @@ export interface ISubstanceService {
   // Category methods
   getCategories(): Promise<SubstanceCategory[]>;
   createCategory(data: CreateCategoryInput): Promise<SubstanceCategory>;
-  updateCategory(id: string, data: UpdateCategoryInput): Promise<SubstanceCategory>;
+  updateCategory(
+    id: string,
+    data: UpdateCategoryInput,
+  ): Promise<SubstanceCategory>;
 
   // Substance methods
-  getSubstances(query: GetSubstancesQuery): Promise<PaginatedResponse<SubstanceWithCategory>>;
+  getSubstances(
+    query: GetSubstancesQuery,
+  ): Promise<PaginatedResponse<SubstanceWithCategory>>;
   getSubstanceById(id: string): Promise<SubstanceWithCategory | null>;
   createSubstance(data: CreateSubstanceInput): Promise<Substance>;
   updateSubstance(id: string, data: UpdateSubstanceInput): Promise<Substance>;

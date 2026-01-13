@@ -1,1 +1,1 @@
-export { createEmailWorker } from './email.processor.js';
+export { createEmailWorker } from "./email.processor.js";

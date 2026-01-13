@@ -1,8 +1,8 @@
-import { Router } from 'express';
-import { z } from 'zod';
-import { getContainer } from '../container/index.js';
-import { authenticate, requireSuperAdmin } from '../middleware/auth.js';
-import { paginationSchema } from '../types/index.js';
+import { Router } from "express";
+import { z } from "zod";
+import { getContainer } from "../container/index.js";
+import { authenticate, requireSuperAdmin } from "../middleware/auth.js";
+import { paginationSchema } from "../types/index.js";
 
 const router = Router();
 
@@ -49,7 +49,7 @@ const createSubstanceSchema = z.object({
 });
 
 // GET /api/v1/substances/categories
-router.get('/categories', async (_req, res, next) => {
+router.get("/categories", async (_req, res, next) => {
   try {
     const substanceService = getContainer().substanceService;
     const categories = await substanceService.getCategories();
@@ -61,36 +61,46 @@ router.get('/categories', async (_req, res, next) => {
 });
 
 // POST /api/v1/substances/categories (super admin only)
-router.post('/categories', authenticate, requireSuperAdmin, async (req, res, next) => {
-  try {
-    const data = createCategorySchema.parse(req.body);
-    const substanceService = getContainer().substanceService;
+router.post(
+  "/categories",
+  authenticate,
+  requireSuperAdmin,
+  async (req, res, next) => {
+    try {
+      const data = createCategorySchema.parse(req.body);
+      const substanceService = getContainer().substanceService;
 
-    const category = await substanceService.createCategory(data);
+      const category = await substanceService.createCategory(data);
 
-    res.status(201).json({ category });
-  } catch (error) {
-    next(error);
-  }
-});
+      res.status(201).json({ category });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 // PUT /api/v1/substances/categories/:id (super admin only)
-router.put('/categories/:id', authenticate, requireSuperAdmin, async (req, res, next) => {
-  try {
-    const id = req.params.id as string;
-    const data = updateCategorySchema.parse(req.body);
-    const substanceService = getContainer().substanceService;
+router.put(
+  "/categories/:id",
+  authenticate,
+  requireSuperAdmin,
+  async (req, res, next) => {
+    try {
+      const id = req.params.id as string;
+      const data = updateCategorySchema.parse(req.body);
+      const substanceService = getContainer().substanceService;
 
-    const category = await substanceService.updateCategory(id, data);
+      const category = await substanceService.updateCategory(id, data);
 
-    res.json({ category });
-  } catch (error) {
-    next(error);
-  }
-});
+      res.json({ category });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 // GET /api/v1/substances
-router.get('/', async (req, res, next) => {
+router.get("/", async (req, res, next) => {
   try {
     const { page, limit } = paginationSchema.parse(req.query);
     const { categoryId, subcategory, search } = req.query;
@@ -114,7 +124,7 @@ router.get('/', async (req, res, next) => {
 });
 
 // GET /api/v1/substances/:id
-router.get('/:id', async (req, res, next) => {
+router.get("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
     const substanceService = getContainer().substanceService;
@@ -128,7 +138,7 @@ router.get('/:id', async (req, res, next) => {
 });
 
 // POST /api/v1/substances (super admin only)
-router.post('/', authenticate, requireSuperAdmin, async (req, res, next) => {
+router.post("/", authenticate, requireSuperAdmin, async (req, res, next) => {
   try {
     const data = createSubstanceSchema.parse(req.body);
     const substanceService = getContainer().substanceService;
@@ -142,7 +152,7 @@ router.post('/', authenticate, requireSuperAdmin, async (req, res, next) => {
 });
 
 // PUT /api/v1/substances/:id (super admin only)
-router.put('/:id', authenticate, requireSuperAdmin, async (req, res, next) => {
+router.put("/:id", authenticate, requireSuperAdmin, async (req, res, next) => {
   try {
     const id = req.params.id as string;
     const data = createSubstanceSchema.partial().parse(req.body);

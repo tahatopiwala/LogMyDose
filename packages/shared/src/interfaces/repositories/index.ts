@@ -1,31 +1,31 @@
-export { IBaseRepository, FindManyOptions } from './IBaseRepository.js';
+export { IBaseRepository, FindManyOptions } from "./IBaseRepository.js";
 
 export {
   IUserRepository,
   CreateUserInput,
   UpdateUserInput,
-} from './IUserRepository.js';
+} from "./IUserRepository.js";
 
 export {
   IPatientRepository,
   CreatePatientInput,
   UpdatePatientInput,
   FindClinicPatientsOptions,
-} from './IPatientRepository.js';
+} from "./IPatientRepository.js";
 
 export {
   ITenantRepository,
   CreateTenantInput,
   UpdateTenantInput,
   CreateInvitationInput,
-} from './ITenantRepository.js';
+} from "./ITenantRepository.js";
 
 export {
   ISubstanceRepository,
   CreateSubstanceInput,
   UpdateSubstanceInput,
   FindSubstancesOptions,
-} from './ISubstanceRepository.js';
+} from "./ISubstanceRepository.js";
 
 export {
   IProtocolRepository,
@@ -33,7 +33,7 @@ export {
   CreateProtocolInput,
   UpdateProtocolInput,
   FindTemplatesOptions,
-} from './IProtocolRepository.js';
+} from "./IProtocolRepository.js";
 
 export {
   IDoseRepository,
@@ -42,4 +42,4 @@ export {
   CreateSideEffectInput,
   FindDosesOptions,
   FindSideEffectsOptions,
-} from './IDoseRepository.js';
+} from "./IDoseRepository.js";

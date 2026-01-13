@@ -1,4 +1,4 @@
-import { JsonValue } from '../types/database.js';
+import { JsonValue } from "../types/database.js";
 
 /**
  * Tenant entity - Clinic/white-label instances

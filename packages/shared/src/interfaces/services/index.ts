@@ -8,18 +8,18 @@ export {
   UserAuthResponse,
   RefreshInput,
   CurrentUser,
-} from './IAuthService.js';
+} from "./IAuthService.js";
 
-export { IPatientService, PatientDosesQuery } from './IPatientService.js';
+export { IPatientService, PatientDosesQuery } from "./IPatientService.js";
 
 export {
   ITenantService,
   GetClinicPatientsQuery,
   CreateClinicInvitationInput,
   InvitationResponse,
-} from './ITenantService.js';
+} from "./ITenantService.js";
 
-export { ISubstanceService, GetSubstancesQuery } from './ISubstanceService.js';
+export { ISubstanceService, GetSubstancesQuery } from "./ISubstanceService.js";
 
 export {
   IProtocolService,
@@ -28,7 +28,7 @@ export {
   CreateProtocolServiceInput,
   ProtocolScheduleItem,
   ProtocolSchedule,
-} from './IProtocolService.js';
+} from "./IProtocolService.js";
 
 export {
   IDoseService,
@@ -38,4 +38,4 @@ export {
   GetDosesQuery,
   GetSideEffectsQuery,
   GetStatsQuery,
-} from './IDoseService.js';
+} from "./IDoseService.js";

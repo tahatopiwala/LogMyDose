@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 // Pagination schema and types
 export const paginationSchema = z.object({
@@ -22,14 +22,13 @@ export interface PaginatedResponse<T> {
 export const uuidSchema = z.string().uuid();
 
 // Date validation
-export const dateSchema = z.string().refine(
-  (val) => !isNaN(Date.parse(val)),
-  { message: 'Invalid date format' }
-);
+export const dateSchema = z
+  .string()
+  .refine((val) => !isNaN(Date.parse(val)), { message: "Invalid date format" });
 
 // Common query options
 export interface FindManyOptions {
   page?: number;
   limit?: number;
-  orderBy?: Record<string, 'asc' | 'desc'>;
+  orderBy?: Record<string, "asc" | "desc">;
 }

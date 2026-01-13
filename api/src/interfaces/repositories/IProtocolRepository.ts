@@ -1,6 +1,11 @@
-import { Protocol, ProtocolTemplate, ProtocolSubstance, Prisma } from '@logmydose/shared/prisma';
-import { IBaseRepository, FindManyOptions } from './IBaseRepository.js';
-import { PaginatedResponse } from '../../types/index.js';
+import {
+  Protocol,
+  ProtocolTemplate,
+  ProtocolSubstance,
+  Prisma,
+} from "@logmydose/shared/prisma";
+import { IBaseRepository, FindManyOptions } from "./IBaseRepository.js";
+import { PaginatedResponse } from "../../types/index.js";
 
 export interface CreateProtocolSubstanceInput {
   substanceId: string;
@@ -36,16 +41,28 @@ export interface UpdateProtocolInput {
 
 export interface ProtocolWithDetails extends Protocol {
   template?: { id: string; name: string } | null;
-  patient?: { id: string; firstName: string | null; lastName: string | null; email: string };
-  provider?: { id: string; firstName: string | null; lastName: string | null; credentials: string | null } | null;
-  substances: Array<ProtocolSubstance & {
-    substance: {
-      id: string;
-      name: string;
-      doseUnit: string | null;
-      administrationRoute: string | null;
-    };
-  }>;
+  patient?: {
+    id: string;
+    firstName: string | null;
+    lastName: string | null;
+    email: string;
+  };
+  provider?: {
+    id: string;
+    firstName: string | null;
+    lastName: string | null;
+    credentials: string | null;
+  } | null;
+  substances: Array<
+    ProtocolSubstance & {
+      substance: {
+        id: string;
+        name: string;
+        doseUnit: string | null;
+        administrationRoute: string | null;
+      };
+    }
+  >;
 }
 
 export interface FindTemplatesOptions extends FindManyOptions {
@@ -94,17 +111,28 @@ export interface TemplateWithRelations extends ProtocolTemplate {
   substance?: { id: string; name: string; doseUnit: string | null } | null;
 }
 
-export interface IProtocolRepository extends IBaseRepository<Protocol, CreateProtocolInput, UpdateProtocolInput> {
+export interface IProtocolRepository extends IBaseRepository<
+  Protocol,
+  CreateProtocolInput,
+  UpdateProtocolInput
+> {
   // Template methods
-  findTemplates(options?: FindTemplatesOptions): Promise<PaginatedResponse<TemplateWithRelations>>;
+  findTemplates(
+    options?: FindTemplatesOptions,
+  ): Promise<PaginatedResponse<TemplateWithRelations>>;
   findTemplateById(id: string): Promise<TemplateWithRelations | null>;
   createTemplate(data: CreateTemplateInput): Promise<TemplateWithRelations>;
-  updateTemplate(id: string, data: UpdateTemplateInput): Promise<TemplateWithRelations>;
+  updateTemplate(
+    id: string,
+    data: UpdateTemplateInput,
+  ): Promise<TemplateWithRelations>;
   deleteTemplate(id: string): Promise<void>;
   incrementTemplateUseCount(id: string): Promise<void>;
 
   // Protocol methods
   findByIdWithDetails(id: string): Promise<ProtocolWithDetails | null>;
   findByPatientId(patientId: string): Promise<ProtocolWithDetails[]>;
-  findProtocolSubstanceById(id: string): Promise<(ProtocolSubstance & { protocol: Protocol }) | null>;
+  findProtocolSubstanceById(
+    id: string,
+  ): Promise<(ProtocolSubstance & { protocol: Protocol }) | null>;
 }

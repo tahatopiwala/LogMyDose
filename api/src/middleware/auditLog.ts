@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
-import { Prisma } from '@logmydose/shared/prisma';
-import { prisma } from '../lib/db.js';
+import { Request, Response, NextFunction } from "express";
+import { Prisma } from "@logmydose/shared/prisma";
+import { prisma } from "../lib/db.js";
 
 interface AuditLogData {
   action: string;
@@ -10,15 +10,12 @@ interface AuditLogData {
   newValues?: Record<string, unknown>;
 }
 
-export async function createAuditLog(
-  req: Request,
-  data: AuditLogData
-) {
+export async function createAuditLog(req: Request, data: AuditLogData) {
   try {
     await prisma.auditLog.create({
       data: {
         userId: req.user?.id,
-        patientId: req.user?.role === 'patient' ? req.user.id : undefined,
+        patientId: req.user?.role === "patient" ? req.user.id : undefined,
         tenantId: req.user?.tenantId,
         action: data.action,
         tableName: data.tableName,
@@ -26,12 +23,12 @@ export async function createAuditLog(
         oldValues: data.oldValues as Prisma.InputJsonValue,
         newValues: data.newValues as Prisma.InputJsonValue,
         ipAddress: req.ip || req.socket.remoteAddress,
-        userAgent: req.headers['user-agent'],
+        userAgent: req.headers["user-agent"],
       },
     });
   } catch (error) {
     // Log error but don't fail the request
-    console.error('Failed to create audit log:', error);
+    console.error("Failed to create audit log:", error);
   }
 }
 

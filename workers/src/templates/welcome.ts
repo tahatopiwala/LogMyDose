@@ -1,4 +1,4 @@
-import type { WelcomeEmailPayload } from '@logmydose/shared/queues';
+import type { WelcomeEmailPayload } from "@logmydose/shared/queues";
 
 export interface EmailContent {
   subject: string;
@@ -7,10 +7,10 @@ export interface EmailContent {
 }
 
 export function renderWelcomeEmail(payload: WelcomeEmailPayload): EmailContent {
-  const name = payload.firstName || 'there';
+  const name = payload.firstName || "there";
 
   return {
-    subject: 'Welcome to LogMyDose!',
+    subject: "Welcome to LogMyDose!",
     html: `
 <!DOCTYPE html>
 <html>

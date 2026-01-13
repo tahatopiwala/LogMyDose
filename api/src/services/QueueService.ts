@@ -1,12 +1,15 @@
-import { Queue, type ConnectionOptions } from 'bullmq';
+import { Queue, type ConnectionOptions } from "bullmq";
 import {
   QUEUE_NAMES,
   EMAIL_JOB_TYPES,
   type EmailJobType,
   type WelcomeEmailPayload,
   type VerifyEmailPayload,
-} from '@logmydose/shared/queues';
-import type { IQueueService, JobOptions } from '../interfaces/services/IQueueService.js';
+} from "@logmydose/shared/queues";
+import type {
+  IQueueService,
+  JobOptions,
+} from "../interfaces/services/IQueueService.js";
 
 export class QueueService implements IQueueService {
   private emailQueue: Queue;
@@ -19,22 +22,32 @@ export class QueueService implements IQueueService {
         removeOnFail: 1000,
         attempts: 3,
         backoff: {
-          type: 'exponential',
+          type: "exponential",
           delay: 2000,
         },
       },
     });
   }
 
-  async addWelcomeEmailJob(payload: WelcomeEmailPayload, options?: JobOptions): Promise<void> {
+  async addWelcomeEmailJob(
+    payload: WelcomeEmailPayload,
+    options?: JobOptions,
+  ): Promise<void> {
     await this.addEmailJob(EMAIL_JOB_TYPES.WELCOME, payload, options);
   }
 
-  async addVerifyEmailJob(payload: VerifyEmailPayload, options?: JobOptions): Promise<void> {
+  async addVerifyEmailJob(
+    payload: VerifyEmailPayload,
+    options?: JobOptions,
+  ): Promise<void> {
     await this.addEmailJob(EMAIL_JOB_TYPES.VERIFY_EMAIL, payload, options);
   }
 
-  async addEmailJob(type: EmailJobType, payload: unknown, options?: JobOptions): Promise<void> {
+  async addEmailJob(
+    type: EmailJobType,
+    payload: unknown,
+    options?: JobOptions,
+  ): Promise<void> {
     await this.emailQueue.add(type, payload, {
       ...(options?.delay && { delay: options.delay }),
       ...(options?.priority && { priority: options.priority }),

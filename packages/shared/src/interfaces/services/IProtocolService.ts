@@ -1,7 +1,11 @@
-import { Protocol, ProtocolWithDetails, TemplateWithRelations } from '../../entities/index.js';
-import { UpdateProtocolInput } from '../repositories/IProtocolRepository.js';
-import { CurrentUser } from './IAuthService.js';
-import { PaginatedResponse, InputJsonValue } from '../../types/index.js';
+import {
+  Protocol,
+  ProtocolWithDetails,
+  TemplateWithRelations,
+} from "../../entities/index.js";
+import { UpdateProtocolInput } from "../repositories/IProtocolRepository.js";
+import { CurrentUser } from "./IAuthService.js";
+import { PaginatedResponse, InputJsonValue } from "../../types/index.js";
 
 export interface GetTemplatesQuery {
   page?: number;
@@ -25,7 +29,7 @@ export interface CreateProtocolSubstanceServiceInput {
 }
 
 export interface CreateProtocolServiceInput {
-  source: 'template' | 'custom';
+  source: "template" | "custom";
   templateId?: string;
   startDate?: string;
   endDate?: string;
@@ -48,22 +52,27 @@ export interface ProtocolSchedule {
 }
 
 export interface IProtocolService {
-  getTemplates(query: GetTemplatesQuery): Promise<PaginatedResponse<TemplateWithRelations>>;
+  getTemplates(
+    query: GetTemplatesQuery,
+  ): Promise<PaginatedResponse<TemplateWithRelations>>;
   getTemplateById(id: string): Promise<TemplateWithRelations | null>;
   createProtocol(
     patientId: string,
-    input: CreateProtocolServiceInput
+    input: CreateProtocolServiceInput,
   ): Promise<ProtocolWithDetails>;
-  getProtocolById(id: string, currentUser: CurrentUser): Promise<ProtocolWithDetails | null>;
+  getProtocolById(
+    id: string,
+    currentUser: CurrentUser,
+  ): Promise<ProtocolWithDetails | null>;
   updateProtocol(
     id: string,
     data: UpdateProtocolInput,
-    currentUser: CurrentUser
+    currentUser: CurrentUser,
   ): Promise<Protocol>;
   getProtocolSchedule(
     id: string,
     currentUser: CurrentUser,
     startDate?: string,
-    endDate?: string
+    endDate?: string,
   ): Promise<ProtocolSchedule>;
 }

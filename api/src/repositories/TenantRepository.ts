@@ -1,4 +1,8 @@
-import { PrismaClient, Tenant, ClinicInvitation } from '@logmydose/shared/prisma';
+import {
+  PrismaClient,
+  Tenant,
+  ClinicInvitation,
+} from "@logmydose/shared/prisma";
 import {
   ITenantRepository,
   CreateTenantInput,
@@ -7,8 +11,8 @@ import {
   CreateInvitationInput,
   InvitationWithClinic,
   FindManyOptions,
-} from '../interfaces/repositories/index.js';
-import { PaginatedResponse } from '../types/index.js';
+} from "../interfaces/repositories/index.js";
+import { PaginatedResponse } from "../types/index.js";
 
 export class TenantRepository implements ITenantRepository {
   constructor(private readonly prisma: PrismaClient) {}
@@ -36,13 +40,15 @@ export class TenantRepository implements ITenantRepository {
     });
   }
 
-  async findMany(options?: FindManyOptions): Promise<PaginatedResponse<Tenant>> {
+  async findMany(
+    options?: FindManyOptions,
+  ): Promise<PaginatedResponse<Tenant>> {
     const page = options?.page || 1;
     const limit = options?.limit || 20;
 
     const [data, total] = await Promise.all([
       this.prisma.tenant.findMany({
-        orderBy: options?.orderBy || { createdAt: 'desc' },
+        orderBy: options?.orderBy || { createdAt: "desc" },
         skip: (page - 1) * limit,
         take: limit,
       }),
@@ -60,7 +66,9 @@ export class TenantRepository implements ITenantRepository {
     };
   }
 
-  async findAllWithCounts(options?: FindManyOptions): Promise<PaginatedResponse<TenantWithCounts>> {
+  async findAllWithCounts(
+    options?: FindManyOptions,
+  ): Promise<PaginatedResponse<TenantWithCounts>> {
     const page = options?.page || 1;
     const limit = options?.limit || 20;
 
@@ -74,7 +82,7 @@ export class TenantRepository implements ITenantRepository {
             },
           },
         },
-        orderBy: options?.orderBy || { createdAt: 'desc' },
+        orderBy: options?.orderBy || { createdAt: "desc" },
         skip: (page - 1) * limit,
         take: limit,
       }),
@@ -145,39 +153,51 @@ export class TenantRepository implements ITenantRepository {
   }
 
   // Invitation methods
-  async findInvitationByCode(inviteCode: string): Promise<InvitationWithClinic | null> {
+  async findInvitationByCode(
+    inviteCode: string,
+  ): Promise<InvitationWithClinic | null> {
     return this.prisma.clinicInvitation.findUnique({
       where: { inviteCode },
       include: { clinic: { select: { name: true } } },
     });
   }
 
-  async findPendingInvitation(clinicId: string, email: string): Promise<ClinicInvitation | null> {
+  async findPendingInvitation(
+    clinicId: string,
+    email: string,
+  ): Promise<ClinicInvitation | null> {
     return this.prisma.clinicInvitation.findFirst({
       where: {
         clinicId,
         email,
-        status: 'pending',
+        status: "pending",
         expiresAt: { gt: new Date() },
       },
     });
   }
 
-  async findInvitationsByClinicId(clinicId: string): Promise<ClinicInvitation[]> {
+  async findInvitationsByClinicId(
+    clinicId: string,
+  ): Promise<ClinicInvitation[]> {
     return this.prisma.clinicInvitation.findMany({
       where: { clinicId },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
   }
 
-  async createInvitation(data: CreateInvitationInput): Promise<InvitationWithClinic> {
+  async createInvitation(
+    data: CreateInvitationInput,
+  ): Promise<InvitationWithClinic> {
     return this.prisma.clinicInvitation.create({
       data,
       include: { clinic: { select: { name: true } } },
     });
   }
 
-  async updateInvitationStatus(id: string, status: string): Promise<ClinicInvitation> {
+  async updateInvitationStatus(
+    id: string,
+    status: string,
+  ): Promise<ClinicInvitation> {
     return this.prisma.clinicInvitation.update({
       where: { id },
       data: { status },

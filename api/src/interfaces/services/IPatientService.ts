@@ -1,7 +1,10 @@
-import { Patient, Dose, Alert } from '@logmydose/shared/prisma';
-import { PatientWithClinic, UpdatePatientInput } from '../repositories/IPatientRepository.js';
-import { ProtocolWithDetails } from '../repositories/IProtocolRepository.js';
-import { PaginatedResponse } from '../../types/index.js';
+import { Patient, Dose, Alert } from "@logmydose/shared/prisma";
+import {
+  PatientWithClinic,
+  UpdatePatientInput,
+} from "../repositories/IPatientRepository.js";
+import { ProtocolWithDetails } from "../repositories/IProtocolRepository.js";
+import { PaginatedResponse } from "../../types/index.js";
 
 export interface PatientDosesQuery {
   page?: number;
@@ -13,9 +16,15 @@ export interface PatientDosesQuery {
 export interface IPatientService {
   getProfile(patientId: string): Promise<PatientWithClinic | null>;
   updateProfile(patientId: string, data: UpdatePatientInput): Promise<Patient>;
-  linkToClinic(patientId: string, inviteCode: string): Promise<PatientWithClinic>;
+  linkToClinic(
+    patientId: string,
+    inviteCode: string,
+  ): Promise<PatientWithClinic>;
   unlinkFromClinic(patientId: string): Promise<Patient>;
   getProtocols(patientId: string): Promise<ProtocolWithDetails[]>;
-  getDoses(patientId: string, query: PatientDosesQuery): Promise<PaginatedResponse<Dose>>;
+  getDoses(
+    patientId: string,
+    query: PatientDosesQuery,
+  ): Promise<PaginatedResponse<Dose>>;
   getAlerts(patientId: string): Promise<Alert[]>;
 }

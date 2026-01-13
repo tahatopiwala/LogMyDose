@@ -1,5 +1,5 @@
 // Repository interfaces
-export * from './repositories/index.js';
+export * from "./repositories/index.js";
 
 // Service interfaces
-export * from './services/index.js';
+export * from "./services/index.js";

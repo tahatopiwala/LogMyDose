@@ -1,11 +1,15 @@
-import { IBaseRepository, FindManyOptions } from './IBaseRepository.js';
+import { IBaseRepository, FindManyOptions } from "./IBaseRepository.js";
 import {
   Protocol,
   ProtocolSubstance,
   ProtocolWithDetails,
   TemplateWithRelations,
-} from '../../entities/index.js';
-import { PaginatedResponse, Decimal, InputJsonValue } from '../../types/index.js';
+} from "../../entities/index.js";
+import {
+  PaginatedResponse,
+  Decimal,
+  InputJsonValue,
+} from "../../types/index.js";
 
 export interface CreateProtocolSubstanceInput {
   substanceId: string;
@@ -47,10 +51,15 @@ export interface FindTemplatesOptions extends FindManyOptions {
   isPublic?: boolean;
 }
 
-export interface IProtocolRepository
-  extends IBaseRepository<Protocol, CreateProtocolInput, UpdateProtocolInput> {
+export interface IProtocolRepository extends IBaseRepository<
+  Protocol,
+  CreateProtocolInput,
+  UpdateProtocolInput
+> {
   // Template methods
-  findTemplates(options?: FindTemplatesOptions): Promise<PaginatedResponse<TemplateWithRelations>>;
+  findTemplates(
+    options?: FindTemplatesOptions,
+  ): Promise<PaginatedResponse<TemplateWithRelations>>;
   findTemplateById(id: string): Promise<TemplateWithRelations | null>;
   incrementTemplateUseCount(id: string): Promise<void>;
 
@@ -58,6 +67,6 @@ export interface IProtocolRepository
   findByIdWithDetails(id: string): Promise<ProtocolWithDetails | null>;
   findByPatientId(patientId: string): Promise<ProtocolWithDetails[]>;
   findProtocolSubstanceById(
-    id: string
+    id: string,
   ): Promise<(ProtocolSubstance & { protocol: Protocol }) | null>;
 }

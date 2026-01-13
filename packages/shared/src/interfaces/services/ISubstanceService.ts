@@ -1,9 +1,13 @@
-import { Substance, SubstanceCategory, SubstanceWithCategory } from '../../entities/index.js';
+import {
+  Substance,
+  SubstanceCategory,
+  SubstanceWithCategory,
+} from "../../entities/index.js";
 import {
   CreateSubstanceInput,
   UpdateSubstanceInput,
-} from '../repositories/ISubstanceRepository.js';
-import { PaginatedResponse } from '../../types/index.js';
+} from "../repositories/ISubstanceRepository.js";
+import { PaginatedResponse } from "../../types/index.js";
 
 export interface GetSubstancesQuery {
   page?: number;
@@ -15,7 +19,9 @@ export interface GetSubstancesQuery {
 
 export interface ISubstanceService {
   getCategories(): Promise<SubstanceCategory[]>;
-  getSubstances(query: GetSubstancesQuery): Promise<PaginatedResponse<SubstanceWithCategory>>;
+  getSubstances(
+    query: GetSubstancesQuery,
+  ): Promise<PaginatedResponse<SubstanceWithCategory>>;
   getSubstanceById(id: string): Promise<SubstanceWithCategory | null>;
   createSubstance(data: CreateSubstanceInput): Promise<Substance>;
   updateSubstance(id: string, data: UpdateSubstanceInput): Promise<Substance>;

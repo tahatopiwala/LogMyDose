@@ -1,4 +1,4 @@
-import { PrismaClient, Dose, Alert } from '@logmydose/shared/prisma';
+import { PrismaClient, Dose, Alert } from "@logmydose/shared/prisma";
 import {
   IDoseRepository,
   CreateDoseInput,
@@ -11,8 +11,8 @@ import {
   FindSideEffectsOptions,
   DoseStats,
   FindManyOptions,
-} from '../interfaces/repositories/index.js';
-import { PaginatedResponse } from '../types/index.js';
+} from "../interfaces/repositories/index.js";
+import { PaginatedResponse } from "../types/index.js";
 
 export class DoseRepository implements IDoseRepository {
   constructor(private readonly prisma: PrismaClient) {}
@@ -50,7 +50,7 @@ export class DoseRepository implements IDoseRepository {
 
     const [data, total] = await Promise.all([
       this.prisma.dose.findMany({
-        orderBy: options?.orderBy || { loggedAt: 'desc' },
+        orderBy: options?.orderBy || { loggedAt: "desc" },
         skip: (page - 1) * limit,
         take: limit,
       }),
@@ -68,7 +68,9 @@ export class DoseRepository implements IDoseRepository {
     };
   }
 
-  async findManyByPatient(options: FindDosesOptions): Promise<PaginatedResponse<DoseWithSubstance>> {
+  async findManyByPatient(
+    options: FindDosesOptions,
+  ): Promise<PaginatedResponse<DoseWithSubstance>> {
     const page = options.page || 1;
     const limit = options.limit || 20;
 
@@ -79,8 +81,10 @@ export class DoseRepository implements IDoseRepository {
 
     if (options.startDate || options.endDate) {
       where.loggedAt = {};
-      if (options.startDate) (where.loggedAt as Record<string, Date>).gte = options.startDate;
-      if (options.endDate) (where.loggedAt as Record<string, Date>).lte = options.endDate;
+      if (options.startDate)
+        (where.loggedAt as Record<string, Date>).gte = options.startDate;
+      if (options.endDate)
+        (where.loggedAt as Record<string, Date>).lte = options.endDate;
     }
 
     const [data, total] = await Promise.all([
@@ -94,7 +98,7 @@ export class DoseRepository implements IDoseRepository {
             select: { id: true, symptom: true, severity: true },
           },
         },
-        orderBy: { loggedAt: 'desc' },
+        orderBy: { loggedAt: "desc" },
         skip: (page - 1) * limit,
         take: limit,
       }),
@@ -135,7 +139,7 @@ export class DoseRepository implements IDoseRepository {
           select: { id: true, symptom: true, severity: true },
         },
       },
-      orderBy: { loggedAt: 'asc' },
+      orderBy: { loggedAt: "asc" },
     });
   }
 
@@ -170,35 +174,40 @@ export class DoseRepository implements IDoseRepository {
     return this.prisma.dose.count({ where: where as never });
   }
 
-  async getStats(patientId: string, startDate: Date, endDate: Date): Promise<DoseStats> {
-    const [totalDoses, takenDoses, missedDoses, sideEffectCount] = await Promise.all([
-      this.prisma.dose.count({
-        where: {
-          patientId,
-          loggedAt: { gte: startDate, lte: endDate },
-        },
-      }),
-      this.prisma.dose.count({
-        where: {
-          patientId,
-          status: 'taken',
-          loggedAt: { gte: startDate, lte: endDate },
-        },
-      }),
-      this.prisma.dose.count({
-        where: {
-          patientId,
-          status: 'missed',
-          loggedAt: { gte: startDate, lte: endDate },
-        },
-      }),
-      this.prisma.sideEffect.count({
-        where: {
-          patientId,
-          reportedAt: { gte: startDate, lte: endDate },
-        },
-      }),
-    ]);
+  async getStats(
+    patientId: string,
+    startDate: Date,
+    endDate: Date,
+  ): Promise<DoseStats> {
+    const [totalDoses, takenDoses, missedDoses, sideEffectCount] =
+      await Promise.all([
+        this.prisma.dose.count({
+          where: {
+            patientId,
+            loggedAt: { gte: startDate, lte: endDate },
+          },
+        }),
+        this.prisma.dose.count({
+          where: {
+            patientId,
+            status: "taken",
+            loggedAt: { gte: startDate, lte: endDate },
+          },
+        }),
+        this.prisma.dose.count({
+          where: {
+            patientId,
+            status: "missed",
+            loggedAt: { gte: startDate, lte: endDate },
+          },
+        }),
+        this.prisma.sideEffect.count({
+          where: {
+            patientId,
+            reportedAt: { gte: startDate, lte: endDate },
+          },
+        }),
+      ]);
 
     const adherenceRate = totalDoses > 0 ? (takenDoses / totalDoses) * 100 : 0;
 
@@ -214,7 +223,9 @@ export class DoseRepository implements IDoseRepository {
   }
 
   // Side effect methods
-  async createSideEffect(data: CreateSideEffectInput): Promise<SideEffectWithRelations> {
+  async createSideEffect(
+    data: CreateSideEffectInput,
+  ): Promise<SideEffectWithRelations> {
     return this.prisma.sideEffect.create({
       data,
       include: {
@@ -229,7 +240,7 @@ export class DoseRepository implements IDoseRepository {
   }
 
   async findSideEffects(
-    options: FindSideEffectsOptions
+    options: FindSideEffectsOptions,
   ): Promise<PaginatedResponse<SideEffectWithRelations>> {
     const page = options.page || 1;
     const limit = options.limit || 20;
@@ -250,7 +261,7 @@ export class DoseRepository implements IDoseRepository {
             select: { id: true, dose: true, loggedAt: true },
           },
         },
-        orderBy: { reportedAt: 'desc' },
+        orderBy: { reportedAt: "desc" },
         skip: (page - 1) * limit,
         take: limit,
       }),
@@ -275,7 +286,7 @@ export class DoseRepository implements IDoseRepository {
         patientId,
         dismissedAt: null,
       },
-      orderBy: { scheduledFor: 'asc' },
+      orderBy: { scheduledFor: "asc" },
     });
   }
 }

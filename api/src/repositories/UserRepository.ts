@@ -1,11 +1,11 @@
-import { PrismaClient, User } from '@logmydose/shared/prisma';
+import { PrismaClient, User } from "@logmydose/shared/prisma";
 import {
   IUserRepository,
   CreateUserInput,
   UpdateUserInput,
   FindManyOptions,
-} from '../interfaces/repositories/index.js';
-import { PaginatedResponse } from '../types/index.js';
+} from "../interfaces/repositories/index.js";
+import { PaginatedResponse } from "../types/index.js";
 
 export class UserRepository implements IUserRepository {
   constructor(private readonly prisma: PrismaClient) {}
@@ -24,7 +24,7 @@ export class UserRepository implements IUserRepository {
 
     const [data, total] = await Promise.all([
       this.prisma.user.findMany({
-        orderBy: options?.orderBy || { createdAt: 'desc' },
+        orderBy: options?.orderBy || { createdAt: "desc" },
         skip: (page - 1) * limit,
         take: limit,
       }),

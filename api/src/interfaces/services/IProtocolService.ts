@@ -1,11 +1,11 @@
-import { Protocol } from '@logmydose/shared/prisma';
+import { Protocol } from "@logmydose/shared/prisma";
 import {
   ProtocolWithDetails,
   TemplateWithRelations,
   UpdateProtocolInput,
-} from '../repositories/IProtocolRepository.js';
-import { PaginatedResponse } from '../../types/index.js';
-import { CurrentUser } from './IAuthService.js';
+} from "../repositories/IProtocolRepository.js";
+import { PaginatedResponse } from "../../types/index.js";
+import { CurrentUser } from "./IAuthService.js";
 
 export interface GetTemplatesQuery {
   page?: number;
@@ -29,7 +29,7 @@ export interface CreateProtocolSubstanceInput {
 }
 
 export interface CreateProtocolInput {
-  source: 'template' | 'custom';
+  source: "template" | "custom";
   templateId?: string;
   startDate?: string;
   endDate?: string;
@@ -85,15 +85,35 @@ export interface UpdateTemplateInput {
 
 export interface IProtocolService {
   // Template methods
-  getTemplates(query: GetTemplatesQuery): Promise<PaginatedResponse<TemplateWithRelations>>;
+  getTemplates(
+    query: GetTemplatesQuery,
+  ): Promise<PaginatedResponse<TemplateWithRelations>>;
   getTemplateById(id: string): Promise<TemplateWithRelations | null>;
   createTemplate(input: CreateTemplateInput): Promise<TemplateWithRelations>;
-  updateTemplate(id: string, input: UpdateTemplateInput): Promise<TemplateWithRelations>;
+  updateTemplate(
+    id: string,
+    input: UpdateTemplateInput,
+  ): Promise<TemplateWithRelations>;
   deleteTemplate(id: string): Promise<void>;
 
   // Protocol methods
-  createProtocol(patientId: string, input: CreateProtocolInput): Promise<ProtocolWithDetails>;
-  getProtocolById(id: string, currentUser: CurrentUser): Promise<ProtocolWithDetails | null>;
-  updateProtocol(id: string, data: UpdateProtocolInput, currentUser: CurrentUser): Promise<Protocol>;
-  getProtocolSchedule(id: string, currentUser: CurrentUser, startDate?: string, endDate?: string): Promise<ProtocolSchedule>;
+  createProtocol(
+    patientId: string,
+    input: CreateProtocolInput,
+  ): Promise<ProtocolWithDetails>;
+  getProtocolById(
+    id: string,
+    currentUser: CurrentUser,
+  ): Promise<ProtocolWithDetails | null>;
+  updateProtocol(
+    id: string,
+    data: UpdateProtocolInput,
+    currentUser: CurrentUser,
+  ): Promise<Protocol>;
+  getProtocolSchedule(
+    id: string,
+    currentUser: CurrentUser,
+    startDate?: string,
+    endDate?: string,
+  ): Promise<ProtocolSchedule>;
 }

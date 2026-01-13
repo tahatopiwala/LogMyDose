@@ -1,4 +1,8 @@
-import { PrismaClient, Patient, EmailVerificationToken } from '@logmydose/shared/prisma';
+import {
+  PrismaClient,
+  Patient,
+  EmailVerificationToken,
+} from "@logmydose/shared/prisma";
 import {
   IPatientRepository,
   CreatePatientInput,
@@ -7,8 +11,8 @@ import {
   FindClinicPatientsOptions,
   FindManyOptions,
   CreateVerificationTokenInput,
-} from '../interfaces/repositories/index.js';
-import { PaginatedResponse } from '../types/index.js';
+} from "../interfaces/repositories/index.js";
+import { PaginatedResponse } from "../types/index.js";
 
 export class PatientRepository implements IPatientRepository {
   constructor(private readonly prisma: PrismaClient) {}
@@ -36,13 +40,15 @@ export class PatientRepository implements IPatientRepository {
     });
   }
 
-  async findMany(options?: FindManyOptions): Promise<PaginatedResponse<Patient>> {
+  async findMany(
+    options?: FindManyOptions,
+  ): Promise<PaginatedResponse<Patient>> {
     const page = options?.page || 1;
     const limit = options?.limit || 20;
 
     const [data, total] = await Promise.all([
       this.prisma.patient.findMany({
-        orderBy: options?.orderBy || { createdAt: 'desc' },
+        orderBy: options?.orderBy || { createdAt: "desc" },
         skip: (page - 1) * limit,
         take: limit,
       }),
@@ -60,7 +66,9 @@ export class PatientRepository implements IPatientRepository {
     };
   }
 
-  async findByClinicId(options: FindClinicPatientsOptions): Promise<PaginatedResponse<Patient>> {
+  async findByClinicId(
+    options: FindClinicPatientsOptions,
+  ): Promise<PaginatedResponse<Patient>> {
     const page = options.page || 1;
     const limit = options.limit || 20;
 
@@ -68,9 +76,9 @@ export class PatientRepository implements IPatientRepository {
 
     if (options.search) {
       where.OR = [
-        { firstName: { contains: options.search, mode: 'insensitive' } },
-        { lastName: { contains: options.search, mode: 'insensitive' } },
-        { email: { contains: options.search, mode: 'insensitive' } },
+        { firstName: { contains: options.search, mode: "insensitive" } },
+        { lastName: { contains: options.search, mode: "insensitive" } },
+        { email: { contains: options.search, mode: "insensitive" } },
       ];
     }
 
@@ -107,7 +115,7 @@ export class PatientRepository implements IPatientRepository {
             },
           },
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         skip: (page - 1) * limit,
         take: limit,
       }),
@@ -148,14 +156,18 @@ export class PatientRepository implements IPatientRepository {
     });
   }
 
-  async linkToClinic(patientId: string, clinicId: string, controlLevel: string): Promise<Patient> {
+  async linkToClinic(
+    patientId: string,
+    clinicId: string,
+    controlLevel: string,
+  ): Promise<Patient> {
     return this.prisma.patient.update({
       where: { id: patientId },
       data: {
         clinicId,
         clinicLinkedAt: new Date(),
         clinicControlLevel: controlLevel,
-        accountType: 'clinic_managed',
+        accountType: "clinic_managed",
       },
     });
   }
@@ -167,13 +179,15 @@ export class PatientRepository implements IPatientRepository {
         clinicId: null,
         clinicLinkedAt: null,
         clinicControlLevel: null,
-        accountType: 'd2c',
+        accountType: "d2c",
       },
     });
   }
 
   // Email verification methods
-  async createVerificationToken(input: CreateVerificationTokenInput): Promise<EmailVerificationToken> {
+  async createVerificationToken(
+    input: CreateVerificationTokenInput,
+  ): Promise<EmailVerificationToken> {
     return this.prisma.emailVerificationToken.create({
       data: {
         patientId: input.patientId,
@@ -183,7 +197,9 @@ export class PatientRepository implements IPatientRepository {
     });
   }
 
-  async findVerificationToken(token: string): Promise<EmailVerificationToken | null> {
+  async findVerificationToken(
+    token: string,
+  ): Promise<EmailVerificationToken | null> {
     return this.prisma.emailVerificationToken.findUnique({
       where: { token },
     });
@@ -207,10 +223,7 @@ export class PatientRepository implements IPatientRepository {
     await this.prisma.emailVerificationToken.deleteMany({
       where: {
         patientId,
-        OR: [
-          { expiresAt: { lt: new Date() } },
-          { usedAt: { not: null } },
-        ],
+        OR: [{ expiresAt: { lt: new Date() } }, { usedAt: { not: null } }],
       },
     });
   }

@@ -1,10 +1,10 @@
-import jwt, { SignOptions } from 'jsonwebtoken';
-import { env } from './env.js';
+import jwt, { SignOptions } from "jsonwebtoken";
+import { env } from "./env.js";
 
 export interface TokenPayload {
   id: string;
   email: string;
-  role: 'patient' | 'provider' | 'clinic_admin' | 'super_admin';
+  role: "patient" | "provider" | "clinic_admin" | "super_admin";
   tenantId?: string;
 }
 
@@ -35,7 +35,7 @@ export function verifyRefreshToken(token: string): RefreshTokenPayload {
 
 export function generateTokenPair(
   accessPayload: TokenPayload,
-  refreshPayload: RefreshTokenPayload
+  refreshPayload: RefreshTokenPayload,
 ): { accessToken: string; refreshToken: string } {
   return {
     accessToken: generateAccessToken(accessPayload),

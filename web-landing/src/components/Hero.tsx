@@ -1,24 +1,24 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from "react";
 
-const SLIDE_DURATION = 5000
+const SLIDE_DURATION = 5000;
 
 export function Hero() {
-  const [activeSlide, setActiveSlide] = useState(0)
-  const [progressKey, setProgressKey] = useState(0)
-  const slides = ['mobile', 'web']
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [progressKey, setProgressKey] = useState(0);
+  const slides = ["mobile", "web"];
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setActiveSlide((prev) => (prev + 1) % slides.length)
-      setProgressKey((prev) => prev + 1)
-    }, SLIDE_DURATION)
-    return () => clearInterval(interval)
-  }, [slides.length])
+      setActiveSlide((prev) => (prev + 1) % slides.length);
+      setProgressKey((prev) => prev + 1);
+    }, SLIDE_DURATION);
+    return () => clearInterval(interval);
+  }, [slides.length]);
 
   const handleSlideClick = (index: number) => {
-    setActiveSlide(index)
-    setProgressKey((prev) => prev + 1)
-  }
+    setActiveSlide(index);
+    setProgressKey((prev) => prev + 1);
+  };
 
   return (
     <section className="min-h-screen w-full pt-16 px-4 sm:px-6 lg:px-8 overflow-hidden flex items-center">
@@ -27,12 +27,13 @@ export function Hero() {
           {/* Left Side - Text Content */}
           <div className="max-w-xl">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
-              Track Your Peptide Therapy with{' '}
+              Track Your Peptide Therapy with{" "}
               <span className="text-primary-600">AI-Powered Insights</span>
             </h1>
             <p className="mt-6 text-xl text-gray-600">
-              LogMyDose helps you log doses, monitor progress, and get personalized insights
-              from your peptide therapy journey. Smart tracking that works for you.
+              LogMyDose helps you log doses, monitor progress, and get
+              personalized insights from your peptide therapy journey. Smart
+              tracking that works for you.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
               <a
@@ -59,8 +60,9 @@ export function Hero() {
             <div
               className="absolute inset-0 opacity-[0.15]"
               style={{
-                backgroundImage: 'radial-gradient(circle, #BE3455 1px, transparent 1px)',
-                backgroundSize: '24px 24px',
+                backgroundImage:
+                  "radial-gradient(circle, #BE3455 1px, transparent 1px)",
+                backgroundSize: "24px 24px",
               }}
             />
 
@@ -76,8 +78,8 @@ export function Hero() {
               <div
                 className={`absolute inset-0 flex items-center justify-center transition-all duration-700 ease-in-out ${
                   activeSlide === 0
-                    ? 'opacity-100 translate-x-0'
-                    : 'opacity-0 -translate-x-full pointer-events-none'
+                    ? "opacity-100 translate-x-0"
+                    : "opacity-0 -translate-x-full pointer-events-none"
                 }`}
               >
                 <div className="relative">
@@ -97,30 +99,50 @@ export function Hero() {
 
                         {/* Log Dose Header */}
                         <div className="bg-white px-4 pb-3 border-b border-gray-100">
-                          <h2 className="text-base font-bold text-gray-900">Log Dose</h2>
-                          <p className="text-xs text-gray-500">BPC-157 - Morning</p>
+                          <h2 className="text-base font-bold text-gray-900">
+                            Log Dose
+                          </h2>
+                          <p className="text-xs text-gray-500">
+                            BPC-157 - Morning
+                          </p>
                         </div>
 
                         {/* Dose Form */}
                         <div className="px-4 py-3 space-y-3">
                           <div className="bg-white rounded-xl p-3 border border-gray-200">
-                            <div className="text-xs text-gray-500 mb-1">Dosage</div>
-                            <div className="text-lg font-bold text-gray-900">250 mcg</div>
+                            <div className="text-xs text-gray-500 mb-1">
+                              Dosage
+                            </div>
+                            <div className="text-lg font-bold text-gray-900">
+                              250 mcg
+                            </div>
                           </div>
 
                           <div className="bg-white rounded-xl p-3 border border-gray-200">
-                            <div className="text-xs text-gray-500 mb-1">Injection Site</div>
-                            <div className="text-sm font-medium text-gray-900">Subcutaneous - Abdomen</div>
+                            <div className="text-xs text-gray-500 mb-1">
+                              Injection Site
+                            </div>
+                            <div className="text-sm font-medium text-gray-900">
+                              Subcutaneous - Abdomen
+                            </div>
                           </div>
 
                           <div className="bg-white rounded-xl p-3 border border-gray-200">
-                            <div className="text-xs text-gray-500 mb-1">Time</div>
-                            <div className="text-sm font-medium text-gray-900">9:30 AM</div>
+                            <div className="text-xs text-gray-500 mb-1">
+                              Time
+                            </div>
+                            <div className="text-sm font-medium text-gray-900">
+                              9:30 AM
+                            </div>
                           </div>
 
                           <div className="bg-white rounded-xl p-3 border border-gray-200">
-                            <div className="text-xs text-gray-500 mb-1">Notes (optional)</div>
-                            <div className="text-sm text-gray-400">Add any notes...</div>
+                            <div className="text-xs text-gray-500 mb-1">
+                              Notes (optional)
+                            </div>
+                            <div className="text-sm text-gray-400">
+                              Add any notes...
+                            </div>
                           </div>
 
                           <button className="w-full bg-primary-600 text-white rounded-xl py-3 font-semibold text-sm mt-2">
@@ -140,19 +162,31 @@ export function Hero() {
                         <div className="bg-white px-6 pt-8 pb-2 flex justify-between items-center text-xs text-gray-600">
                           <span className="font-medium">9:41</span>
                           <div className="flex items-center gap-1">
-                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm0 16c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7z"/>
+                            <svg
+                              className="w-4 h-4"
+                              fill="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm0 16c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7z" />
                             </svg>
-                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/>
+                            <svg
+                              className="w-4 h-4"
+                              fill="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z" />
                             </svg>
                           </div>
                         </div>
 
                         {/* App Header */}
                         <div className="bg-white px-5 pb-4">
-                          <h2 className="text-lg font-bold text-gray-900">Good morning!</h2>
-                          <p className="text-sm text-gray-500">Your therapy is on track</p>
+                          <h2 className="text-lg font-bold text-gray-900">
+                            Good morning!
+                          </h2>
+                          <p className="text-sm text-gray-500">
+                            Your therapy is on track
+                          </p>
                         </div>
 
                         {/* Stats Cards */}
@@ -161,13 +195,29 @@ export function Hero() {
                           <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
                             <div className="flex items-center justify-between">
                               <div>
-                                <div className="text-xs font-medium text-gray-500 uppercase tracking-wide">Today</div>
-                                <div className="text-2xl font-bold text-gray-900 mt-1">2 of 3</div>
-                                <div className="text-sm text-gray-600">doses logged</div>
+                                <div className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                                  Today
+                                </div>
+                                <div className="text-2xl font-bold text-gray-900 mt-1">
+                                  2 of 3
+                                </div>
+                                <div className="text-sm text-gray-600">
+                                  doses logged
+                                </div>
                               </div>
                               <div className="w-14 h-14 rounded-full bg-primary-100 flex items-center justify-center">
-                                <svg className="w-7 h-7 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                <svg
+                                  className="w-7 h-7 text-primary-600"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                  />
                                 </svg>
                               </div>
                             </div>
@@ -177,8 +227,12 @@ export function Hero() {
                           <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-4 text-white">
                             <div className="flex items-center justify-between">
                               <div>
-                                <div className="text-xs font-medium text-green-100 uppercase tracking-wide">Streak</div>
-                                <div className="text-2xl font-bold mt-1">21 days</div>
+                                <div className="text-xs font-medium text-green-100 uppercase tracking-wide">
+                                  Streak
+                                </div>
+                                <div className="text-2xl font-bold mt-1">
+                                  21 days
+                                </div>
                               </div>
                               <div className="text-3xl">🔥</div>
                             </div>
@@ -199,8 +253,8 @@ export function Hero() {
               <div
                 className={`absolute inset-0 flex items-center justify-center transition-all duration-700 ease-in-out ${
                   activeSlide === 1
-                    ? 'opacity-100 translate-x-0'
-                    : 'opacity-0 translate-x-full pointer-events-none'
+                    ? "opacity-100 translate-x-0"
+                    : "opacity-0 translate-x-full pointer-events-none"
                 }`}
               >
                 {/* Browser Window Mockup */}
@@ -223,12 +277,18 @@ export function Hero() {
                       {/* Dashboard Header */}
                       <div className="flex items-center justify-between mb-4">
                         <div>
-                          <h2 className="text-lg font-bold text-gray-900">Dashboard</h2>
-                          <p className="text-xs text-gray-500">Welcome back, Sarah</p>
+                          <h2 className="text-lg font-bold text-gray-900">
+                            Dashboard
+                          </h2>
+                          <p className="text-xs text-gray-500">
+                            Welcome back, Sarah
+                          </p>
                         </div>
                         <div className="flex items-center gap-2">
                           <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center">
-                            <span className="text-sm font-semibold text-primary-600">S</span>
+                            <span className="text-sm font-semibold text-primary-600">
+                              S
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -237,17 +297,29 @@ export function Hero() {
                       <div className="grid grid-cols-3 gap-3 mb-4">
                         <div className="bg-white rounded-xl p-3 border border-gray-100">
                           <div className="text-xs text-gray-500">This Week</div>
-                          <div className="text-xl font-bold text-gray-900">18/21</div>
-                          <div className="text-xs text-green-600">86% adherence</div>
+                          <div className="text-xl font-bold text-gray-900">
+                            18/21
+                          </div>
+                          <div className="text-xs text-green-600">
+                            86% adherence
+                          </div>
                         </div>
                         <div className="bg-white rounded-xl p-3 border border-gray-100">
-                          <div className="text-xs text-gray-500">Current Streak</div>
-                          <div className="text-xl font-bold text-gray-900">21</div>
+                          <div className="text-xs text-gray-500">
+                            Current Streak
+                          </div>
+                          <div className="text-xl font-bold text-gray-900">
+                            21
+                          </div>
                           <div className="text-xs text-gray-500">days</div>
                         </div>
                         <div className="bg-white rounded-xl p-3 border border-gray-100">
-                          <div className="text-xs text-gray-500">Active Protocols</div>
-                          <div className="text-xl font-bold text-gray-900">3</div>
+                          <div className="text-xs text-gray-500">
+                            Active Protocols
+                          </div>
+                          <div className="text-xl font-bold text-gray-900">
+                            3
+                          </div>
                           <div className="text-xs text-gray-500">peptides</div>
                         </div>
                       </div>
@@ -255,18 +327,43 @@ export function Hero() {
                       {/* Chart Area */}
                       <div className="bg-white rounded-xl p-4 border border-gray-100 mb-4">
                         <div className="flex items-center justify-between mb-3">
-                          <span className="text-sm font-semibold text-gray-900">Weekly Progress</span>
-                          <span className="text-xs text-gray-500">Last 7 days</span>
+                          <span className="text-sm font-semibold text-gray-900">
+                            Weekly Progress
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            Last 7 days
+                          </span>
                         </div>
                         {/* Simple Bar Chart */}
                         <div className="flex items-end gap-2 h-20">
-                          <div className="flex-1 bg-primary-200 rounded-t" style={{ height: '60%' }} />
-                          <div className="flex-1 bg-primary-300 rounded-t" style={{ height: '80%' }} />
-                          <div className="flex-1 bg-primary-400 rounded-t" style={{ height: '100%' }} />
-                          <div className="flex-1 bg-primary-500 rounded-t" style={{ height: '90%' }} />
-                          <div className="flex-1 bg-primary-400 rounded-t" style={{ height: '70%' }} />
-                          <div className="flex-1 bg-primary-500 rounded-t" style={{ height: '100%' }} />
-                          <div className="flex-1 bg-primary-300 rounded-t" style={{ height: '50%' }} />
+                          <div
+                            className="flex-1 bg-primary-200 rounded-t"
+                            style={{ height: "60%" }}
+                          />
+                          <div
+                            className="flex-1 bg-primary-300 rounded-t"
+                            style={{ height: "80%" }}
+                          />
+                          <div
+                            className="flex-1 bg-primary-400 rounded-t"
+                            style={{ height: "100%" }}
+                          />
+                          <div
+                            className="flex-1 bg-primary-500 rounded-t"
+                            style={{ height: "90%" }}
+                          />
+                          <div
+                            className="flex-1 bg-primary-400 rounded-t"
+                            style={{ height: "70%" }}
+                          />
+                          <div
+                            className="flex-1 bg-primary-500 rounded-t"
+                            style={{ height: "100%" }}
+                          />
+                          <div
+                            className="flex-1 bg-primary-300 rounded-t"
+                            style={{ height: "50%" }}
+                          />
                         </div>
                         <div className="flex justify-between mt-2 text-xs text-gray-400">
                           <span>Mon</span>
@@ -283,13 +380,28 @@ export function Hero() {
                       <div className="bg-gradient-to-r from-primary-50 to-primary-100 rounded-xl p-3 border border-primary-100">
                         <div className="flex items-start gap-2">
                           <div className="w-6 h-6 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
-                            <svg className="w-3.5 h-3.5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            <svg
+                              className="w-3.5 h-3.5 text-primary-600"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M13 10V3L4 14h7v7l9-11h-7z"
+                              />
                             </svg>
                           </div>
                           <div>
-                            <div className="text-xs font-semibold text-gray-900">AI Insight</div>
-                            <p className="text-xs text-gray-600 mt-0.5">Your morning doses show 95% consistency. Consider setting a reminder for evening doses.</p>
+                            <div className="text-xs font-semibold text-gray-900">
+                              AI Insight
+                            </div>
+                            <p className="text-xs text-gray-600 mt-0.5">
+                              Your morning doses show 95% consistency. Consider
+                              setting a reminder for evening doses.
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -310,9 +422,15 @@ export function Hero() {
                 >
                   <div className="relative h-1.5 w-16 bg-gray-200 rounded-full overflow-hidden">
                     <div
-                      key={activeSlide === index ? progressKey : `static-${index}`}
+                      key={
+                        activeSlide === index ? progressKey : `static-${index}`
+                      }
                       className={`absolute inset-y-0 left-0 rounded-full bg-primary-600 ${
-                        index < activeSlide ? 'w-full' : index > activeSlide ? 'w-0' : ''
+                        index < activeSlide
+                          ? "w-full"
+                          : index > activeSlide
+                            ? "w-0"
+                            : ""
                       }`}
                       style={
                         activeSlide === index
@@ -325,10 +443,12 @@ export function Hero() {
                   </div>
                   <span
                     className={`text-xs font-medium transition-colors ${
-                      activeSlide === index ? 'text-primary-600' : 'text-gray-400'
+                      activeSlide === index
+                        ? "text-primary-600"
+                        : "text-gray-400"
                     }`}
                   >
-                    {label === 'mobile' ? 'Mobile' : 'Web'}
+                    {label === "mobile" ? "Mobile" : "Web"}
                   </span>
                 </button>
               ))}
@@ -337,5 +457,5 @@ export function Hero() {
         </div>
       </div>
     </section>
-  )
+  );
 }

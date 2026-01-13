@@ -1,4 +1,4 @@
-import { Protocol, Prisma } from '@logmydose/shared/prisma';
+import { Protocol, Prisma } from "@logmydose/shared/prisma";
 import {
   IProtocolService,
   GetTemplatesQuery,
@@ -6,26 +6,26 @@ import {
   ProtocolSchedule,
   CreateTemplateInput,
   UpdateTemplateInput,
-} from '../interfaces/services/IProtocolService.js';
-import { CurrentUser } from '../interfaces/services/IAuthService.js';
+} from "../interfaces/services/IProtocolService.js";
+import { CurrentUser } from "../interfaces/services/IAuthService.js";
 import {
   IProtocolRepository,
   ProtocolWithDetails,
   TemplateWithRelations,
   UpdateProtocolInput,
-} from '../interfaces/repositories/IProtocolRepository.js';
-import { ISubstanceRepository } from '../interfaces/repositories/ISubstanceRepository.js';
-import { PaginatedResponse } from '../types/index.js';
-import { AppError } from '../middleware/errorHandler.js';
+} from "../interfaces/repositories/IProtocolRepository.js";
+import { ISubstanceRepository } from "../interfaces/repositories/ISubstanceRepository.js";
+import { PaginatedResponse } from "../types/index.js";
+import { AppError } from "../middleware/errorHandler.js";
 
 export class ProtocolService implements IProtocolService {
   constructor(
     private readonly protocolRepository: IProtocolRepository,
-    private readonly substanceRepository: ISubstanceRepository
+    private readonly substanceRepository: ISubstanceRepository,
   ) {}
 
   async getTemplates(
-    query: GetTemplatesQuery
+    query: GetTemplatesQuery,
   ): Promise<PaginatedResponse<TemplateWithRelations>> {
     return this.protocolRepository.findTemplates({
       page: query.page,
@@ -42,26 +42,32 @@ export class ProtocolService implements IProtocolService {
     const template = await this.protocolRepository.findTemplateById(id);
 
     if (!template) {
-      throw new AppError(404, 'Template not found', 'NOT_FOUND');
+      throw new AppError(404, "Template not found", "NOT_FOUND");
     }
 
     return template;
   }
 
-  async createTemplate(input: CreateTemplateInput): Promise<TemplateWithRelations> {
+  async createTemplate(
+    input: CreateTemplateInput,
+  ): Promise<TemplateWithRelations> {
     // Validate category exists if provided
     if (input.categoryId) {
-      const category = await this.substanceRepository.findCategoryById(input.categoryId);
+      const category = await this.substanceRepository.findCategoryById(
+        input.categoryId,
+      );
       if (!category) {
-        throw new AppError(400, 'Category not found', 'CATEGORY_NOT_FOUND');
+        throw new AppError(400, "Category not found", "CATEGORY_NOT_FOUND");
       }
     }
 
     // Validate substance exists if provided
     if (input.substanceId) {
-      const substance = await this.substanceRepository.findById(input.substanceId);
+      const substance = await this.substanceRepository.findById(
+        input.substanceId,
+      );
       if (!substance) {
-        throw new AppError(400, 'Substance not found', 'SUBSTANCE_NOT_FOUND');
+        throw new AppError(400, "Substance not found", "SUBSTANCE_NOT_FOUND");
       }
     }
 
@@ -82,26 +88,33 @@ export class ProtocolService implements IProtocolService {
     });
   }
 
-  async updateTemplate(id: string, input: UpdateTemplateInput): Promise<TemplateWithRelations> {
+  async updateTemplate(
+    id: string,
+    input: UpdateTemplateInput,
+  ): Promise<TemplateWithRelations> {
     const existingTemplate = await this.protocolRepository.findTemplateById(id);
 
     if (!existingTemplate) {
-      throw new AppError(404, 'Template not found', 'NOT_FOUND');
+      throw new AppError(404, "Template not found", "NOT_FOUND");
     }
 
     // Validate category exists if provided
     if (input.categoryId) {
-      const category = await this.substanceRepository.findCategoryById(input.categoryId);
+      const category = await this.substanceRepository.findCategoryById(
+        input.categoryId,
+      );
       if (!category) {
-        throw new AppError(400, 'Category not found', 'CATEGORY_NOT_FOUND');
+        throw new AppError(400, "Category not found", "CATEGORY_NOT_FOUND");
       }
     }
 
     // Validate substance exists if provided
     if (input.substanceId) {
-      const substance = await this.substanceRepository.findById(input.substanceId);
+      const substance = await this.substanceRepository.findById(
+        input.substanceId,
+      );
       if (!substance) {
-        throw new AppError(400, 'Substance not found', 'SUBSTANCE_NOT_FOUND');
+        throw new AppError(400, "Substance not found", "SUBSTANCE_NOT_FOUND");
       }
     }
 
@@ -126,7 +139,7 @@ export class ProtocolService implements IProtocolService {
     const existingTemplate = await this.protocolRepository.findTemplateById(id);
 
     if (!existingTemplate) {
-      throw new AppError(404, 'Template not found', 'NOT_FOUND');
+      throw new AppError(404, "Template not found", "NOT_FOUND");
     }
 
     await this.protocolRepository.deleteTemplate(id);
@@ -134,14 +147,16 @@ export class ProtocolService implements IProtocolService {
 
   async createProtocol(
     patientId: string,
-    input: CreateProtocolInput
+    input: CreateProtocolInput,
   ): Promise<ProtocolWithDetails> {
     // If using template, verify it exists and increment use count
-    if (input.source === 'template' && input.templateId) {
-      const template = await this.protocolRepository.findTemplateById(input.templateId);
+    if (input.source === "template" && input.templateId) {
+      const template = await this.protocolRepository.findTemplateById(
+        input.templateId,
+      );
 
       if (!template) {
-        throw new AppError(404, 'Template not found', 'TEMPLATE_NOT_FOUND');
+        throw new AppError(404, "Template not found", "TEMPLATE_NOT_FOUND");
       }
 
       await this.protocolRepository.incrementTemplateUseCount(input.templateId);
@@ -152,7 +167,11 @@ export class ProtocolService implements IProtocolService {
     const substances = await this.substanceRepository.findByIds(substanceIds);
 
     if (substances.length !== substanceIds.length) {
-      throw new AppError(400, 'One or more substances not found', 'SUBSTANCE_NOT_FOUND');
+      throw new AppError(
+        400,
+        "One or more substances not found",
+        "SUBSTANCE_NOT_FOUND",
+      );
     }
 
     const protocol = await this.protocolRepository.create({
@@ -162,7 +181,7 @@ export class ProtocolService implements IProtocolService {
       startDate: input.startDate ? new Date(input.startDate) : undefined,
       endDate: input.endDate ? new Date(input.endDate) : undefined,
       notes: input.notes,
-      status: 'active',
+      status: "active",
       substances: input.substances.map((s) => ({
         substanceId: s.substanceId,
         dose: s.dose,
@@ -176,30 +195,42 @@ export class ProtocolService implements IProtocolService {
       })),
     });
 
-    const result = await this.protocolRepository.findByIdWithDetails(protocol.id);
+    const result = await this.protocolRepository.findByIdWithDetails(
+      protocol.id,
+    );
     if (!result) {
-      throw new AppError(500, 'Failed to retrieve created protocol', 'INTERNAL_ERROR');
+      throw new AppError(
+        500,
+        "Failed to retrieve created protocol",
+        "INTERNAL_ERROR",
+      );
     }
 
     return result;
   }
 
-  async getProtocolById(id: string, currentUser: CurrentUser): Promise<ProtocolWithDetails | null> {
+  async getProtocolById(
+    id: string,
+    currentUser: CurrentUser,
+  ): Promise<ProtocolWithDetails | null> {
     const protocol = await this.protocolRepository.findByIdWithDetails(id);
 
     if (!protocol) {
-      throw new AppError(404, 'Protocol not found', 'NOT_FOUND');
+      throw new AppError(404, "Protocol not found", "NOT_FOUND");
     }
 
     // Verify access
-    if (currentUser.role === 'patient' && protocol.patientId !== currentUser.id) {
-      throw new AppError(403, 'Access denied', 'FORBIDDEN');
+    if (
+      currentUser.role === "patient" &&
+      protocol.patientId !== currentUser.id
+    ) {
+      throw new AppError(403, "Access denied", "FORBIDDEN");
     }
 
     // For providers, check tenant access
-    if (['provider', 'clinic_admin'].includes(currentUser.role)) {
+    if (["provider", "clinic_admin"].includes(currentUser.role)) {
       if (protocol.clinicId !== currentUser.tenantId) {
-        throw new AppError(403, 'Access denied', 'FORBIDDEN');
+        throw new AppError(403, "Access denied", "FORBIDDEN");
       }
     }
 
@@ -209,17 +240,20 @@ export class ProtocolService implements IProtocolService {
   async updateProtocol(
     id: string,
     data: UpdateProtocolInput,
-    currentUser: CurrentUser
+    currentUser: CurrentUser,
   ): Promise<Protocol> {
     const existingProtocol = await this.protocolRepository.findById(id);
 
     if (!existingProtocol) {
-      throw new AppError(404, 'Protocol not found', 'NOT_FOUND');
+      throw new AppError(404, "Protocol not found", "NOT_FOUND");
     }
 
     // Verify access
-    if (currentUser.role === 'patient' && existingProtocol.patientId !== currentUser.id) {
-      throw new AppError(403, 'Access denied', 'FORBIDDEN');
+    if (
+      currentUser.role === "patient" &&
+      existingProtocol.patientId !== currentUser.id
+    ) {
+      throw new AppError(403, "Access denied", "FORBIDDEN");
     }
 
     return this.protocolRepository.update(id, data);
@@ -229,21 +263,26 @@ export class ProtocolService implements IProtocolService {
     id: string,
     currentUser: CurrentUser,
     startDate?: string,
-    endDate?: string
+    endDate?: string,
   ): Promise<ProtocolSchedule> {
     const protocol = await this.protocolRepository.findByIdWithDetails(id);
 
     if (!protocol) {
-      throw new AppError(404, 'Protocol not found', 'NOT_FOUND');
+      throw new AppError(404, "Protocol not found", "NOT_FOUND");
     }
 
     // Verify access
-    if (currentUser.role === 'patient' && protocol.patientId !== currentUser.id) {
-      throw new AppError(403, 'Access denied', 'FORBIDDEN');
+    if (
+      currentUser.role === "patient" &&
+      protocol.patientId !== currentUser.id
+    ) {
+      throw new AppError(403, "Access denied", "FORBIDDEN");
     }
 
     const start = startDate ? new Date(startDate) : new Date();
-    const end = endDate ? new Date(endDate) : new Date(start.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const end = endDate
+      ? new Date(endDate)
+      : new Date(start.getTime() + 7 * 24 * 60 * 60 * 1000);
 
     const schedule = protocol.substances.map((ps) => ({
       substanceId: ps.substanceId,

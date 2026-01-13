@@ -1,4 +1,4 @@
-import { PrismaClient } from '@logmydose/shared/prisma';
+import { PrismaClient } from "@logmydose/shared/prisma";
 
 // Repository interfaces
 import {
@@ -8,7 +8,7 @@ import {
   ISubstanceRepository,
   IProtocolRepository,
   IDoseRepository,
-} from '../interfaces/repositories/index.js';
+} from "../interfaces/repositories/index.js";
 
 // Repository implementations
 import {
@@ -18,7 +18,7 @@ import {
   SubstanceRepository,
   ProtocolRepository,
   DoseRepository,
-} from '../repositories/index.js';
+} from "../repositories/index.js";
 
 // Service interfaces
 import {
@@ -29,7 +29,7 @@ import {
   IProtocolService,
   IDoseService,
   IQueueService,
-} from '../interfaces/services/index.js';
+} from "../interfaces/services/index.js";
 
 // Service implementations
 import {
@@ -40,9 +40,9 @@ import {
   ProtocolService,
   DoseService,
   QueueService,
-} from '../services/index.js';
+} from "../services/index.js";
 
-import { env } from '../lib/env.js';
+import { env } from "../lib/env.js";
 
 export class Container {
   private static instance: Container;
@@ -84,33 +84,41 @@ export class Container {
     this.authService = new AuthService(
       this.userRepository,
       this.patientRepository,
-      this.queueService
+      this.queueService,
     );
 
     this.patientService = new PatientService(
       this.patientRepository,
       this.tenantRepository,
       this.protocolRepository,
-      this.doseRepository
+      this.doseRepository,
     );
 
-    this.tenantService = new TenantService(this.tenantRepository, this.patientRepository);
+    this.tenantService = new TenantService(
+      this.tenantRepository,
+      this.patientRepository,
+    );
 
     this.substanceService = new SubstanceService(this.substanceRepository);
 
-    this.protocolService = new ProtocolService(this.protocolRepository, this.substanceRepository);
+    this.protocolService = new ProtocolService(
+      this.protocolRepository,
+      this.substanceRepository,
+    );
 
     this.doseService = new DoseService(
       this.doseRepository,
       this.substanceRepository,
-      this.protocolRepository
+      this.protocolRepository,
     );
   }
 
   static getInstance(prisma?: PrismaClient): Container {
     if (!Container.instance) {
       if (!prisma) {
-        throw new Error('Prisma client required for initial Container instantiation');
+        throw new Error(
+          "Prisma client required for initial Container instantiation",
+        );
       }
       Container.instance = new Container(prisma);
     }

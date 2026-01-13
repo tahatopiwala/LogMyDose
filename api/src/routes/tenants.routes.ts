@@ -1,11 +1,15 @@
-import { Router } from 'express';
-import { z } from 'zod';
-import { Prisma } from '@logmydose/shared/prisma';
-import { getContainer } from '../container/index.js';
-import { authenticate, requireAdmin, requireSuperAdmin } from '../middleware/auth.js';
-import { AppError } from '../middleware/errorHandler.js';
-import { createAuditLog } from '../middleware/auditLog.js';
-import { paginationSchema } from '../types/index.js';
+import { Router } from "express";
+import { z } from "zod";
+import { Prisma } from "@logmydose/shared/prisma";
+import { getContainer } from "../container/index.js";
+import {
+  authenticate,
+  requireAdmin,
+  requireSuperAdmin,
+} from "../middleware/auth.js";
+import { AppError } from "../middleware/errorHandler.js";
+import { createAuditLog } from "../middleware/auditLog.js";
+import { paginationSchema } from "../types/index.js";
 
 const router = Router();
 
@@ -16,7 +20,7 @@ const createTenantSchema = z.object({
     .string()
     .min(1)
     .max(100)
-    .regex(/^[a-z0-9-]+$/, 'Slug must be lowercase alphanumeric with hyphens'),
+    .regex(/^[a-z0-9-]+$/, "Slug must be lowercase alphanumeric with hyphens"),
   branding: z
     .object({
       logoUrl: z.string().url().optional(),
@@ -47,17 +51,21 @@ const createInvitationSchema = z.object({
 });
 
 // GET /api/v1/tenants/me
-router.get('/me', authenticate, requireAdmin, async (req, res, next) => {
+router.get("/me", authenticate, requireAdmin, async (req, res, next) => {
   try {
     if (!req.user?.tenantId) {
-      throw new AppError(400, 'No tenant associated with this account', 'NO_TENANT');
+      throw new AppError(
+        400,
+        "No tenant associated with this account",
+        "NO_TENANT",
+      );
     }
 
     const tenantService = getContainer().tenantService;
     const tenant = await tenantService.getMyClinic(req.user.tenantId);
 
     if (!tenant) {
-      throw new AppError(404, 'Tenant not found', 'NOT_FOUND');
+      throw new AppError(404, "Tenant not found", "NOT_FOUND");
     }
 
     res.json({ tenant });
@@ -67,10 +75,14 @@ router.get('/me', authenticate, requireAdmin, async (req, res, next) => {
 });
 
 // PUT /api/v1/tenants/me
-router.put('/me', authenticate, requireAdmin, async (req, res, next) => {
+router.put("/me", authenticate, requireAdmin, async (req, res, next) => {
   try {
     if (!req.user?.tenantId) {
-      throw new AppError(400, 'No tenant associated with this account', 'NO_TENANT');
+      throw new AppError(
+        400,
+        "No tenant associated with this account",
+        "NO_TENANT",
+      );
     }
 
     const data = updateTenantSchema.parse(req.body);
@@ -83,8 +95,8 @@ router.put('/me', authenticate, requireAdmin, async (req, res, next) => {
     });
 
     await createAuditLog(req, {
-      action: 'tenant.update',
-      tableName: 'tenants',
+      action: "tenant.update",
+      tableName: "tenants",
       recordId: tenant.id,
       newValues: data as Record<string, unknown>,
     });
@@ -96,77 +108,107 @@ router.put('/me', authenticate, requireAdmin, async (req, res, next) => {
 });
 
 // GET /api/v1/tenants/me/patients
-router.get('/me/patients', authenticate, requireAdmin, async (req, res, next) => {
-  try {
-    if (!req.user?.tenantId) {
-      throw new AppError(400, 'No tenant associated with this account', 'NO_TENANT');
+router.get(
+  "/me/patients",
+  authenticate,
+  requireAdmin,
+  async (req, res, next) => {
+    try {
+      if (!req.user?.tenantId) {
+        throw new AppError(
+          400,
+          "No tenant associated with this account",
+          "NO_TENANT",
+        );
+      }
+
+      const { page, limit } = paginationSchema.parse(req.query);
+      const { search, status } = req.query;
+
+      const tenantService = getContainer().tenantService;
+      const result = await tenantService.getClinicPatients(req.user.tenantId, {
+        page,
+        limit,
+        search: search as string,
+        status: status as string,
+      });
+
+      res.json({
+        patients: result.data,
+        pagination: result.pagination,
+      });
+    } catch (error) {
+      next(error);
     }
-
-    const { page, limit } = paginationSchema.parse(req.query);
-    const { search, status } = req.query;
-
-    const tenantService = getContainer().tenantService;
-    const result = await tenantService.getClinicPatients(req.user.tenantId, {
-      page,
-      limit,
-      search: search as string,
-      status: status as string,
-    });
-
-    res.json({
-      patients: result.data,
-      pagination: result.pagination,
-    });
-  } catch (error) {
-    next(error);
-  }
-});
+  },
+);
 
 // POST /api/v1/tenants/me/invitations
-router.post('/me/invitations', authenticate, requireAdmin, async (req, res, next) => {
-  try {
-    if (!req.user?.tenantId) {
-      throw new AppError(400, 'No tenant associated with this account', 'NO_TENANT');
+router.post(
+  "/me/invitations",
+  authenticate,
+  requireAdmin,
+  async (req, res, next) => {
+    try {
+      if (!req.user?.tenantId) {
+        throw new AppError(
+          400,
+          "No tenant associated with this account",
+          "NO_TENANT",
+        );
+      }
+
+      const data = createInvitationSchema.parse(req.body);
+      const tenantService = getContainer().tenantService;
+
+      const invitation = await tenantService.createInvitation(
+        req.user.tenantId,
+        data,
+      );
+
+      await createAuditLog(req, {
+        action: "invitation.create",
+        tableName: "clinic_invitations",
+        recordId: invitation.id,
+        newValues: { email: data.email },
+      });
+
+      res.status(201).json({ invitation });
+    } catch (error) {
+      next(error);
     }
-
-    const data = createInvitationSchema.parse(req.body);
-    const tenantService = getContainer().tenantService;
-
-    const invitation = await tenantService.createInvitation(req.user.tenantId, data);
-
-    await createAuditLog(req, {
-      action: 'invitation.create',
-      tableName: 'clinic_invitations',
-      recordId: invitation.id,
-      newValues: { email: data.email },
-    });
-
-    res.status(201).json({ invitation });
-  } catch (error) {
-    next(error);
-  }
-});
+  },
+);
 
 // GET /api/v1/tenants/me/invitations
-router.get('/me/invitations', authenticate, requireAdmin, async (req, res, next) => {
-  try {
-    if (!req.user?.tenantId) {
-      throw new AppError(400, 'No tenant associated with this account', 'NO_TENANT');
+router.get(
+  "/me/invitations",
+  authenticate,
+  requireAdmin,
+  async (req, res, next) => {
+    try {
+      if (!req.user?.tenantId) {
+        throw new AppError(
+          400,
+          "No tenant associated with this account",
+          "NO_TENANT",
+        );
+      }
+
+      const tenantService = getContainer().tenantService;
+      const invitations = await tenantService.getInvitations(req.user.tenantId);
+
+      res.json({ invitations });
+    } catch (error) {
+      next(error);
     }
-
-    const tenantService = getContainer().tenantService;
-    const invitations = await tenantService.getInvitations(req.user.tenantId);
-
-    res.json({ invitations });
-  } catch (error) {
-    next(error);
-  }
-});
+  },
+);
 
 // Super admin routes
 
 // GET /api/v1/tenants (super admin only)
-router.get('/', authenticate, requireSuperAdmin, async (req, res, next) => {
+router.get("/", authenticate, requireSuperAdmin, async (req, res, next) => {
   try {
     const { page, limit } = paginationSchema.parse(req.query);
     const tenantService = getContainer().tenantService;
@@ -183,7 +225,7 @@ router.get('/', authenticate, requireSuperAdmin, async (req, res, next) => {
 });
 
 // POST /api/v1/tenants (super admin only)
-router.post('/', authenticate, requireSuperAdmin, async (req, res, next) => {
+router.post("/", authenticate, requireSuperAdmin, async (req, res, next) => {
   try {
     const data = createTenantSchema.parse(req.body);
     const tenantService = getContainer().tenantService;
@@ -196,8 +238,8 @@ router.post('/', authenticate, requireSuperAdmin, async (req, res, next) => {
     });
 
     await createAuditLog(req, {
-      action: 'tenant.create',
-      tableName: 'tenants',
+      action: "tenant.create",
+      tableName: "tenants",
       recordId: tenant.id,
       newValues: { name: data.name, slug: data.slug },
     });
@@ -209,7 +251,7 @@ router.post('/', authenticate, requireSuperAdmin, async (req, res, next) => {
 });
 
 // GET /api/v1/tenants/:id (super admin only)
-router.get('/:id', authenticate, requireSuperAdmin, async (req, res, next) => {
+router.get("/:id", authenticate, requireSuperAdmin, async (req, res, next) => {
   try {
     const id = req.params.id as string;
     const tenantService = getContainer().tenantService;
@@ -217,7 +259,7 @@ router.get('/:id', authenticate, requireSuperAdmin, async (req, res, next) => {
     const tenant = await tenantService.getTenantWithUsers(id);
 
     if (!tenant) {
-      throw new AppError(404, 'Tenant not found', 'NOT_FOUND');
+      throw new AppError(404, "Tenant not found", "NOT_FOUND");
     }
 
     res.json({ tenant });

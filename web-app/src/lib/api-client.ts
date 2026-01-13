@@ -39,7 +39,7 @@ class ApiClient {
   async request<T>(
     endpoint: string,
     options: RequestInit = {},
-    isRetry = false
+    isRetry = false,
   ): Promise<T> {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       ...options,
@@ -52,8 +52,14 @@ class ApiClient {
 
     if (!response.ok) {
       // Try to refresh token on 401, but not for login/register/refresh or retries
-      const skipRefreshEndpoints = ["/auth/login", "/auth/register", "/auth/refresh"];
-      const shouldSkipRefresh = skipRefreshEndpoints.some((e) => endpoint.startsWith(e));
+      const skipRefreshEndpoints = [
+        "/auth/login",
+        "/auth/register",
+        "/auth/refresh",
+      ];
+      const shouldSkipRefresh = skipRefreshEndpoints.some((e) =>
+        endpoint.startsWith(e),
+      );
 
       if (response.status === 401 && !isRetry && !shouldSkipRefresh) {
         const refreshed = await this.refreshToken();

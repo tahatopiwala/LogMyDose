@@ -1,14 +1,18 @@
-import { Worker, Job } from 'bullmq';
+import { Worker, Job } from "bullmq";
 import {
   QUEUE_NAMES,
   EMAIL_JOB_TYPES,
   welcomeEmailPayloadSchema,
   verifyEmailPayloadSchema,
-} from '@logmydose/shared/queues';
-import { redis } from '../lib/redis.js';
-import { env } from '../config/env.js';
-import { ResendEmailService } from '../services/EmailService.js';
-import { renderWelcomeEmail, renderVerifyEmail, type EmailContent } from '../templates/index.js';
+} from "@logmydose/shared/queues";
+import { redis } from "../lib/redis.js";
+import { env } from "../config/env.js";
+import { ResendEmailService } from "../services/EmailService.js";
+import {
+  renderWelcomeEmail,
+  renderVerifyEmail,
+  type EmailContent,
+} from "../templates/index.js";
 
 const emailService = new ResendEmailService();
 
@@ -44,7 +48,9 @@ async function processEmailJob(job: Job): Promise<void> {
     text: emailContent.text,
   });
 
-  console.log(`[Email Worker] Email sent successfully: ${job.name} to ${toEmail} (id: ${result.id})`);
+  console.log(
+    `[Email Worker] Email sent successfully: ${job.name} to ${toEmail} (id: ${result.id})`,
+  );
 }
 
 export function createEmailWorker(): Worker {
@@ -53,16 +59,16 @@ export function createEmailWorker(): Worker {
     concurrency: env.WORKER_CONCURRENCY,
   });
 
-  worker.on('completed', (job) => {
+  worker.on("completed", (job) => {
     console.log(`[Email Worker] Job ${job.id} completed successfully`);
   });
 
-  worker.on('failed', (job, err) => {
+  worker.on("failed", (job, err) => {
     console.error(`[Email Worker] Job ${job?.id} failed:`, err.message);
   });
 
-  worker.on('error', (err) => {
-    console.error('[Email Worker] Worker error:', err.message);
+  worker.on("error", (err) => {
+    console.error("[Email Worker] Worker error:", err.message);
   });
 
   return worker;

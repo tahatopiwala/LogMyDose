@@ -4,8 +4,8 @@ import {
   DoseWithDetails,
   SideEffectWithRelations,
   DoseStats,
-} from '../../entities/index.js';
-import { PaginatedResponse } from '../../types/index.js';
+} from "../../entities/index.js";
+import { PaginatedResponse } from "../../types/index.js";
 
 export interface LogDoseInput {
   protocolSubstanceId?: string;
@@ -13,14 +13,14 @@ export interface LogDoseInput {
   dose: number;
   doseUnit?: string;
   scheduledAt?: string;
-  status?: 'taken' | 'missed' | 'skipped';
+  status?: "taken" | "missed" | "skipped";
   administrationSite?: string;
   notes?: string;
   photoUrl?: string;
 }
 
 export interface UpdateDoseServiceInput {
-  status?: 'taken' | 'missed' | 'skipped';
+  status?: "taken" | "missed" | "skipped";
   administrationSite?: string;
   notes?: string;
 }
@@ -57,14 +57,24 @@ export interface GetStatsQuery {
 
 export interface IDoseService {
   logDose(patientId: string, input: LogDoseInput): Promise<Dose>;
-  getDoses(patientId: string, query: GetDosesQuery): Promise<PaginatedResponse<DoseWithSubstance>>;
+  getDoses(
+    patientId: string,
+    query: GetDosesQuery,
+  ): Promise<PaginatedResponse<DoseWithSubstance>>;
   getTodayDoses(patientId: string): Promise<DoseWithSubstance[]>;
   getDoseById(id: string, patientId: string): Promise<DoseWithDetails | null>;
-  updateDose(id: string, patientId: string, data: UpdateDoseServiceInput): Promise<Dose>;
-  logSideEffect(patientId: string, input: LogSideEffectInput): Promise<SideEffectWithRelations>;
+  updateDose(
+    id: string,
+    patientId: string,
+    data: UpdateDoseServiceInput,
+  ): Promise<Dose>;
+  logSideEffect(
+    patientId: string,
+    input: LogSideEffectInput,
+  ): Promise<SideEffectWithRelations>;
   getSideEffects(
     patientId: string,
-    query: GetSideEffectsQuery
+    query: GetSideEffectsQuery,
   ): Promise<PaginatedResponse<SideEffectWithRelations>>;
   getStats(patientId: string, query: GetStatsQuery): Promise<DoseStats>;
 }

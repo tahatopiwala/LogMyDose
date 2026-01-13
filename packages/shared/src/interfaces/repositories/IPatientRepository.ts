@@ -1,6 +1,6 @@
-import { IBaseRepository, FindManyOptions } from './IBaseRepository.js';
-import { Patient, PatientWithClinic } from '../../entities/index.js';
-import { PaginatedResponse, InputJsonValue } from '../../types/index.js';
+import { IBaseRepository, FindManyOptions } from "./IBaseRepository.js";
+import { Patient, PatientWithClinic } from "../../entities/index.js";
+import { PaginatedResponse, InputJsonValue } from "../../types/index.js";
 
 export interface CreatePatientInput {
   email: string;
@@ -29,12 +29,21 @@ export interface FindClinicPatientsOptions extends FindManyOptions {
   status?: string;
 }
 
-export interface IPatientRepository
-  extends IBaseRepository<Patient, CreatePatientInput, UpdatePatientInput> {
+export interface IPatientRepository extends IBaseRepository<
+  Patient,
+  CreatePatientInput,
+  UpdatePatientInput
+> {
   findByEmail(email: string): Promise<Patient | null>;
   findByIdWithClinic(id: string): Promise<PatientWithClinic | null>;
-  findByClinicId(options: FindClinicPatientsOptions): Promise<PaginatedResponse<Patient>>;
+  findByClinicId(
+    options: FindClinicPatientsOptions,
+  ): Promise<PaginatedResponse<Patient>>;
   incrementTokenVersion(id: string): Promise<void>;
-  linkToClinic(patientId: string, clinicId: string, controlLevel: string): Promise<Patient>;
+  linkToClinic(
+    patientId: string,
+    clinicId: string,
+    controlLevel: string,
+  ): Promise<Patient>;
   unlinkFromClinic(patientId: string): Promise<Patient>;
 }

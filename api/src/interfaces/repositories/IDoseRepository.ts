@@ -1,6 +1,6 @@
-import { Dose, SideEffect, Alert, Prisma } from '@logmydose/shared/prisma';
-import { IBaseRepository, FindManyOptions } from './IBaseRepository.js';
-import { PaginatedResponse } from '../../types/index.js';
+import { Dose, SideEffect, Alert, Prisma } from "@logmydose/shared/prisma";
+import { IBaseRepository, FindManyOptions } from "./IBaseRepository.js";
+import { PaginatedResponse } from "../../types/index.js";
 
 export interface CreateDoseInput {
   patientId: string;
@@ -81,15 +81,29 @@ export interface DoseStats {
   period: { start: Date; end: Date };
 }
 
-export interface IDoseRepository extends IBaseRepository<Dose, CreateDoseInput, UpdateDoseInput> {
-  findManyByPatient(options: FindDosesOptions): Promise<PaginatedResponse<DoseWithSubstance>>;
+export interface IDoseRepository extends IBaseRepository<
+  Dose,
+  CreateDoseInput,
+  UpdateDoseInput
+> {
+  findManyByPatient(
+    options: FindDosesOptions,
+  ): Promise<PaginatedResponse<DoseWithSubstance>>;
   findByIdWithDetails(id: string): Promise<DoseWithDetails | null>;
   findTodayByPatient(patientId: string): Promise<DoseWithSubstance[]>;
-  getStats(patientId: string, startDate: Date, endDate: Date): Promise<DoseStats>;
+  getStats(
+    patientId: string,
+    startDate: Date,
+    endDate: Date,
+  ): Promise<DoseStats>;
 
   // Side effect methods
-  createSideEffect(data: CreateSideEffectInput): Promise<SideEffectWithRelations>;
-  findSideEffects(options: FindSideEffectsOptions): Promise<PaginatedResponse<SideEffectWithRelations>>;
+  createSideEffect(
+    data: CreateSideEffectInput,
+  ): Promise<SideEffectWithRelations>;
+  findSideEffects(
+    options: FindSideEffectsOptions,
+  ): Promise<PaginatedResponse<SideEffectWithRelations>>;
   findDoseById(id: string): Promise<Dose | null>;
 
   // Alert methods

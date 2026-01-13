@@ -5,22 +5,22 @@ export {
   RegisterUserInput,
   LoginInput,
   RefreshInput,
-} from '../interfaces/services/IAuthService.js';
+} from "../interfaces/services/IAuthService.js";
 
-export { PatientDosesQuery } from '../interfaces/services/IPatientService.js';
+export { PatientDosesQuery } from "../interfaces/services/IPatientService.js";
 
 export {
   GetClinicPatientsQuery,
   CreateClinicInvitationInput,
-} from '../interfaces/services/ITenantService.js';
+} from "../interfaces/services/ITenantService.js";
 
-export { GetSubstancesQuery } from '../interfaces/services/ISubstanceService.js';
+export { GetSubstancesQuery } from "../interfaces/services/ISubstanceService.js";
 
 export {
   GetTemplatesQuery,
   CreateProtocolSubstanceServiceInput,
   CreateProtocolServiceInput,
-} from '../interfaces/services/IProtocolService.js';
+} from "../interfaces/services/IProtocolService.js";
 
 export {
   LogDoseInput,
@@ -29,4 +29,4 @@ export {
   GetDosesQuery,
   GetSideEffectsQuery,
   GetStatsQuery,
-} from '../interfaces/services/IDoseService.js';
+} from "../interfaces/services/IDoseService.js";

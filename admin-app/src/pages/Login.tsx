@@ -1,36 +1,36 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { authApi } from '../lib/api'
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { authApi } from "../lib/api";
 
 export default function Login() {
-  const navigate = useNavigate()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
     try {
-      const response = await authApi.login(email, password)
+      const response = await authApi.login(email, password);
 
-      if (response.user.role !== 'super_admin') {
-        setError('Access denied. Super admin privileges required.')
-        setLoading(false)
-        return
+      if (response.user.role !== "super_admin") {
+        setError("Access denied. Super admin privileges required.");
+        setLoading(false);
+        return;
       }
 
-      localStorage.setItem('accessToken', response.accessToken)
-      navigate('/')
+      localStorage.setItem("accessToken", response.accessToken);
+      navigate("/");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed')
+      setError(err instanceof Error ? err.message : "Login failed");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
@@ -90,11 +90,11 @@ export default function Login() {
               disabled={loading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
             >
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading ? "Signing in..." : "Sign in"}
             </button>
           </div>
         </form>
       </div>
     </div>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-import { JsonValue } from '../types/database.js';
+import { JsonValue } from "../types/database.js";
 
 /**
  * User entity - Providers, admins, super admins (NOT patients)
@@ -22,4 +22,4 @@ export interface User {
 /**
  * User without sensitive fields
  */
-export type SafeUser = Omit<User, 'passwordHash' | 'tokenVersion'>;
+export type SafeUser = Omit<User, "passwordHash" | "tokenVersion">;

@@ -1,4 +1,4 @@
-import { JsonValue } from '../types/database.js';
+import { JsonValue } from "../types/database.js";
 
 /**
  * Patient entity - D2C and clinic-managed users
@@ -28,7 +28,7 @@ export interface Patient {
 /**
  * Patient without sensitive fields
  */
-export type SafePatient = Omit<Patient, 'passwordHash' | 'tokenVersion'>;
+export type SafePatient = Omit<Patient, "passwordHash" | "tokenVersion">;
 
 /**
  * Patient with clinic relation

@@ -1,4 +1,4 @@
-import { SafePatient, SafeUser } from '../../entities/index.js';
+import { SafePatient, SafeUser } from "../../entities/index.js";
 
 export interface RegisterPatientInput {
   email: string;
@@ -12,7 +12,7 @@ export interface RegisterUserInput {
   password: string;
   firstName?: string;
   lastName?: string;
-  role: 'provider' | 'clinic_admin';
+  role: "provider" | "clinic_admin";
   tenantId: string;
   credentials?: string;
 }
@@ -20,7 +20,7 @@ export interface RegisterUserInput {
 export interface LoginInput {
   email: string;
   password: string;
-  userType: 'patient' | 'user';
+  userType: "patient" | "user";
 }
 
 export interface TokenPair {
@@ -42,7 +42,7 @@ export interface UserAuthResponse {
 
 export interface RefreshInput {
   refreshToken: string;
-  userType: 'patient' | 'user';
+  userType: "patient" | "user";
 }
 
 export interface CurrentUser {
@@ -56,7 +56,7 @@ export interface IAuthService {
   registerPatient(input: RegisterPatientInput): Promise<PatientAuthResponse>;
   registerUser(
     input: RegisterUserInput,
-    currentUser: CurrentUser
+    currentUser: CurrentUser,
   ): Promise<{ user: SafeUser }>;
   login(input: LoginInput): Promise<PatientAuthResponse | UserAuthResponse>;
   refresh(input: RefreshInput): Promise<TokenPair>;

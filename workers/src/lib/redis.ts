@@ -1,5 +1,5 @@
-import { Redis } from 'ioredis';
-import { env } from '../config/env.js';
+import { Redis } from "ioredis";
+import { env } from "../config/env.js";
 
 const globalForRedis = globalThis as unknown as {
   redis: Redis | undefined;
@@ -14,6 +14,6 @@ export const redis =
     maxRetriesPerRequest: null, // Required for BullMQ
   });
 
-if (env.NODE_ENV !== 'production') {
+if (env.NODE_ENV !== "production") {
   globalForRedis.redis = redis;
 }

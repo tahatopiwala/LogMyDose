@@ -1,5 +1,5 @@
-import { User, Prisma } from '@logmydose/shared/prisma';
-import { IBaseRepository } from './IBaseRepository.js';
+import { User, Prisma } from "@logmydose/shared/prisma";
+import { IBaseRepository } from "./IBaseRepository.js";
 
 export interface CreateUserInput {
   email: string;
@@ -19,7 +19,11 @@ export interface UpdateUserInput {
   isActive?: boolean;
 }
 
-export interface IUserRepository extends IBaseRepository<User, CreateUserInput, UpdateUserInput> {
+export interface IUserRepository extends IBaseRepository<
+  User,
+  CreateUserInput,
+  UpdateUserInput
+> {
   findByEmail(email: string): Promise<User | null>;
   incrementTokenVersion(id: string): Promise<void>;
   findByTenantId(tenantId: string): Promise<User[]>;

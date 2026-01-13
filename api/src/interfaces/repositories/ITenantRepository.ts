@@ -1,6 +1,6 @@
-import { Tenant, ClinicInvitation, Prisma } from '@logmydose/shared/prisma';
-import { IBaseRepository, FindManyOptions } from './IBaseRepository.js';
-import { PaginatedResponse } from '../../types/index.js';
+import { Tenant, ClinicInvitation, Prisma } from "@logmydose/shared/prisma";
+import { IBaseRepository, FindManyOptions } from "./IBaseRepository.js";
+import { PaginatedResponse } from "../../types/index.js";
 
 export interface CreateTenantInput {
   name: string;
@@ -38,15 +38,40 @@ export interface InvitationWithClinic extends ClinicInvitation {
   };
 }
 
-export interface ITenantRepository extends IBaseRepository<Tenant, CreateTenantInput, UpdateTenantInput> {
+export interface ITenantRepository extends IBaseRepository<
+  Tenant,
+  CreateTenantInput,
+  UpdateTenantInput
+> {
   findBySlug(slug: string): Promise<Tenant | null>;
   findByIdWithCounts(id: string): Promise<TenantWithCounts | null>;
-  findAllWithCounts(options?: FindManyOptions): Promise<PaginatedResponse<TenantWithCounts>>;
-  findByIdWithUsers(id: string): Promise<Tenant & { users: Array<{ id: string; email: string; firstName: string | null; lastName: string | null; role: string; isActive: boolean }> } | null>;
+  findAllWithCounts(
+    options?: FindManyOptions,
+  ): Promise<PaginatedResponse<TenantWithCounts>>;
+  findByIdWithUsers(
+    id: string,
+  ): Promise<
+    | (Tenant & {
+        users: Array<{
+          id: string;
+          email: string;
+          firstName: string | null;
+          lastName: string | null;
+          role: string;
+          isActive: boolean;
+        }>;
+      })
+    | null
+  >;
 
   // Invitation methods
-  findInvitationByCode(inviteCode: string): Promise<InvitationWithClinic | null>;
-  findPendingInvitation(clinicId: string, email: string): Promise<ClinicInvitation | null>;
+  findInvitationByCode(
+    inviteCode: string,
+  ): Promise<InvitationWithClinic | null>;
+  findPendingInvitation(
+    clinicId: string,
+    email: string,
+  ): Promise<ClinicInvitation | null>;
   findInvitationsByClinicId(clinicId: string): Promise<ClinicInvitation[]>;
   createInvitation(data: CreateInvitationInput): Promise<InvitationWithClinic>;
   updateInvitationStatus(id: string, status: string): Promise<ClinicInvitation>;

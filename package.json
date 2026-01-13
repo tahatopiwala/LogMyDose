@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "build": "npm run build:ui & npm run build:shared && npm run build --workspaces --if-present",
-    "dev": "npm run dev:api && npm run dev:landing & npm run dev:app",
+    "dev": "npm run dev:api & npm run dev:landing & npm run dev:app",
     "build:shared": "npm run build -w @logmydose/shared",
     "build:ui": "npm run build -w @logmydose/ui",
     "build:api": "npm run build -w logmydose-api",

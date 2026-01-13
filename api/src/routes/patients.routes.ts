@@ -1,10 +1,10 @@
-import { Router } from 'express';
-import { z } from 'zod';
-import { Prisma } from '@logmydose/shared/prisma';
-import { getContainer } from '../container/index.js';
-import { authenticate, requirePatient } from '../middleware/auth.js';
-import { AppError } from '../middleware/errorHandler.js';
-import { createAuditLog } from '../middleware/auditLog.js';
+import { Router } from "express";
+import { z } from "zod";
+import { Prisma } from "@logmydose/shared/prisma";
+import { getContainer } from "../container/index.js";
+import { authenticate, requirePatient } from "../middleware/auth.js";
+import { AppError } from "../middleware/errorHandler.js";
+import { createAuditLog } from "../middleware/auditLog.js";
 
 const router = Router();
 
@@ -22,13 +22,13 @@ const linkClinicSchema = z.object({
 });
 
 // GET /api/v1/patients/me
-router.get('/me', authenticate, requirePatient, async (req, res, next) => {
+router.get("/me", authenticate, requirePatient, async (req, res, next) => {
   try {
     const patientService = getContainer().patientService;
     const patient = await patientService.getProfile(req.user!.id);
 
     if (!patient) {
-      throw new AppError(404, 'Patient not found', 'NOT_FOUND');
+      throw new AppError(404, "Patient not found", "NOT_FOUND");
     }
 
     res.json({ patient });
@@ -38,7 +38,7 @@ router.get('/me', authenticate, requirePatient, async (req, res, next) => {
 });
 
 // PUT /api/v1/patients/me
-router.put('/me', authenticate, requirePatient, async (req, res, next) => {
+router.put("/me", authenticate, requirePatient, async (req, res, next) => {
   try {
     const data = updatePatientSchema.parse(req.body);
     const patientService = getContainer().patientService;
@@ -52,8 +52,8 @@ router.put('/me', authenticate, requirePatient, async (req, res, next) => {
     });
 
     await createAuditLog(req, {
-      action: 'patient.update',
-      tableName: 'patients',
+      action: "patient.update",
+      tableName: "patients",
       recordId: patient.id,
       newValues: data as Record<string, unknown>,
     });
@@ -65,61 +65,79 @@ router.put('/me', authenticate, requirePatient, async (req, res, next) => {
 });
 
 // POST /api/v1/patients/link-clinic
-router.post('/link-clinic', authenticate, requirePatient, async (req, res, next) => {
-  try {
-    const data = linkClinicSchema.parse(req.body);
-    const patientService = getContainer().patientService;
+router.post(
+  "/link-clinic",
+  authenticate,
+  requirePatient,
+  async (req, res, next) => {
+    try {
+      const data = linkClinicSchema.parse(req.body);
+      const patientService = getContainer().patientService;
 
-    const patient = await patientService.linkToClinic(req.user!.id, data.inviteCode);
+      const patient = await patientService.linkToClinic(
+        req.user!.id,
+        data.inviteCode,
+      );
 
-    await createAuditLog(req, {
-      action: 'patient.link_clinic',
-      tableName: 'patients',
-      recordId: patient.id,
-      newValues: { clinicId: patient.clinicId },
-    });
+      await createAuditLog(req, {
+        action: "patient.link_clinic",
+        tableName: "patients",
+        recordId: patient.id,
+        newValues: { clinicId: patient.clinicId },
+      });
 
-    res.json({ patient });
-  } catch (error) {
-    next(error);
-  }
-});
+      res.json({ patient });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 // POST /api/v1/patients/unlink-clinic
-router.post('/unlink-clinic', authenticate, requirePatient, async (req, res, next) => {
-  try {
-    const patientService = getContainer().patientService;
+router.post(
+  "/unlink-clinic",
+  authenticate,
+  requirePatient,
+  async (req, res, next) => {
+    try {
+      const patientService = getContainer().patientService;
 
-    const currentPatient = await patientService.getProfile(req.user!.id);
-    const patient = await patientService.unlinkFromClinic(req.user!.id);
+      const currentPatient = await patientService.getProfile(req.user!.id);
+      const patient = await patientService.unlinkFromClinic(req.user!.id);
 
-    await createAuditLog(req, {
-      action: 'patient.unlink_clinic',
-      tableName: 'patients',
-      recordId: patient.id,
-      oldValues: { clinicId: currentPatient?.clinicId },
-    });
+      await createAuditLog(req, {
+        action: "patient.unlink_clinic",
+        tableName: "patients",
+        recordId: patient.id,
+        oldValues: { clinicId: currentPatient?.clinicId },
+      });
 
-    res.json({ patient });
-  } catch (error) {
-    next(error);
-  }
-});
+      res.json({ patient });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 // GET /api/v1/patients/protocols
-router.get('/protocols', authenticate, requirePatient, async (req, res, next) => {
-  try {
-    const patientService = getContainer().patientService;
-    const protocols = await patientService.getProtocols(req.user!.id);
+router.get(
+  "/protocols",
+  authenticate,
+  requirePatient,
+  async (req, res, next) => {
+    try {
+      const patientService = getContainer().patientService;
+      const protocols = await patientService.getProtocols(req.user!.id);
 
-    res.json({ protocols });
-  } catch (error) {
-    next(error);
-  }
-});
+      res.json({ protocols });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 // GET /api/v1/patients/doses
-router.get('/doses', authenticate, requirePatient, async (req, res, next) => {
+router.get("/doses", authenticate, requirePatient, async (req, res, next) => {
   try {
     const { page, limit, startDate, endDate } = req.query;
     const patientService = getContainer().patientService;
@@ -141,7 +159,7 @@ router.get('/doses', authenticate, requirePatient, async (req, res, next) => {
 });
 
 // GET /api/v1/patients/alerts
-router.get('/alerts', authenticate, requirePatient, async (req, res, next) => {
+router.get("/alerts", authenticate, requirePatient, async (req, res, next) => {
   try {
     const patientService = getContainer().patientService;
     const alerts = await patientService.getAlerts(req.user!.id);

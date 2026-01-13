@@ -1,8 +1,8 @@
-import { Router } from 'express';
-import { z } from 'zod';
-import { getContainer } from '../container/index.js';
-import { authenticate, requirePatient } from '../middleware/auth.js';
-import { createAuditLog } from '../middleware/auditLog.js';
+import { Router } from "express";
+import { z } from "zod";
+import { getContainer } from "../container/index.js";
+import { authenticate, requirePatient } from "../middleware/auth.js";
+import { createAuditLog } from "../middleware/auditLog.js";
 
 const router = Router();
 
@@ -13,7 +13,7 @@ const logDoseSchema = z.object({
   dose: z.number().positive(),
   doseUnit: z.string().max(20).optional(),
   scheduledAt: z.string().optional(),
-  status: z.enum(['taken', 'missed', 'skipped']).default('taken'),
+  status: z.enum(["taken", "missed", "skipped"]).default("taken"),
   administrationSite: z.string().max(50).optional(),
   notes: z.string().optional(),
   photoUrl: z.string().url().optional(),
@@ -29,13 +29,13 @@ const logSideEffectSchema = z.object({
 });
 
 const updateDoseSchema = z.object({
-  status: z.enum(['taken', 'missed', 'skipped']).optional(),
+  status: z.enum(["taken", "missed", "skipped"]).optional(),
   administrationSite: z.string().max(50).optional(),
   notes: z.string().optional(),
 });
 
 // POST /api/v1/doses
-router.post('/', authenticate, requirePatient, async (req, res, next) => {
+router.post("/", authenticate, requirePatient, async (req, res, next) => {
   try {
     const data = logDoseSchema.parse(req.body);
     const doseService = getContainer().doseService;
@@ -43,10 +43,14 @@ router.post('/', authenticate, requirePatient, async (req, res, next) => {
     const dose = await doseService.logDose(req.user!.id, data);
 
     await createAuditLog(req, {
-      action: 'dose.log',
-      tableName: 'doses',
+      action: "dose.log",
+      tableName: "doses",
       recordId: dose.id,
-      newValues: { substanceId: data.substanceId, dose: data.dose, status: data.status },
+      newValues: {
+        substanceId: data.substanceId,
+        dose: data.dose,
+        status: data.status,
+      },
     });
 
     res.status(201).json({ dose });
@@ -56,7 +60,7 @@ router.post('/', authenticate, requirePatient, async (req, res, next) => {
 });
 
 // GET /api/v1/doses
-router.get('/', authenticate, requirePatient, async (req, res, next) => {
+router.get("/", authenticate, requirePatient, async (req, res, next) => {
   try {
     const { page, limit, substanceId, status, startDate, endDate } = req.query;
     const doseService = getContainer().doseService;
@@ -80,7 +84,7 @@ router.get('/', authenticate, requirePatient, async (req, res, next) => {
 });
 
 // GET /api/v1/doses/today
-router.get('/today', authenticate, requirePatient, async (req, res, next) => {
+router.get("/today", authenticate, requirePatient, async (req, res, next) => {
   try {
     const doseService = getContainer().doseService;
     const doses = await doseService.getTodayDoses(req.user!.id);
@@ -92,29 +96,34 @@ router.get('/today', authenticate, requirePatient, async (req, res, next) => {
 });
 
 // GET /api/v1/doses/side-effects
-router.get('/side-effects', authenticate, requirePatient, async (req, res, next) => {
-  try {
-    const { page, limit, substanceId, minSeverity } = req.query;
-    const doseService = getContainer().doseService;
+router.get(
+  "/side-effects",
+  authenticate,
+  requirePatient,
+  async (req, res, next) => {
+    try {
+      const { page, limit, substanceId, minSeverity } = req.query;
+      const doseService = getContainer().doseService;
 
-    const result = await doseService.getSideEffects(req.user!.id, {
-      page: page ? parseInt(page as string) : undefined,
-      limit: limit ? parseInt(limit as string) : undefined,
-      substanceId: substanceId as string,
-      minSeverity: minSeverity ? parseInt(minSeverity as string) : undefined,
-    });
+      const result = await doseService.getSideEffects(req.user!.id, {
+        page: page ? parseInt(page as string) : undefined,
+        limit: limit ? parseInt(limit as string) : undefined,
+        substanceId: substanceId as string,
+        minSeverity: minSeverity ? parseInt(minSeverity as string) : undefined,
+      });
 
-    res.json({
-      sideEffects: result.data,
-      pagination: result.pagination,
-    });
-  } catch (error) {
-    next(error);
-  }
-});
+      res.json({
+        sideEffects: result.data,
+        pagination: result.pagination,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 // GET /api/v1/doses/stats
-router.get('/stats', authenticate, requirePatient, async (req, res, next) => {
+router.get("/stats", authenticate, requirePatient, async (req, res, next) => {
   try {
     const { startDate, endDate } = req.query;
     const doseService = getContainer().doseService;
@@ -131,7 +140,7 @@ router.get('/stats', authenticate, requirePatient, async (req, res, next) => {
 });
 
 // GET /api/v1/doses/:id
-router.get('/:id', authenticate, requirePatient, async (req, res, next) => {
+router.get("/:id", authenticate, requirePatient, async (req, res, next) => {
   try {
     const id = req.params.id as string;
     const doseService = getContainer().doseService;
@@ -145,7 +154,7 @@ router.get('/:id', authenticate, requirePatient, async (req, res, next) => {
 });
 
 // PUT /api/v1/doses/:id
-router.put('/:id', authenticate, requirePatient, async (req, res, next) => {
+router.put("/:id", authenticate, requirePatient, async (req, res, next) => {
   try {
     const id = req.params.id as string;
     const data = updateDoseSchema.parse(req.body);
@@ -154,8 +163,8 @@ router.put('/:id', authenticate, requirePatient, async (req, res, next) => {
     const dose = await doseService.updateDose(id, req.user!.id, data);
 
     await createAuditLog(req, {
-      action: 'dose.update',
-      tableName: 'doses',
+      action: "dose.update",
+      tableName: "doses",
       recordId: dose.id,
       newValues: data as Record<string, unknown>,
     });
@@ -167,24 +176,29 @@ router.put('/:id', authenticate, requirePatient, async (req, res, next) => {
 });
 
 // POST /api/v1/doses/side-effects
-router.post('/side-effects', authenticate, requirePatient, async (req, res, next) => {
-  try {
-    const data = logSideEffectSchema.parse(req.body);
-    const doseService = getContainer().doseService;
+router.post(
+  "/side-effects",
+  authenticate,
+  requirePatient,
+  async (req, res, next) => {
+    try {
+      const data = logSideEffectSchema.parse(req.body);
+      const doseService = getContainer().doseService;
 
-    const sideEffect = await doseService.logSideEffect(req.user!.id, data);
+      const sideEffect = await doseService.logSideEffect(req.user!.id, data);
 
-    await createAuditLog(req, {
-      action: 'side_effect.log',
-      tableName: 'side_effects',
-      recordId: sideEffect.id,
-      newValues: { symptom: data.symptom, severity: data.severity },
-    });
+      await createAuditLog(req, {
+        action: "side_effect.log",
+        tableName: "side_effects",
+        recordId: sideEffect.id,
+        newValues: { symptom: data.symptom, severity: data.severity },
+      });
 
-    res.status(201).json({ sideEffect });
-  } catch (error) {
-    next(error);
-  }
-});
+      res.status(201).json({ sideEffect });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 export default router;

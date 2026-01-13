@@ -1,4 +1,8 @@
-import { PrismaClient, Substance, SubstanceCategory } from '@logmydose/shared/prisma';
+import {
+  PrismaClient,
+  Substance,
+  SubstanceCategory,
+} from "@logmydose/shared/prisma";
 import {
   ISubstanceRepository,
   CreateSubstanceInput,
@@ -8,8 +12,8 @@ import {
   FindManyOptions,
   CreateCategoryInput,
   UpdateCategoryInput,
-} from '../interfaces/repositories/index.js';
-import { PaginatedResponse } from '../types/index.js';
+} from "../interfaces/repositories/index.js";
+import { PaginatedResponse } from "../types/index.js";
 
 export class SubstanceRepository implements ISubstanceRepository {
   constructor(private readonly prisma: PrismaClient) {}
@@ -18,7 +22,9 @@ export class SubstanceRepository implements ISubstanceRepository {
     return this.prisma.substance.findUnique({ where: { id } });
   }
 
-  async findByIdWithCategory(id: string): Promise<SubstanceWithCategory | null> {
+  async findByIdWithCategory(
+    id: string,
+  ): Promise<SubstanceWithCategory | null> {
     return this.prisma.substance.findUnique({
       where: { id },
       include: {
@@ -33,14 +39,16 @@ export class SubstanceRepository implements ISubstanceRepository {
     });
   }
 
-  async findMany(options?: FindManyOptions): Promise<PaginatedResponse<Substance>> {
+  async findMany(
+    options?: FindManyOptions,
+  ): Promise<PaginatedResponse<Substance>> {
     const page = options?.page || 1;
     const limit = options?.limit || 20;
 
     const [data, total] = await Promise.all([
       this.prisma.substance.findMany({
         where: { isActive: true },
-        orderBy: options?.orderBy || { name: 'asc' },
+        orderBy: options?.orderBy || { name: "asc" },
         skip: (page - 1) * limit,
         take: limit,
       }),
@@ -59,7 +67,7 @@ export class SubstanceRepository implements ISubstanceRepository {
   }
 
   async findManyWithCategory(
-    options?: FindSubstancesOptions
+    options?: FindSubstancesOptions,
   ): Promise<PaginatedResponse<SubstanceWithCategory>> {
     const page = options?.page || 1;
     const limit = options?.limit || 20;
@@ -78,7 +86,7 @@ export class SubstanceRepository implements ISubstanceRepository {
 
     if (options?.search) {
       where.OR = [
-        { name: { contains: options.search, mode: 'insensitive' } },
+        { name: { contains: options.search, mode: "insensitive" } },
         { aliases: { has: options.search } },
       ];
     }
@@ -95,7 +103,7 @@ export class SubstanceRepository implements ISubstanceRepository {
             },
           },
         },
-        orderBy: { name: 'asc' },
+        orderBy: { name: "asc" },
         skip: (page - 1) * limit,
         take: limit,
       }),
@@ -122,7 +130,7 @@ export class SubstanceRepository implements ISubstanceRepository {
   async findCategories(): Promise<SubstanceCategory[]> {
     return this.prisma.substanceCategory.findMany({
       where: { isActive: true },
-      orderBy: { sortOrder: 'asc' },
+      orderBy: { sortOrder: "asc" },
     });
   }
 
@@ -142,7 +150,10 @@ export class SubstanceRepository implements ISubstanceRepository {
     });
   }
 
-  async updateCategory(id: string, data: UpdateCategoryInput): Promise<SubstanceCategory> {
+  async updateCategory(
+    id: string,
+    data: UpdateCategoryInput,
+  ): Promise<SubstanceCategory> {
     return this.prisma.substanceCategory.update({
       where: { id },
       data: {

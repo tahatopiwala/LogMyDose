@@ -1,4 +1,4 @@
-import { IBaseRepository, FindManyOptions } from './IBaseRepository.js';
+import { IBaseRepository, FindManyOptions } from "./IBaseRepository.js";
 import {
   Dose,
   Alert,
@@ -6,8 +6,8 @@ import {
   DoseWithDetails,
   SideEffectWithRelations,
   DoseStats,
-} from '../../entities/index.js';
-import { PaginatedResponse, Decimal } from '../../types/index.js';
+} from "../../entities/index.js";
+import { PaginatedResponse, Decimal } from "../../types/index.js";
 
 export interface CreateDoseInput {
   patientId: string;
@@ -52,16 +52,28 @@ export interface FindSideEffectsOptions extends FindManyOptions {
   minSeverity?: number;
 }
 
-export interface IDoseRepository extends IBaseRepository<Dose, CreateDoseInput, UpdateDoseInput> {
-  findManyByPatient(options: FindDosesOptions): Promise<PaginatedResponse<DoseWithSubstance>>;
+export interface IDoseRepository extends IBaseRepository<
+  Dose,
+  CreateDoseInput,
+  UpdateDoseInput
+> {
+  findManyByPatient(
+    options: FindDosesOptions,
+  ): Promise<PaginatedResponse<DoseWithSubstance>>;
   findByIdWithDetails(id: string): Promise<DoseWithDetails | null>;
   findTodayByPatient(patientId: string): Promise<DoseWithSubstance[]>;
-  getStats(patientId: string, startDate: Date, endDate: Date): Promise<DoseStats>;
+  getStats(
+    patientId: string,
+    startDate: Date,
+    endDate: Date,
+  ): Promise<DoseStats>;
 
   // Side effect methods
-  createSideEffect(data: CreateSideEffectInput): Promise<SideEffectWithRelations>;
+  createSideEffect(
+    data: CreateSideEffectInput,
+  ): Promise<SideEffectWithRelations>;
   findSideEffects(
-    options: FindSideEffectsOptions
+    options: FindSideEffectsOptions,
   ): Promise<PaginatedResponse<SideEffectWithRelations>>;
   findDoseById(id: string): Promise<Dose | null>;
 

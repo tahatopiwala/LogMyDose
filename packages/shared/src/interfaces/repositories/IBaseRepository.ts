@@ -1,4 +1,4 @@
-import { PaginatedResponse, FindManyOptions } from '../../types/index.js';
+import { PaginatedResponse, FindManyOptions } from "../../types/index.js";
 
 export interface IBaseRepository<T, CreateInput, UpdateInput> {
   findById(id: string): Promise<T | null>;

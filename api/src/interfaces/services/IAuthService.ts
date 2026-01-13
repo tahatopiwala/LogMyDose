@@ -1,4 +1,4 @@
-import { Patient, User } from '@logmydose/shared/prisma';
+import { Patient, User } from "@logmydose/shared/prisma";
 
 export interface RegisterPatientInput {
   email: string;
@@ -12,7 +12,7 @@ export interface RegisterUserInput {
   password: string;
   firstName?: string;
   lastName?: string;
-  role: 'provider' | 'clinic_admin';
+  role: "provider" | "clinic_admin";
   tenantId: string;
   credentials?: string;
 }
@@ -20,7 +20,7 @@ export interface RegisterUserInput {
 export interface LoginInput {
   email: string;
   password: string;
-  userType: 'patient' | 'user';
+  userType: "patient" | "user";
 }
 
 export interface TokenPair {
@@ -29,20 +29,20 @@ export interface TokenPair {
 }
 
 export interface PatientAuthResponse {
-  patient: Omit<Patient, 'passwordHash' | 'tokenVersion'>;
+  patient: Omit<Patient, "passwordHash" | "tokenVersion">;
   accessToken: string;
   refreshToken: string;
 }
 
 export interface UserAuthResponse {
-  user: Omit<User, 'passwordHash' | 'tokenVersion'>;
+  user: Omit<User, "passwordHash" | "tokenVersion">;
   accessToken: string;
   refreshToken: string;
 }
 
 export interface RefreshInput {
   refreshToken: string;
-  userType: 'patient' | 'user';
+  userType: "patient" | "user";
 }
 
 export interface CurrentUser {
@@ -54,12 +54,19 @@ export interface CurrentUser {
 
 export interface IAuthService {
   registerPatient(input: RegisterPatientInput): Promise<PatientAuthResponse>;
-  registerUser(input: RegisterUserInput, currentUser: CurrentUser): Promise<{ user: Omit<User, 'passwordHash' | 'tokenVersion'> }>;
+  registerUser(
+    input: RegisterUserInput,
+    currentUser: CurrentUser,
+  ): Promise<{ user: Omit<User, "passwordHash" | "tokenVersion"> }>;
   login(input: LoginInput): Promise<PatientAuthResponse | UserAuthResponse>;
   refresh(input: RefreshInput): Promise<TokenPair>;
   logout(currentUser: CurrentUser): Promise<void>;
-  getCurrentPatient(id: string): Promise<Omit<Patient, 'passwordHash' | 'tokenVersion'> | null>;
-  getCurrentUser(id: string): Promise<Omit<User, 'passwordHash' | 'tokenVersion'> | null>;
+  getCurrentPatient(
+    id: string,
+  ): Promise<Omit<Patient, "passwordHash" | "tokenVersion"> | null>;
+  getCurrentUser(
+    id: string,
+  ): Promise<Omit<User, "passwordHash" | "tokenVersion"> | null>;
   verifyEmail(token: string): Promise<void>;
   resendVerificationEmail(patientId: string): Promise<void>;
 }

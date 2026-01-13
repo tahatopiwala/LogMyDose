@@ -1,6 +1,10 @@
-import { IBaseRepository, FindManyOptions } from './IBaseRepository.js';
-import { Substance, SubstanceCategory, SubstanceWithCategory } from '../../entities/index.js';
-import { PaginatedResponse, Decimal } from '../../types/index.js';
+import { IBaseRepository, FindManyOptions } from "./IBaseRepository.js";
+import {
+  Substance,
+  SubstanceCategory,
+  SubstanceWithCategory,
+} from "../../entities/index.js";
+import { PaginatedResponse, Decimal } from "../../types/index.js";
 
 export interface CreateSubstanceInput {
   categoryId: string;
@@ -37,12 +41,15 @@ export interface FindSubstancesOptions extends FindManyOptions {
   isActive?: boolean;
 }
 
-export interface ISubstanceRepository
-  extends IBaseRepository<Substance, CreateSubstanceInput, UpdateSubstanceInput> {
+export interface ISubstanceRepository extends IBaseRepository<
+  Substance,
+  CreateSubstanceInput,
+  UpdateSubstanceInput
+> {
   findCategories(): Promise<SubstanceCategory[]>;
   findCategoryById(id: string): Promise<SubstanceCategory | null>;
   findManyWithCategory(
-    options?: FindSubstancesOptions
+    options?: FindSubstancesOptions,
   ): Promise<PaginatedResponse<SubstanceWithCategory>>;
   findByIdWithCategory(id: string): Promise<SubstanceWithCategory | null>;
   findByIds(ids: string[]): Promise<Substance[]>;

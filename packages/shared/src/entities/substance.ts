@@ -1,4 +1,4 @@
-import { Decimal } from '../types/database.js';
+import { Decimal } from "../types/database.js";
 
 /**
  * SubstanceCategory entity

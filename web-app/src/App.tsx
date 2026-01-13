@@ -1,10 +1,10 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { Layout } from './components/Layout';
-import { ProtectedRoute } from './components/ProtectedRoute';
-import { Dashboard } from './pages/Dashboard';
-import { Login } from './pages/Login';
-import { Signup } from './pages/Signup';
-import { LogDose } from './pages/LogDose';
+import { Routes, Route, Navigate } from "react-router-dom";
+import { Layout } from "./components/Layout";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { Dashboard } from "./pages/Dashboard";
+import { Login } from "./pages/Login";
+import { Signup } from "./pages/Signup";
+import { LogDose } from "./pages/LogDose";
 
 function History() {
   return (
@@ -22,7 +22,9 @@ function Insights() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-gray-900">AI Insights</h1>
-      <p className="text-gray-600 mt-1">Personalized insights from your therapy data.</p>
+      <p className="text-gray-600 mt-1">
+        Personalized insights from your therapy data.
+      </p>
       <div className="mt-8 bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-500">
         AI insights coming soon...
       </div>
@@ -34,7 +36,9 @@ function Protocol() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-gray-900">My Protocol</h1>
-      <p className="text-gray-600 mt-1">View and manage your therapy protocol.</p>
+      <p className="text-gray-600 mt-1">
+        View and manage your therapy protocol.
+      </p>
       <div className="mt-8 bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-500">
         Protocol management coming soon...
       </div>

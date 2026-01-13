@@ -1,6 +1,6 @@
-import { Substance, SubstanceCategory, Prisma } from '@logmydose/shared/prisma';
-import { IBaseRepository, FindManyOptions } from './IBaseRepository.js';
-import { PaginatedResponse } from '../../types/index.js';
+import { Substance, SubstanceCategory, Prisma } from "@logmydose/shared/prisma";
+import { IBaseRepository, FindManyOptions } from "./IBaseRepository.js";
+import { PaginatedResponse } from "../../types/index.js";
 
 export interface CreateSubstanceInput {
   categoryId: string;
@@ -62,15 +62,24 @@ export interface UpdateCategoryInput {
   isActive?: boolean;
 }
 
-export interface ISubstanceRepository extends IBaseRepository<Substance, CreateSubstanceInput, UpdateSubstanceInput> {
+export interface ISubstanceRepository extends IBaseRepository<
+  Substance,
+  CreateSubstanceInput,
+  UpdateSubstanceInput
+> {
   // Category methods
   findCategories(): Promise<SubstanceCategory[]>;
   findCategoryById(id: string): Promise<SubstanceCategory | null>;
   createCategory(data: CreateCategoryInput): Promise<SubstanceCategory>;
-  updateCategory(id: string, data: UpdateCategoryInput): Promise<SubstanceCategory>;
+  updateCategory(
+    id: string,
+    data: UpdateCategoryInput,
+  ): Promise<SubstanceCategory>;
 
   // Substance methods
-  findManyWithCategory(options?: FindSubstancesOptions): Promise<PaginatedResponse<SubstanceWithCategory>>;
+  findManyWithCategory(
+    options?: FindSubstancesOptions,
+  ): Promise<PaginatedResponse<SubstanceWithCategory>>;
   findByIdWithCategory(id: string): Promise<SubstanceWithCategory | null>;
   findByIds(ids: string[]): Promise<Substance[]>;
 }

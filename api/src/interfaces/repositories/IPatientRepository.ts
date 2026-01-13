@@ -1,6 +1,10 @@
-import { Patient, Prisma, EmailVerificationToken } from '@logmydose/shared/prisma';
-import { IBaseRepository, FindManyOptions } from './IBaseRepository.js';
-import { PaginatedResponse } from '../../types/index.js';
+import {
+  Patient,
+  Prisma,
+  EmailVerificationToken,
+} from "@logmydose/shared/prisma";
+import { IBaseRepository, FindManyOptions } from "./IBaseRepository.js";
+import { PaginatedResponse } from "../../types/index.js";
 
 export interface CreateVerificationTokenInput {
   patientId: string;
@@ -43,15 +47,27 @@ export interface FindClinicPatientsOptions extends FindManyOptions {
   status?: string;
 }
 
-export interface IPatientRepository extends IBaseRepository<Patient, CreatePatientInput, UpdatePatientInput> {
+export interface IPatientRepository extends IBaseRepository<
+  Patient,
+  CreatePatientInput,
+  UpdatePatientInput
+> {
   findByEmail(email: string): Promise<Patient | null>;
   findByIdWithClinic(id: string): Promise<PatientWithClinic | null>;
-  findByClinicId(options: FindClinicPatientsOptions): Promise<PaginatedResponse<Patient>>;
+  findByClinicId(
+    options: FindClinicPatientsOptions,
+  ): Promise<PaginatedResponse<Patient>>;
   incrementTokenVersion(id: string): Promise<void>;
-  linkToClinic(patientId: string, clinicId: string, controlLevel: string): Promise<Patient>;
+  linkToClinic(
+    patientId: string,
+    clinicId: string,
+    controlLevel: string,
+  ): Promise<Patient>;
   unlinkFromClinic(patientId: string): Promise<Patient>;
   // Email verification methods
-  createVerificationToken(input: CreateVerificationTokenInput): Promise<EmailVerificationToken>;
+  createVerificationToken(
+    input: CreateVerificationTokenInput,
+  ): Promise<EmailVerificationToken>;
   findVerificationToken(token: string): Promise<EmailVerificationToken | null>;
   markVerificationTokenUsed(token: string): Promise<void>;
   markEmailVerified(patientId: string): Promise<Patient>;

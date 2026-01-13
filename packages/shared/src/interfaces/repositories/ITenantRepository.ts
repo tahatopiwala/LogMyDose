@@ -1,12 +1,12 @@
-import { IBaseRepository, FindManyOptions } from './IBaseRepository.js';
+import { IBaseRepository, FindManyOptions } from "./IBaseRepository.js";
 import {
   Tenant,
   TenantWithCounts,
   TenantWithUsers,
   ClinicInvitation,
   InvitationWithClinic,
-} from '../../entities/index.js';
-import { PaginatedResponse, InputJsonValue } from '../../types/index.js';
+} from "../../entities/index.js";
+import { PaginatedResponse, InputJsonValue } from "../../types/index.js";
 
 export interface CreateTenantInput {
   name: string;
@@ -30,16 +30,26 @@ export interface CreateInvitationInput {
   expiresAt: Date;
 }
 
-export interface ITenantRepository
-  extends IBaseRepository<Tenant, CreateTenantInput, UpdateTenantInput> {
+export interface ITenantRepository extends IBaseRepository<
+  Tenant,
+  CreateTenantInput,
+  UpdateTenantInput
+> {
   findBySlug(slug: string): Promise<Tenant | null>;
   findByIdWithCounts(id: string): Promise<TenantWithCounts | null>;
-  findAllWithCounts(options?: FindManyOptions): Promise<PaginatedResponse<TenantWithCounts>>;
+  findAllWithCounts(
+    options?: FindManyOptions,
+  ): Promise<PaginatedResponse<TenantWithCounts>>;
   findByIdWithUsers(id: string): Promise<TenantWithUsers | null>;
 
   // Invitation methods
-  findInvitationByCode(inviteCode: string): Promise<InvitationWithClinic | null>;
-  findPendingInvitation(clinicId: string, email: string): Promise<ClinicInvitation | null>;
+  findInvitationByCode(
+    inviteCode: string,
+  ): Promise<InvitationWithClinic | null>;
+  findPendingInvitation(
+    clinicId: string,
+    email: string,
+  ): Promise<ClinicInvitation | null>;
   findInvitationsByClinicId(clinicId: string): Promise<ClinicInvitation[]>;
   createInvitation(data: CreateInvitationInput): Promise<InvitationWithClinic>;
   updateInvitationStatus(id: string, status: string): Promise<ClinicInvitation>;

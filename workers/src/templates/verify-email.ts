@@ -1,11 +1,11 @@
-import type { VerifyEmailPayload } from '@logmydose/shared/queues';
-import type { EmailContent } from './welcome.js';
+import type { VerifyEmailPayload } from "@logmydose/shared/queues";
+import type { EmailContent } from "./welcome.js";
 
 export function renderVerifyEmail(payload: VerifyEmailPayload): EmailContent {
-  const name = payload.firstName || 'there';
+  const name = payload.firstName || "there";
 
   return {
-    subject: 'Verify your LogMyDose email',
+    subject: "Verify your LogMyDose email",
     html: `
 <!DOCTYPE html>
 <html>

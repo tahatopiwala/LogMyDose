@@ -1,4 +1,8 @@
-import { PrismaClient, Protocol, ProtocolSubstance } from '@logmydose/shared/prisma';
+import {
+  PrismaClient,
+  Protocol,
+  ProtocolSubstance,
+} from "@logmydose/shared/prisma";
 import {
   IProtocolRepository,
   CreateProtocolInput,
@@ -9,8 +13,8 @@ import {
   FindManyOptions,
   CreateTemplateInput,
   UpdateTemplateInput,
-} from '../interfaces/repositories/index.js';
-import { PaginatedResponse } from '../types/index.js';
+} from "../interfaces/repositories/index.js";
+import { PaginatedResponse } from "../types/index.js";
 
 export class ProtocolRepository implements IProtocolRepository {
   constructor(private readonly prisma: PrismaClient) {}
@@ -30,12 +34,22 @@ export class ProtocolRepository implements IProtocolRepository {
           select: { id: true, name: true },
         },
         provider: {
-          select: { id: true, firstName: true, lastName: true, credentials: true },
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            credentials: true,
+          },
         },
         substances: {
           include: {
             substance: {
-              select: { id: true, name: true, doseUnit: true, administrationRoute: true },
+              select: {
+                id: true,
+                name: true,
+                doseUnit: true,
+                administrationRoute: true,
+              },
             },
           },
         },
@@ -53,22 +67,29 @@ export class ProtocolRepository implements IProtocolRepository {
         substances: {
           include: {
             substance: {
-              select: { id: true, name: true, doseUnit: true, administrationRoute: true },
+              select: {
+                id: true,
+                name: true,
+                doseUnit: true,
+                administrationRoute: true,
+              },
             },
           },
         },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
   }
 
-  async findMany(options?: FindManyOptions): Promise<PaginatedResponse<Protocol>> {
+  async findMany(
+    options?: FindManyOptions,
+  ): Promise<PaginatedResponse<Protocol>> {
     const page = options?.page || 1;
     const limit = options?.limit || 20;
 
     const [data, total] = await Promise.all([
       this.prisma.protocol.findMany({
-        orderBy: options?.orderBy || { createdAt: 'desc' },
+        orderBy: options?.orderBy || { createdAt: "desc" },
         skip: (page - 1) * limit,
         take: limit,
       }),
@@ -97,7 +118,7 @@ export class ProtocolRepository implements IProtocolRepository {
         startDate: data.startDate,
         endDate: data.endDate,
         notes: data.notes,
-        status: data.status || 'active',
+        status: data.status || "active",
         substances: {
           create: data.substances.map((s) => ({
             substanceId: s.substanceId,
@@ -119,7 +140,12 @@ export class ProtocolRepository implements IProtocolRepository {
         substances: {
           include: {
             substance: {
-              select: { id: true, name: true, doseUnit: true, administrationRoute: true },
+              select: {
+                id: true,
+                name: true,
+                doseUnit: true,
+                administrationRoute: true,
+              },
             },
           },
         },
@@ -152,7 +178,7 @@ export class ProtocolRepository implements IProtocolRepository {
   }
 
   async findProtocolSubstanceById(
-    id: string
+    id: string,
   ): Promise<(ProtocolSubstance & { protocol: Protocol }) | null> {
     return this.prisma.protocolSubstance.findUnique({
       where: { id },
@@ -162,7 +188,7 @@ export class ProtocolRepository implements IProtocolRepository {
 
   // Template methods
   async findTemplates(
-    options?: FindTemplatesOptions
+    options?: FindTemplatesOptions,
   ): Promise<PaginatedResponse<TemplateWithRelations>> {
     const page = options?.page || 1;
     const limit = options?.limit || 20;
@@ -177,8 +203,8 @@ export class ProtocolRepository implements IProtocolRepository {
 
     if (options?.search) {
       where.OR = [
-        { name: { contains: options.search, mode: 'insensitive' } },
-        { description: { contains: options.search, mode: 'insensitive' } },
+        { name: { contains: options.search, mode: "insensitive" } },
+        { description: { contains: options.search, mode: "insensitive" } },
       ];
     }
 
@@ -193,7 +219,7 @@ export class ProtocolRepository implements IProtocolRepository {
             select: { id: true, name: true, doseUnit: true },
           },
         },
-        orderBy: [{ useCount: 'desc' }, { createdAt: 'desc' }],
+        orderBy: [{ useCount: "desc" }, { createdAt: "desc" }],
         skip: (page - 1) * limit,
         take: limit,
       }),
@@ -221,7 +247,9 @@ export class ProtocolRepository implements IProtocolRepository {
     });
   }
 
-  async createTemplate(data: CreateTemplateInput): Promise<TemplateWithRelations> {
+  async createTemplate(
+    data: CreateTemplateInput,
+  ): Promise<TemplateWithRelations> {
     return this.prisma.protocolTemplate.create({
       data: {
         name: data.name,
@@ -246,7 +274,10 @@ export class ProtocolRepository implements IProtocolRepository {
     });
   }
 
-  async updateTemplate(id: string, data: UpdateTemplateInput): Promise<TemplateWithRelations> {
+  async updateTemplate(
+    id: string,
+    data: UpdateTemplateInput,
+  ): Promise<TemplateWithRelations> {
     return this.prisma.protocolTemplate.update({
       where: { id },
       data: {
