@@ -29,8 +29,8 @@ export function authenticate(
     }
 
     // Fall back to cookie if no valid Authorization header
-    if (!token && req.cookies?.access_token) {
-      token = req.cookies.access_token;
+    if (!token && req.cookies?.lmd_access_token) {
+      token = req.cookies.lmd_access_token;
     }
 
     if (!token) {

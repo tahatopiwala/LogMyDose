@@ -16,19 +16,19 @@ const COOKIE_OPTIONS = {
 };
 
 function setAuthCookies(res: Response, accessToken: string, refreshToken: string) {
-  res.cookie('access_token', accessToken, {
+  res.cookie('lmd_access_token', accessToken, {
     ...COOKIE_OPTIONS,
     maxAge: 15 * 60 * 1000, // 15 minutes
   });
-  res.cookie('refresh_token', refreshToken, {
+  res.cookie('lmd_refresh_token', refreshToken, {
     ...COOKIE_OPTIONS,
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 }
 
 function clearAuthCookies(res: Response) {
-  res.clearCookie('access_token', COOKIE_OPTIONS);
-  res.clearCookie('refresh_token', COOKIE_OPTIONS);
+  res.clearCookie('lmd_access_token', COOKIE_OPTIONS);
+  res.clearCookie('lmd_refresh_token', COOKIE_OPTIONS);
 }
 
 // Validation schemas
@@ -138,7 +138,7 @@ router.post('/login', async (req, res, next) => {
 router.post('/refresh', async (req, res, next) => {
   try {
     // Support refresh token from body or cookie
-    const refreshToken = req.body.refreshToken || req.cookies?.refresh_token;
+    const refreshToken = req.body.refreshToken || req.cookies?.lmd_refresh_token;
     const userType = req.body.userType || 'patient';
 
     const data = refreshSchema.parse({ refreshToken, userType });
