@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { apiClient } from "@/lib/api-client";
 import {
   ProtocolTemplate,
-  PaginatedResponse,
   SubstanceCategory,
 } from "@/types/domain";
 
@@ -20,13 +19,15 @@ export function AddProtocol() {
     async function fetchData() {
       try {
         const [templatesRes, categoriesRes] = await Promise.all([
-          apiClient.get<PaginatedResponse<ProtocolTemplate>>(
+          apiClient.get<{ templates: ProtocolTemplate[] }>(
             "/protocols/templates?limit=50",
           ),
-          apiClient.get<SubstanceCategory[]>("/substances/categories"),
+          apiClient.get<{ categories: SubstanceCategory[] }>(
+            "/substances/categories",
+          ),
         ]);
-        setTemplates(templatesRes.data);
-        setCategories(categoriesRes);
+        setTemplates(templatesRes.templates || []);
+        setCategories(categoriesRes.categories || []);
       } catch (error) {
         console.error("Failed to fetch templates:", error);
       } finally {
