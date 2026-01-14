@@ -82,15 +82,45 @@ export interface DoseStats {
 }
 
 // Substance types
+export type FdaStatus = "approved" | "research" | "supplement" | "withdrawn";
+
+export interface SubstanceReference {
+  title: string;
+  url: string;
+  type: "fda_label" | "study" | "guideline" | "nih_resource" | "fda_document";
+}
+
 export interface Substance {
   id: string;
   categoryId: string;
   name: string;
   aliases: string[];
+  subcategory: string | null;
   defaultDose: number | string | null;
   doseUnit: string | null;
   defaultFrequency: string | null;
   administrationRoute: string | null;
+  preparationInstructions: string | null;
+  storageTemp: string | null;
+  storageNotes: string | null;
+  shelfLifeDays: number | null;
+  shelfLifeReconstitutedDays: number | null;
+  requiresCycling: boolean;
+  commonCycleOnWeeks: number | null;
+  commonCycleOffWeeks: number | null;
+  contraindications: string[];
+  commonSideEffects: string[];
+  interactions: string[];
+  onsetTimeline: string | null;
+  isPrescriptionRequired: boolean;
+  // FDA & Regulatory Info
+  fdaStatus: FdaStatus | null;
+  fdaApprovedFor: string[];
+  fdaLabelUrl: string | null;
+  references: SubstanceReference[] | null;
+  // Metadata
+  isActive: boolean;
+  createdAt: string;
   category?: { id: string; name: string; displayName: string };
 }
 

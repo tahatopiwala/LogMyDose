@@ -15,6 +15,8 @@ export {
   SubstanceCategory,
   Substance,
   SubstanceWithCategory,
+  FdaStatus,
+  SubstanceReference,
 } from "./substance.js";
 
 // Protocol entities

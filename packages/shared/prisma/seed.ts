@@ -1,6 +1,15 @@
 import { PrismaClient } from "@prisma/client";
+import { Pool } from "pg";
+import { PrismaPg } from "@prisma/adapter-pg";
 
-const prisma = new PrismaClient();
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+  throw new Error("DATABASE_URL environment variable is not set");
+}
+
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log("Seeding database...");
@@ -87,6 +96,21 @@ async function main() {
       interactions: [],
       onsetTimeline: "2-4 weeks for noticeable effects",
       isPrescriptionRequired: false,
+      fdaStatus: "research",
+      fdaApprovedFor: [],
+      fdaLabelUrl: null,
+      references: [
+        {
+          title: "BPC 157: A Review of its Effects on Wound Healing and Tissue Repair",
+          url: "https://pubmed.ncbi.nlm.nih.gov/29898130/",
+          type: "study",
+        },
+        {
+          title: "Stable gastric pentadecapeptide BPC 157: novel therapy",
+          url: "https://pubmed.ncbi.nlm.nih.gov/27142187/",
+          type: "study",
+        },
+      ],
     },
     {
       name: "TB-500",
@@ -115,6 +139,21 @@ async function main() {
       interactions: [],
       onsetTimeline: "2-6 weeks for injury healing",
       isPrescriptionRequired: false,
+      fdaStatus: "research",
+      fdaApprovedFor: [],
+      fdaLabelUrl: null,
+      references: [
+        {
+          title: "Thymosin β4: A Multi-Functional Regenerative Peptide",
+          url: "https://pubmed.ncbi.nlm.nih.gov/22074427/",
+          type: "study",
+        },
+        {
+          title: "Thymosin Beta 4 in Wound Healing",
+          url: "https://pubmed.ncbi.nlm.nih.gov/17185648/",
+          type: "study",
+        },
+      ],
     },
     {
       name: "Semaglutide",
@@ -150,6 +189,30 @@ async function main() {
       onsetTimeline:
         "Weight loss typically begins within 4-8 weeks, full effects at 16-20 weeks",
       isPrescriptionRequired: true,
+      fdaStatus: "approved",
+      fdaApprovedFor: [
+        "Type 2 diabetes mellitus (Ozempic)",
+        "Chronic weight management (Wegovy)",
+        "Cardiovascular risk reduction",
+      ],
+      fdaLabelUrl: "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=adec4fd2-6858-4c99-91d4-531f5f2a2d79",
+      references: [
+        {
+          title: "FDA Approval - Ozempic (semaglutide) for Type 2 Diabetes",
+          url: "https://www.accessdata.fda.gov/drugsatfda_docs/label/2023/209637s012lbl.pdf",
+          type: "fda_label",
+        },
+        {
+          title: "FDA Approval - Wegovy (semaglutide) for Chronic Weight Management",
+          url: "https://www.accessdata.fda.gov/drugsatfda_docs/label/2023/215256s007lbl.pdf",
+          type: "fda_label",
+        },
+        {
+          title: "STEP 1 Trial: Semaglutide 2.4 mg for Weight Management",
+          url: "https://pubmed.ncbi.nlm.nih.gov/33567185/",
+          type: "study",
+        },
+      ],
     },
     {
       name: "Tirzepatide",
@@ -183,6 +246,29 @@ async function main() {
       interactions: ["Insulin", "Sulfonylureas"],
       onsetTimeline: "Weight loss typically begins within 4 weeks",
       isPrescriptionRequired: true,
+      fdaStatus: "approved",
+      fdaApprovedFor: [
+        "Type 2 diabetes mellitus (Mounjaro)",
+        "Chronic weight management (Zepbound)",
+      ],
+      fdaLabelUrl: "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=c1a64a6c-4e31-458c-9fe4-f9ef92bb7ddc",
+      references: [
+        {
+          title: "FDA Approval - Mounjaro (tirzepatide) for Type 2 Diabetes",
+          url: "https://www.accessdata.fda.gov/drugsatfda_docs/label/2023/215866s003lbl.pdf",
+          type: "fda_label",
+        },
+        {
+          title: "FDA Approval - Zepbound (tirzepatide) for Chronic Weight Management",
+          url: "https://www.accessdata.fda.gov/drugsatfda_docs/label/2023/217806s000lbl.pdf",
+          type: "fda_label",
+        },
+        {
+          title: "SURMOUNT-1 Trial: Tirzepatide for Weight Management",
+          url: "https://pubmed.ncbi.nlm.nih.gov/35658024/",
+          type: "study",
+        },
+      ],
     },
     {
       name: "CJC-1295",
@@ -213,6 +299,16 @@ async function main() {
       onsetTimeline:
         "2-4 weeks for improved sleep, 8-12 weeks for body composition changes",
       isPrescriptionRequired: false,
+      fdaStatus: "research",
+      fdaApprovedFor: [],
+      fdaLabelUrl: null,
+      references: [
+        {
+          title: "CJC-1295: A Long-Acting GHRH Analog",
+          url: "https://pubmed.ncbi.nlm.nih.gov/16352683/",
+          type: "study",
+        },
+      ],
     },
     {
       name: "Ipamorelin",
@@ -242,6 +338,16 @@ async function main() {
       onsetTimeline:
         "2-4 weeks for improved sleep, 8-12 weeks for full effects",
       isPrescriptionRequired: false,
+      fdaStatus: "research",
+      fdaApprovedFor: [],
+      fdaLabelUrl: null,
+      references: [
+        {
+          title: "Ipamorelin: The First Selective Growth Hormone Secretagogue",
+          url: "https://pubmed.ncbi.nlm.nih.gov/9849822/",
+          type: "study",
+        },
+      ],
     },
     {
       name: "PT-141",
@@ -271,6 +377,23 @@ async function main() {
       interactions: ["Antihypertensives"],
       onsetTimeline: "45-60 minutes before onset of effects",
       isPrescriptionRequired: true,
+      fdaStatus: "approved",
+      fdaApprovedFor: [
+        "Hypoactive sexual desire disorder (HSDD) in premenopausal women",
+      ],
+      fdaLabelUrl: "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=18b77e84-4bc0-4e40-b09c-bc76ef9bfe04",
+      references: [
+        {
+          title: "FDA Approval - Vyleesi (bremelanotide) for HSDD",
+          url: "https://www.accessdata.fda.gov/drugsatfda_docs/label/2019/210557s000lbl.pdf",
+          type: "fda_label",
+        },
+        {
+          title: "Bremelanotide for Hypoactive Sexual Desire Disorder",
+          url: "https://pubmed.ncbi.nlm.nih.gov/31042449/",
+          type: "study",
+        },
+      ],
     },
     {
       name: "Sermorelin",
@@ -301,6 +424,18 @@ async function main() {
       onsetTimeline:
         "2-4 weeks for improved sleep, 3-6 months for full effects",
       isPrescriptionRequired: true,
+      fdaStatus: "withdrawn",
+      fdaApprovedFor: [
+        "Previously approved for diagnosis of growth hormone deficiency (discontinued)",
+      ],
+      fdaLabelUrl: null,
+      references: [
+        {
+          title: "Sermorelin: A Review of Its Use in the Diagnosis and Treatment of Children with Idiopathic Growth Hormone Deficiency",
+          url: "https://pubmed.ncbi.nlm.nih.gov/10193873/",
+          type: "study",
+        },
+      ],
     },
     {
       name: "Tesamorelin",
@@ -331,6 +466,23 @@ async function main() {
       interactions: [],
       onsetTimeline: "8-12 weeks for measurable reduction in visceral fat",
       isPrescriptionRequired: true,
+      fdaStatus: "approved",
+      fdaApprovedFor: [
+        "Reduction of excess abdominal fat in HIV-infected patients with lipodystrophy",
+      ],
+      fdaLabelUrl: "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0d89e15d-cc26-4c2a-9f5f-6e1e78c91ce5",
+      references: [
+        {
+          title: "FDA Approval - Egrifta (tesamorelin) for HIV Lipodystrophy",
+          url: "https://www.accessdata.fda.gov/drugsatfda_docs/label/2019/022505s011lbl.pdf",
+          type: "fda_label",
+        },
+        {
+          title: "Tesamorelin Effects on Visceral Fat and Liver Fat in HIV",
+          url: "https://pubmed.ncbi.nlm.nih.gov/25006700/",
+          type: "study",
+        },
+      ],
     },
     {
       name: "AOD-9604",
@@ -354,6 +506,21 @@ async function main() {
       interactions: [],
       onsetTimeline: "4-8 weeks for fat metabolism effects",
       isPrescriptionRequired: false,
+      fdaStatus: "research",
+      fdaApprovedFor: [],
+      fdaLabelUrl: null,
+      references: [
+        {
+          title: "AOD9604: A Novel Peptide with Fat-Reducing Properties",
+          url: "https://pubmed.ncbi.nlm.nih.gov/11713213/",
+          type: "study",
+        },
+        {
+          title: "FDA GRAS Notice for AOD-9604 (food use)",
+          url: "https://www.fda.gov/media/110870/download",
+          type: "fda_document",
+        },
+      ],
     },
     {
       name: "GHK-Cu",
@@ -378,6 +545,21 @@ async function main() {
       interactions: [],
       onsetTimeline: "4-8 weeks for skin/healing improvements",
       isPrescriptionRequired: false,
+      fdaStatus: "research",
+      fdaApprovedFor: [],
+      fdaLabelUrl: null,
+      references: [
+        {
+          title: "GHK-Cu: The Human Skin Remodeling Peptide",
+          url: "https://pubmed.ncbi.nlm.nih.gov/18047933/",
+          type: "study",
+        },
+        {
+          title: "GHK Peptide as a Natural Modulator of Multiple Cellular Pathways",
+          url: "https://pubmed.ncbi.nlm.nih.gov/25654320/",
+          type: "study",
+        },
+      ],
     },
     {
       name: "NAD+",
@@ -404,6 +586,21 @@ async function main() {
       interactions: [],
       onsetTimeline: "2-4 weeks for energy improvements",
       isPrescriptionRequired: false,
+      fdaStatus: "supplement",
+      fdaApprovedFor: [],
+      fdaLabelUrl: null,
+      references: [
+        {
+          title: "NAD+ Metabolism and Its Roles in Cellular Processes",
+          url: "https://pubmed.ncbi.nlm.nih.gov/26785480/",
+          type: "study",
+        },
+        {
+          title: "NAD+ in Aging: Molecular Mechanisms and Translational Implications",
+          url: "https://pubmed.ncbi.nlm.nih.gov/30443585/",
+          type: "study",
+        },
+      ],
     },
   ];
 
@@ -477,6 +674,25 @@ async function main() {
       onsetTimeline:
         "2-4 weeks for initial effects, 3-6 months for full benefits",
       isPrescriptionRequired: true,
+      fdaStatus: "approved",
+      fdaApprovedFor: [
+        "Male hypogonadism",
+        "Delayed puberty in males",
+        "Metastatic breast cancer in females",
+      ],
+      fdaLabelUrl: "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=bbb4cf8f-b8c9-4f9d-8a2e-4be5d58e6d50",
+      references: [
+        {
+          title: "FDA Label - Depo-Testosterone (testosterone cypionate)",
+          url: "https://www.accessdata.fda.gov/drugsatfda_docs/label/2018/085635s029lbl.pdf",
+          type: "fda_label",
+        },
+        {
+          title: "Testosterone Therapy in Men with Hypogonadism: An Endocrine Society Guideline",
+          url: "https://pubmed.ncbi.nlm.nih.gov/29562364/",
+          type: "guideline",
+        },
+      ],
     },
     {
       name: "Testosterone Enanthate",
@@ -509,6 +725,19 @@ async function main() {
       onsetTimeline:
         "2-4 weeks for initial effects, 3-6 months for full benefits",
       isPrescriptionRequired: true,
+      fdaStatus: "approved",
+      fdaApprovedFor: [
+        "Male hypogonadism",
+        "Delayed puberty in males",
+      ],
+      fdaLabelUrl: "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=e7e0e6be-fb2a-4c38-ad6b-c2a80a2d6b4c",
+      references: [
+        {
+          title: "FDA Label - Delatestryl (testosterone enanthate)",
+          url: "https://www.accessdata.fda.gov/drugsatfda_docs/label/2018/009165s033lbl.pdf",
+          type: "fda_label",
+        },
+      ],
     },
     {
       name: "Estradiol",
@@ -544,6 +773,26 @@ async function main() {
       ],
       onsetTimeline: "2-4 weeks for symptom improvement",
       isPrescriptionRequired: true,
+      fdaStatus: "approved",
+      fdaApprovedFor: [
+        "Moderate to severe vasomotor symptoms of menopause",
+        "Vulvar and vaginal atrophy",
+        "Hypoestrogenism due to hypogonadism",
+        "Prevention of postmenopausal osteoporosis",
+      ],
+      fdaLabelUrl: "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=af14d71e-e94c-48b2-8203-aae2a7c1f8b6",
+      references: [
+        {
+          title: "FDA Label - Estrace (estradiol)",
+          url: "https://www.accessdata.fda.gov/drugsatfda_docs/label/2018/017369s056lbl.pdf",
+          type: "fda_label",
+        },
+        {
+          title: "The 2022 Hormone Therapy Position Statement of The North American Menopause Society",
+          url: "https://pubmed.ncbi.nlm.nih.gov/35797481/",
+          type: "guideline",
+        },
+      ],
     },
     {
       name: "Progesterone",
@@ -576,6 +825,19 @@ async function main() {
       onsetTimeline:
         "1-2 weeks for sleep benefits, 2-4 weeks for other effects",
       isPrescriptionRequired: true,
+      fdaStatus: "approved",
+      fdaApprovedFor: [
+        "Prevention of endometrial hyperplasia in postmenopausal women receiving estrogen",
+        "Secondary amenorrhea",
+      ],
+      fdaLabelUrl: "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=3f6a7a1c-6dba-48ff-95ef-1b6a17dd0c0c",
+      references: [
+        {
+          title: "FDA Label - Prometrium (progesterone)",
+          url: "https://www.accessdata.fda.gov/drugsatfda_docs/label/2018/019781s029lbl.pdf",
+          type: "fda_label",
+        },
+      ],
     },
     {
       name: "DHEA",
@@ -612,6 +874,21 @@ async function main() {
       ],
       onsetTimeline: "4-8 weeks for noticeable effects",
       isPrescriptionRequired: false,
+      fdaStatus: "supplement",
+      fdaApprovedFor: [],
+      fdaLabelUrl: null,
+      references: [
+        {
+          title: "DHEA in Elderly Women and DHEA or Testosterone in Elderly Men",
+          url: "https://pubmed.ncbi.nlm.nih.gov/17090760/",
+          type: "study",
+        },
+        {
+          title: "NIH - DHEA Fact Sheet",
+          url: "https://ods.od.nih.gov/factsheets/DHEA-HealthProfessional/",
+          type: "nih_resource",
+        },
+      ],
     },
     {
       name: "Pregnenolone",
@@ -637,6 +914,16 @@ async function main() {
       interactions: ["Hormone therapies", "CNS depressants"],
       onsetTimeline: "2-4 weeks for cognitive effects",
       isPrescriptionRequired: false,
+      fdaStatus: "supplement",
+      fdaApprovedFor: [],
+      fdaLabelUrl: null,
+      references: [
+        {
+          title: "Pregnenolone and Cognitive Function",
+          url: "https://pubmed.ncbi.nlm.nih.gov/21158904/",
+          type: "study",
+        },
+      ],
     },
     {
       name: "Liothyronine",
@@ -673,6 +960,26 @@ async function main() {
       onsetTimeline:
         "24-72 hours for initial effects, 2-4 weeks for stable levels",
       isPrescriptionRequired: true,
+      fdaStatus: "approved",
+      fdaApprovedFor: [
+        "Hypothyroidism",
+        "Thyroid suppression therapy",
+        "Myxedema coma",
+        "Thyroid diagnostic testing",
+      ],
+      fdaLabelUrl: "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=28db4b44-f71b-4c32-b37e-70c48685e7d5",
+      references: [
+        {
+          title: "FDA Label - Cytomel (liothyronine sodium)",
+          url: "https://www.accessdata.fda.gov/drugsatfda_docs/label/2018/010379s042lbl.pdf",
+          type: "fda_label",
+        },
+        {
+          title: "ATA Guidelines for Treatment of Hypothyroidism",
+          url: "https://pubmed.ncbi.nlm.nih.gov/25266247/",
+          type: "guideline",
+        },
+      ],
     },
     {
       name: "HCG",
@@ -704,6 +1011,25 @@ async function main() {
       interactions: ["Gonadotropin-releasing hormones"],
       onsetTimeline: "1-2 weeks for testicular response",
       isPrescriptionRequired: true,
+      fdaStatus: "approved",
+      fdaApprovedFor: [
+        "Prepubertal cryptorchidism",
+        "Hypogonadotropic hypogonadism in males",
+        "Induction of ovulation in anovulatory women",
+      ],
+      fdaLabelUrl: "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=ae5e7fbd-8e9e-4d03-96d9-5e5d2b9ad6c2",
+      references: [
+        {
+          title: "FDA Label - Pregnyl (chorionic gonadotropin)",
+          url: "https://www.accessdata.fda.gov/drugsatfda_docs/label/2018/017022s032lbl.pdf",
+          type: "fda_label",
+        },
+        {
+          title: "HCG Use in Male Hypogonadism",
+          url: "https://pubmed.ncbi.nlm.nih.gov/23915510/",
+          type: "study",
+        },
+      ],
     },
   ];
 
@@ -770,6 +1096,21 @@ async function main() {
       onsetTimeline:
         "4-8 weeks for blood level changes, 3+ months for full benefits",
       isPrescriptionRequired: false,
+      fdaStatus: "supplement",
+      fdaApprovedFor: [],
+      fdaLabelUrl: null,
+      references: [
+        {
+          title: "NIH Office of Dietary Supplements - Vitamin D Fact Sheet",
+          url: "https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional/",
+          type: "nih_resource",
+        },
+        {
+          title: "Vitamin D and Health: A Review",
+          url: "https://pubmed.ncbi.nlm.nih.gov/32679784/",
+          type: "study",
+        },
+      ],
     },
     {
       name: "Vitamin B12",
@@ -790,6 +1131,16 @@ async function main() {
       interactions: ["Metformin", "Proton pump inhibitors", "Colchicine"],
       onsetTimeline: "2-4 weeks for energy improvements",
       isPrescriptionRequired: false,
+      fdaStatus: "supplement",
+      fdaApprovedFor: [],
+      fdaLabelUrl: null,
+      references: [
+        {
+          title: "NIH Office of Dietary Supplements - Vitamin B12 Fact Sheet",
+          url: "https://ods.od.nih.gov/factsheets/VitaminB12-HealthProfessional/",
+          type: "nih_resource",
+        },
+      ],
     },
     {
       name: "Magnesium Glycinate",
@@ -818,6 +1169,21 @@ async function main() {
       ],
       onsetTimeline: "1-2 weeks for sleep and relaxation benefits",
       isPrescriptionRequired: false,
+      fdaStatus: "supplement",
+      fdaApprovedFor: [],
+      fdaLabelUrl: null,
+      references: [
+        {
+          title: "NIH Office of Dietary Supplements - Magnesium Fact Sheet",
+          url: "https://ods.od.nih.gov/factsheets/Magnesium-HealthProfessional/",
+          type: "nih_resource",
+        },
+        {
+          title: "The Role of Magnesium in Sleep Health",
+          url: "https://pubmed.ncbi.nlm.nih.gov/35184264/",
+          type: "study",
+        },
+      ],
     },
     {
       name: "Zinc",
@@ -840,6 +1206,16 @@ async function main() {
       interactions: ["Antibiotics", "Penicillamine", "Thiazide diuretics"],
       onsetTimeline: "2-4 weeks for immune benefits",
       isPrescriptionRequired: false,
+      fdaStatus: "supplement",
+      fdaApprovedFor: [],
+      fdaLabelUrl: null,
+      references: [
+        {
+          title: "NIH Office of Dietary Supplements - Zinc Fact Sheet",
+          url: "https://ods.od.nih.gov/factsheets/Zinc-HealthProfessional/",
+          type: "nih_resource",
+        },
+      ],
     },
     {
       name: "Omega-3 Fish Oil",
@@ -860,6 +1236,21 @@ async function main() {
       interactions: ["Blood thinners", "Blood pressure medications"],
       onsetTimeline: "8-12 weeks for cardiovascular benefits",
       isPrescriptionRequired: false,
+      fdaStatus: "supplement",
+      fdaApprovedFor: [],
+      fdaLabelUrl: null,
+      references: [
+        {
+          title: "NIH Office of Dietary Supplements - Omega-3 Fatty Acids Fact Sheet",
+          url: "https://ods.od.nih.gov/factsheets/Omega3FattyAcids-HealthProfessional/",
+          type: "nih_resource",
+        },
+        {
+          title: "Omega-3 Fatty Acids and Cardiovascular Disease",
+          url: "https://pubmed.ncbi.nlm.nih.gov/33963618/",
+          type: "study",
+        },
+      ],
     },
     {
       name: "CoQ10",
@@ -888,6 +1279,21 @@ async function main() {
       ],
       onsetTimeline: "4-12 weeks for energy benefits",
       isPrescriptionRequired: false,
+      fdaStatus: "supplement",
+      fdaApprovedFor: [],
+      fdaLabelUrl: null,
+      references: [
+        {
+          title: "Coenzyme Q10: Clinical Applications in Cardiovascular Diseases",
+          url: "https://pubmed.ncbi.nlm.nih.gov/29543825/",
+          type: "study",
+        },
+        {
+          title: "NIH - Coenzyme Q10 Summary",
+          url: "https://www.nccih.nih.gov/health/coenzyme-q10",
+          type: "nih_resource",
+        },
+      ],
     },
     {
       name: "Glutathione",
@@ -908,6 +1314,16 @@ async function main() {
       interactions: ["Chemotherapy drugs", "Acetaminophen"],
       onsetTimeline: "4-8 weeks for detoxification benefits",
       isPrescriptionRequired: false,
+      fdaStatus: "supplement",
+      fdaApprovedFor: [],
+      fdaLabelUrl: null,
+      references: [
+        {
+          title: "Glutathione: Overview of its Protective Roles and Therapeutic Potential",
+          url: "https://pubmed.ncbi.nlm.nih.gov/25050823/",
+          type: "study",
+        },
+      ],
     },
     {
       name: "Vitamin K2",
@@ -928,6 +1344,21 @@ async function main() {
       interactions: ["Blood thinners (especially warfarin)"],
       onsetTimeline: "8-12 weeks for bone health benefits",
       isPrescriptionRequired: false,
+      fdaStatus: "supplement",
+      fdaApprovedFor: [],
+      fdaLabelUrl: null,
+      references: [
+        {
+          title: "NIH Office of Dietary Supplements - Vitamin K Fact Sheet",
+          url: "https://ods.od.nih.gov/factsheets/VitaminK-HealthProfessional/",
+          type: "nih_resource",
+        },
+        {
+          title: "Vitamin K2 in Bone and Cardiovascular Health",
+          url: "https://pubmed.ncbi.nlm.nih.gov/26770129/",
+          type: "study",
+        },
+      ],
     },
   ];
 
@@ -1284,6 +1715,577 @@ async function main() {
       frequency: "daily",
       difficultyLevel: "beginner",
       tags: ["sleep", "recovery", "relaxation", "stress"],
+    },
+    // Additional Peptide Protocol Templates
+    {
+      name: "Tirzepatide Weight Loss Titration",
+      description:
+        "Standard titration schedule for Tirzepatide (Mounjaro/Zepbound). Dual GLP-1/GIP agonist for enhanced weight loss.",
+      substanceName: "Tirzepatide",
+      defaultDose: 2.5,
+      doseUnit: "mg",
+      frequency: "weekly",
+      difficultyLevel: "intermediate",
+      tags: ["weight-loss", "glp1", "gip", "titration", "metabolic"],
+      titrationPlan: {
+        weeks: [
+          {
+            week: 1,
+            dose: 2.5,
+            unit: "mg",
+            frequency: "weekly",
+            notes: "Starting dose - expect appetite reduction",
+          },
+          { week: 2, dose: 2.5, unit: "mg", frequency: "weekly" },
+          { week: 3, dose: 2.5, unit: "mg", frequency: "weekly" },
+          { week: 4, dose: 2.5, unit: "mg", frequency: "weekly" },
+          {
+            week: 5,
+            dose: 5,
+            unit: "mg",
+            frequency: "weekly",
+            notes: "First dose increase",
+          },
+          { week: 6, dose: 5, unit: "mg", frequency: "weekly" },
+          { week: 7, dose: 5, unit: "mg", frequency: "weekly" },
+          { week: 8, dose: 5, unit: "mg", frequency: "weekly" },
+          {
+            week: 9,
+            dose: 7.5,
+            unit: "mg",
+            frequency: "weekly",
+            notes: "Second dose increase",
+          },
+          { week: 10, dose: 7.5, unit: "mg", frequency: "weekly" },
+          { week: 11, dose: 7.5, unit: "mg", frequency: "weekly" },
+          { week: 12, dose: 7.5, unit: "mg", frequency: "weekly" },
+          {
+            week: 13,
+            dose: 10,
+            unit: "mg",
+            frequency: "weekly",
+            notes: "Third dose increase",
+          },
+          { week: 14, dose: 10, unit: "mg", frequency: "weekly" },
+          { week: 15, dose: 10, unit: "mg", frequency: "weekly" },
+          { week: 16, dose: 10, unit: "mg", frequency: "weekly" },
+          {
+            week: 17,
+            dose: 12.5,
+            unit: "mg",
+            frequency: "weekly",
+            notes: "Fourth dose increase if needed",
+          },
+          { week: 18, dose: 12.5, unit: "mg", frequency: "weekly" },
+          { week: 19, dose: 12.5, unit: "mg", frequency: "weekly" },
+          { week: 20, dose: 12.5, unit: "mg", frequency: "weekly" },
+          {
+            week: 21,
+            dose: 15,
+            unit: "mg",
+            frequency: "weekly",
+            notes: "Maximum dose if needed",
+          },
+        ],
+      },
+    },
+    {
+      name: "PT-141 Sexual Health Protocol",
+      description:
+        "As-needed protocol for PT-141 (Bremelanotide) for sexual dysfunction. Use 45-60 minutes before activity.",
+      substanceName: "PT-141",
+      defaultDose: 1.75,
+      doseUnit: "mg",
+      frequency: "as_needed",
+      difficultyLevel: "beginner",
+      tags: ["sexual-health", "libido", "as-needed"],
+    },
+    {
+      name: "Sermorelin Anti-Aging Protocol",
+      description:
+        "Daily Sermorelin protocol for anti-aging, improved sleep, and body composition. Inject at bedtime on empty stomach.",
+      substanceName: "Sermorelin",
+      defaultDose: 200,
+      doseUnit: "mcg",
+      frequency: "daily",
+      difficultyLevel: "intermediate",
+      tags: ["anti-aging", "sleep", "gh-secretagogue", "recovery"],
+      cycleOnWeeks: 12,
+      cycleOffWeeks: 4,
+      titrationPlan: {
+        weeks: [
+          {
+            week: 1,
+            dose: 100,
+            unit: "mcg",
+            frequency: "daily",
+            notes: "Start low to assess tolerance",
+          },
+          { week: 2, dose: 100, unit: "mcg", frequency: "daily" },
+          {
+            week: 3,
+            dose: 200,
+            unit: "mcg",
+            frequency: "daily",
+            notes: "Increase to standard dose",
+          },
+          { week: 4, dose: 200, unit: "mcg", frequency: "daily" },
+          { week: 5, dose: 200, unit: "mcg", frequency: "daily" },
+          { week: 6, dose: 200, unit: "mcg", frequency: "daily" },
+          {
+            week: 7,
+            dose: 300,
+            unit: "mcg",
+            frequency: "daily",
+            notes: "Optional increase for enhanced effects",
+          },
+          { week: 8, dose: 300, unit: "mcg", frequency: "daily" },
+          { week: 9, dose: 300, unit: "mcg", frequency: "daily" },
+          { week: 10, dose: 300, unit: "mcg", frequency: "daily" },
+          { week: 11, dose: 300, unit: "mcg", frequency: "daily" },
+          {
+            week: 12,
+            dose: 300,
+            unit: "mcg",
+            frequency: "daily",
+            notes: "End of cycle - take 4 weeks off",
+          },
+        ],
+      },
+    },
+    {
+      name: "NAD+ Cellular Energy Protocol",
+      description:
+        "NAD+ supplementation for cellular energy, longevity, and cognitive function.",
+      substanceName: "NAD+",
+      defaultDose: 100,
+      doseUnit: "mg",
+      frequency: "daily",
+      difficultyLevel: "intermediate",
+      tags: ["longevity", "energy", "cognitive", "anti-aging", "mitochondria"],
+      titrationPlan: {
+        weeks: [
+          {
+            week: 1,
+            dose: 50,
+            unit: "mg",
+            frequency: "daily",
+            notes: "Start low - may cause flushing",
+          },
+          { week: 2, dose: 50, unit: "mg", frequency: "daily" },
+          {
+            week: 3,
+            dose: 100,
+            unit: "mg",
+            frequency: "daily",
+            notes: "Standard dose",
+          },
+          { week: 4, dose: 100, unit: "mg", frequency: "daily" },
+          { week: 5, dose: 100, unit: "mg", frequency: "daily" },
+          { week: 6, dose: 100, unit: "mg", frequency: "daily" },
+          {
+            week: 7,
+            dose: 150,
+            unit: "mg",
+            frequency: "daily",
+            notes: "Optional increase",
+          },
+          { week: 8, dose: 150, unit: "mg", frequency: "daily" },
+        ],
+      },
+    },
+    {
+      name: "GHK-Cu Skin Rejuvenation Protocol",
+      description:
+        "Copper peptide protocol for skin health, wound healing, and hair growth.",
+      substanceName: "GHK-Cu",
+      defaultDose: 1,
+      doseUnit: "mg",
+      frequency: "daily",
+      difficultyLevel: "beginner",
+      tags: ["skin", "healing", "hair", "collagen", "anti-aging"],
+    },
+    {
+      name: "AOD-9604 Fat Loss Protocol",
+      description:
+        "AOD-9604 protocol targeting fat metabolism without affecting blood sugar or growth.",
+      substanceName: "AOD-9604",
+      defaultDose: 300,
+      doseUnit: "mcg",
+      frequency: "daily",
+      difficultyLevel: "intermediate",
+      tags: ["fat-loss", "metabolic", "body-composition"],
+      cycleOnWeeks: 12,
+      cycleOffWeeks: 4,
+      titrationPlan: {
+        weeks: [
+          {
+            week: 1,
+            dose: 250,
+            unit: "mcg",
+            frequency: "daily",
+            notes: "Inject on empty stomach, morning preferred",
+          },
+          { week: 2, dose: 250, unit: "mcg", frequency: "daily" },
+          {
+            week: 3,
+            dose: 300,
+            unit: "mcg",
+            frequency: "daily",
+            notes: "Standard dose",
+          },
+          { week: 4, dose: 300, unit: "mcg", frequency: "daily" },
+          { week: 5, dose: 300, unit: "mcg", frequency: "daily" },
+          { week: 6, dose: 300, unit: "mcg", frequency: "daily" },
+          { week: 7, dose: 300, unit: "mcg", frequency: "daily" },
+          { week: 8, dose: 300, unit: "mcg", frequency: "daily" },
+          { week: 9, dose: 300, unit: "mcg", frequency: "daily" },
+          { week: 10, dose: 300, unit: "mcg", frequency: "daily" },
+          { week: 11, dose: 300, unit: "mcg", frequency: "daily" },
+          {
+            week: 12,
+            dose: 300,
+            unit: "mcg",
+            frequency: "daily",
+            notes: "End of cycle",
+          },
+        ],
+      },
+    },
+    {
+      name: "Ipamorelin Sleep & Recovery Protocol",
+      description:
+        "Ipamorelin solo protocol for improved sleep quality, recovery, and gentle GH release.",
+      substanceName: "Ipamorelin",
+      defaultDose: 200,
+      doseUnit: "mcg",
+      frequency: "2x_daily",
+      difficultyLevel: "beginner",
+      tags: ["sleep", "recovery", "gh-secretagogue", "beginner-friendly"],
+      cycleOnWeeks: 12,
+      cycleOffWeeks: 4,
+    },
+    {
+      name: "Tesamorelin Visceral Fat Protocol",
+      description:
+        "FDA-approved GHRH analog for reducing visceral adipose tissue. Inject into abdomen daily.",
+      substanceName: "Tesamorelin",
+      defaultDose: 2,
+      doseUnit: "mg",
+      frequency: "daily",
+      difficultyLevel: "advanced",
+      tags: ["visceral-fat", "body-composition", "gh-secretagogue", "fda-approved"],
+    },
+    {
+      name: "BPC-157 + TB-500 Advanced Healing Protocol",
+      description:
+        "High-dose healing stack for serious injuries. Combines systemic and local healing mechanisms.",
+      substanceName: "BPC-157",
+      defaultDose: 500,
+      doseUnit: "mcg",
+      frequency: "2x_daily",
+      difficultyLevel: "advanced",
+      tags: ["healing", "injury-recovery", "advanced", "stack"],
+      cycleOnWeeks: 8,
+      cycleOffWeeks: 4,
+      titrationPlan: {
+        weeks: [
+          {
+            week: 1,
+            dose: 250,
+            unit: "mcg",
+            frequency: "2x_daily",
+            notes: "BPC-157 + TB-500 2.5mg 2x/week",
+          },
+          {
+            week: 2,
+            dose: 500,
+            unit: "mcg",
+            frequency: "2x_daily",
+            notes: "Increase BPC-157 dose",
+          },
+          { week: 3, dose: 500, unit: "mcg", frequency: "2x_daily" },
+          { week: 4, dose: 500, unit: "mcg", frequency: "2x_daily" },
+          { week: 5, dose: 500, unit: "mcg", frequency: "2x_daily" },
+          { week: 6, dose: 500, unit: "mcg", frequency: "2x_daily" },
+          {
+            week: 7,
+            dose: 250,
+            unit: "mcg",
+            frequency: "2x_daily",
+            notes: "Taper down",
+          },
+          {
+            week: 8,
+            dose: 250,
+            unit: "mcg",
+            frequency: "2x_daily",
+            notes: "End of cycle",
+          },
+        ],
+      },
+    },
+    // Additional Hormone Protocol Templates
+    {
+      name: "DHEA Optimization Protocol",
+      description:
+        "DHEA supplementation for adrenal support, energy, and hormone precursor optimization.",
+      substanceName: "DHEA",
+      categoryName: "hormone",
+      defaultDose: 25,
+      doseUnit: "mg",
+      frequency: "daily",
+      difficultyLevel: "beginner",
+      tags: ["adrenal", "energy", "hormone-precursor", "anti-aging"],
+      cycleOnWeeks: 8,
+      cycleOffWeeks: 4,
+      titrationPlan: {
+        weeks: [
+          {
+            week: 1,
+            dose: 10,
+            unit: "mg",
+            frequency: "daily",
+            notes: "Start low, take in morning",
+          },
+          { week: 2, dose: 10, unit: "mg", frequency: "daily" },
+          {
+            week: 3,
+            dose: 25,
+            unit: "mg",
+            frequency: "daily",
+            notes: "Standard dose",
+          },
+          { week: 4, dose: 25, unit: "mg", frequency: "daily" },
+          { week: 5, dose: 25, unit: "mg", frequency: "daily" },
+          { week: 6, dose: 25, unit: "mg", frequency: "daily" },
+          { week: 7, dose: 25, unit: "mg", frequency: "daily" },
+          {
+            week: 8,
+            dose: 25,
+            unit: "mg",
+            frequency: "daily",
+            notes: "Check DHEA-S levels",
+          },
+        ],
+      },
+    },
+    {
+      name: "Pregnenolone Brain Health Protocol",
+      description:
+        "Pregnenolone for cognitive function, memory, and neurosteroid support.",
+      substanceName: "Pregnenolone",
+      categoryName: "hormone",
+      defaultDose: 50,
+      doseUnit: "mg",
+      frequency: "daily",
+      difficultyLevel: "intermediate",
+      tags: ["cognitive", "memory", "brain-health", "neurosteroid"],
+      cycleOnWeeks: 8,
+      cycleOffWeeks: 4,
+    },
+    {
+      name: "Micro-dose TRT Protocol",
+      description:
+        "More frequent, smaller injections for stable testosterone levels and fewer side effects.",
+      substanceName: "Testosterone Cypionate",
+      categoryName: "hormone",
+      defaultDose: 20,
+      doseUnit: "mg",
+      frequency: "daily",
+      difficultyLevel: "advanced",
+      tags: ["trt", "testosterone", "micro-dose", "stable-levels"],
+      titrationPlan: {
+        weeks: [
+          {
+            week: 1,
+            dose: 14,
+            unit: "mg",
+            frequency: "daily",
+            notes: "Start with ~100mg/week equivalent",
+          },
+          { week: 2, dose: 14, unit: "mg", frequency: "daily" },
+          { week: 3, dose: 14, unit: "mg", frequency: "daily" },
+          { week: 4, dose: 14, unit: "mg", frequency: "daily" },
+          {
+            week: 5,
+            dose: 14,
+            unit: "mg",
+            frequency: "daily",
+            notes: "Check labs - trough levels",
+          },
+          { week: 6, dose: 14, unit: "mg", frequency: "daily" },
+          {
+            week: 7,
+            dose: 20,
+            unit: "mg",
+            frequency: "daily",
+            notes: "Adjust based on labs if needed",
+          },
+          { week: 8, dose: 20, unit: "mg", frequency: "daily" },
+        ],
+      },
+    },
+    {
+      name: "HCG Monotherapy Protocol",
+      description:
+        "HCG-only protocol for men wanting to maintain fertility while optimizing testosterone.",
+      substanceName: "HCG",
+      categoryName: "hormone",
+      defaultDose: 1500,
+      doseUnit: "iu",
+      frequency: "3x_weekly",
+      difficultyLevel: "intermediate",
+      tags: ["hcg", "fertility", "testosterone", "natural-production"],
+      titrationPlan: {
+        weeks: [
+          {
+            week: 1,
+            dose: 1000,
+            unit: "iu",
+            frequency: "3x_weekly",
+            notes: "Starting dose",
+          },
+          { week: 2, dose: 1000, unit: "iu", frequency: "3x_weekly" },
+          {
+            week: 3,
+            dose: 1500,
+            unit: "iu",
+            frequency: "3x_weekly",
+            notes: "Increase to standard dose",
+          },
+          { week: 4, dose: 1500, unit: "iu", frequency: "3x_weekly" },
+          {
+            week: 5,
+            dose: 1500,
+            unit: "iu",
+            frequency: "3x_weekly",
+            notes: "Check total T and estradiol",
+          },
+          { week: 6, dose: 1500, unit: "iu", frequency: "3x_weekly" },
+          { week: 7, dose: 1500, unit: "iu", frequency: "3x_weekly" },
+          {
+            week: 8,
+            dose: 1500,
+            unit: "iu",
+            frequency: "3x_weekly",
+            notes: "Adjust based on response",
+          },
+        ],
+      },
+    },
+    // Additional Supplement Protocol Templates
+    {
+      name: "Immune Support Stack",
+      description:
+        "Comprehensive immune support with Vitamin D3, Zinc, and Vitamin C for optimal immune function.",
+      substanceName: "Vitamin D3",
+      categoryName: "supplement",
+      defaultDose: 5000,
+      doseUnit: "iu",
+      frequency: "daily",
+      difficultyLevel: "beginner",
+      tags: ["immune", "vitamins", "minerals", "health", "prevention"],
+    },
+    {
+      name: "Cardiovascular Health Stack",
+      description:
+        "Heart health protocol with Omega-3s, CoQ10, and K2 for cardiovascular optimization.",
+      substanceName: "Omega-3 Fish Oil",
+      categoryName: "supplement",
+      defaultDose: 3000,
+      doseUnit: "mg",
+      frequency: "daily",
+      difficultyLevel: "beginner",
+      tags: ["heart-health", "cardiovascular", "omega-3", "coq10"],
+    },
+    {
+      name: "Detox & Antioxidant Protocol",
+      description:
+        "Glutathione-based protocol for detoxification and antioxidant support.",
+      substanceName: "Glutathione",
+      categoryName: "supplement",
+      defaultDose: 500,
+      doseUnit: "mg",
+      frequency: "daily",
+      difficultyLevel: "intermediate",
+      tags: ["detox", "antioxidant", "liver-support", "cellular-health"],
+    },
+    {
+      name: "Bone Health Protocol",
+      description:
+        "Vitamin D3 + K2 combination for optimal calcium metabolism and bone density.",
+      substanceName: "Vitamin K2",
+      categoryName: "supplement",
+      defaultDose: 200,
+      doseUnit: "mcg",
+      frequency: "daily",
+      difficultyLevel: "beginner",
+      tags: ["bone-health", "calcium", "vitamin-d", "vitamin-k2"],
+    },
+    {
+      name: "Energy & Methylation Support",
+      description:
+        "B12 and methylation support for energy production and neurological health.",
+      substanceName: "Vitamin B12",
+      categoryName: "supplement",
+      defaultDose: 2000,
+      doseUnit: "mcg",
+      frequency: "daily",
+      difficultyLevel: "beginner",
+      tags: ["energy", "methylation", "neurological", "b-vitamins"],
+    },
+    {
+      name: "Stress & Adrenal Support Stack",
+      description:
+        "Magnesium-based protocol for stress management and adrenal health.",
+      substanceName: "Magnesium Glycinate",
+      categoryName: "supplement",
+      defaultDose: 600,
+      doseUnit: "mg",
+      frequency: "daily",
+      difficultyLevel: "beginner",
+      tags: ["stress", "adrenal", "relaxation", "anxiety", "magnesium"],
+      titrationPlan: {
+        weeks: [
+          {
+            week: 1,
+            dose: 200,
+            unit: "mg",
+            frequency: "daily",
+            notes: "Start low - take in evening",
+          },
+          {
+            week: 2,
+            dose: 400,
+            unit: "mg",
+            frequency: "daily",
+            notes: "Split AM/PM if desired",
+          },
+          { week: 3, dose: 400, unit: "mg", frequency: "daily" },
+          {
+            week: 4,
+            dose: 600,
+            unit: "mg",
+            frequency: "daily",
+            notes: "Full dose - 200mg AM, 400mg PM",
+          },
+        ],
+      },
+    },
+    {
+      name: "Zinc & Immune Cycling Protocol",
+      description:
+        "Cycled zinc supplementation to avoid copper depletion while supporting immune function.",
+      substanceName: "Zinc",
+      categoryName: "supplement",
+      defaultDose: 30,
+      doseUnit: "mg",
+      frequency: "daily",
+      difficultyLevel: "beginner",
+      tags: ["zinc", "immune", "testosterone", "cycling"],
+      cycleOnWeeks: 8,
+      cycleOffWeeks: 4,
     },
   ];
 

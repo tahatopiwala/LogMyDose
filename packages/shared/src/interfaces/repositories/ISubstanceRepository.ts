@@ -3,6 +3,8 @@ import {
   Substance,
   SubstanceCategory,
   SubstanceWithCategory,
+  FdaStatus,
+  SubstanceReference,
 } from "../../entities/index.js";
 import { PaginatedResponse, Decimal } from "../../types/index.js";
 
@@ -28,6 +30,11 @@ export interface CreateSubstanceInput {
   interactions?: string[];
   onsetTimeline?: string;
   isPrescriptionRequired?: boolean;
+  // FDA & Regulatory Info
+  fdaStatus?: FdaStatus;
+  fdaApprovedFor?: string[];
+  fdaLabelUrl?: string;
+  references?: SubstanceReference[];
 }
 
 export interface UpdateSubstanceInput extends Partial<CreateSubstanceInput> {

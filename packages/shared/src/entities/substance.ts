@@ -1,4 +1,4 @@
-import { Decimal } from "../types/database.js";
+import { Decimal, JsonValue } from "../types/database.js";
 
 /**
  * SubstanceCategory entity
@@ -13,6 +13,20 @@ export interface SubstanceCategory {
   isActive: boolean;
   sortOrder: number;
   createdAt: Date;
+}
+
+/**
+ * FDA status for substances
+ */
+export type FdaStatus = "approved" | "research" | "supplement" | "withdrawn";
+
+/**
+ * Reference for a substance (study, FDA document, etc.)
+ */
+export interface SubstanceReference {
+  title: string;
+  url: string;
+  type: "fda_label" | "study" | "guideline" | "nih_resource" | "fda_document";
 }
 
 /**
@@ -42,6 +56,12 @@ export interface Substance {
   interactions: string[];
   onsetTimeline: string | null;
   isPrescriptionRequired: boolean;
+  // FDA & Regulatory Info
+  fdaStatus: FdaStatus | null;
+  fdaApprovedFor: string[];
+  fdaLabelUrl: string | null;
+  references: SubstanceReference[] | JsonValue | null;
+  // Metadata
   isActive: boolean;
   createdAt: Date;
 }

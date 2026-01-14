@@ -24,6 +24,13 @@ const updateCategorySchema = z.object({
   isActive: z.boolean().optional(),
 });
 
+// Reference schema for FDA and study links
+const substanceReferenceSchema = z.object({
+  title: z.string(),
+  url: z.string().url(),
+  type: z.enum(["fda_label", "study", "guideline", "nih_resource", "fda_document"]),
+});
+
 const createSubstanceSchema = z.object({
   categoryId: z.string().uuid(),
   name: z.string().min(1).max(100),
@@ -46,6 +53,11 @@ const createSubstanceSchema = z.object({
   interactions: z.array(z.string()).optional(),
   onsetTimeline: z.string().max(100).optional(),
   isPrescriptionRequired: z.boolean().optional(),
+  // FDA & Regulatory Info
+  fdaStatus: z.enum(["approved", "research", "supplement", "withdrawn"]).optional(),
+  fdaApprovedFor: z.array(z.string()).optional(),
+  fdaLabelUrl: z.string().url().max(500).optional().nullable(),
+  references: z.array(substanceReferenceSchema).optional(),
 });
 
 // GET /api/v1/substances/categories
