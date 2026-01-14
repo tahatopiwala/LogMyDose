@@ -6,6 +6,7 @@ import { Login } from "./pages/Login";
 import { Signup } from "./pages/Signup";
 import { LogDose } from "./pages/LogDose";
 import { AddProtocol } from "./pages/AddProtocol";
+import { ProtocolDetail } from "./pages/ProtocolDetail";
 import { Settings } from "./pages/Settings";
 
 function History() {
@@ -29,32 +30,6 @@ function Insights() {
       </p>
       <div className="mt-8 bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-500">
         AI insights coming soon...
-      </div>
-    </div>
-  );
-}
-
-function Protocol() {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold text-gray-900">My Protocol</h1>
-      <p className="text-gray-600 mt-1">
-        View and manage your therapy protocol.
-      </p>
-      <div className="mt-8 bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-500">
-        Protocol management coming soon...
-      </div>
-    </div>
-  );
-}
-
-function ProtocolDetail() {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold text-gray-900">Protocol Details</h1>
-      <p className="text-gray-600 mt-1">View and manage this protocol.</p>
-      <div className="mt-8 bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-500">
-        Protocol details coming soon...
       </div>
     </div>
   );
@@ -104,16 +79,6 @@ export default function App() {
           <ProtectedRoute>
             <Layout>
               <Insights />
-            </Layout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/protocol"
-        element={
-          <ProtectedRoute>
-            <Layout>
-              <Protocol />
             </Layout>
           </ProtectedRoute>
         }

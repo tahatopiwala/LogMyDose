@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { apiClient } from "@/lib/api-client";
 import { Protocol, Dose, DoseStats } from "@/types/domain";
+import { ProtocolCard } from "@/components/protocols/ProtocolCard";
+import { ProtocolSearch } from "@/components/protocols/ProtocolSearch";
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -52,21 +54,26 @@ export function Dashboard() {
   const { patient } = useAuth();
   const [protocols, setProtocols] = useState<Protocol[]>([]);
   const [todayDoses, setTodayDoses] = useState<Dose[]>([]);
+  const [allDoses, setAllDoses] = useState<Dose[]>([]);
   const [weekStats, setWeekStats] = useState<DoseStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     async function fetchDashboardData() {
       try {
-        const [protocolsRes, todayRes, statsRes] = await Promise.all([
-          apiClient.get<{ protocols: Protocol[] }>("/patients/protocols"),
-          apiClient.get<{ doses: Dose[] }>("/doses/today"),
-          apiClient.get<{ stats: DoseStats }>(
-            `/doses/stats?startDate=${getWeekStart()}&endDate=${getWeekEnd()}`,
-          ),
-        ]);
+        const [protocolsRes, todayRes, allDosesRes, statsRes] =
+          await Promise.all([
+            apiClient.get<{ protocols: Protocol[] }>("/patients/protocols"),
+            apiClient.get<{ doses: Dose[] }>("/doses/today"),
+            apiClient.get<{ doses: Dose[] }>("/doses?limit=100"),
+            apiClient.get<{ stats: DoseStats }>(
+              `/doses/stats?startDate=${getWeekStart()}&endDate=${getWeekEnd()}`,
+            ),
+          ]);
         setProtocols(protocolsRes.protocols);
         setTodayDoses(todayRes.doses);
+        setAllDoses(allDosesRes.doses);
         setWeekStats(statsRes.stats);
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
@@ -83,6 +90,43 @@ export function Dashboard() {
   const inactiveProtocols = protocols.filter(
     (p) => p.status === "completed" || p.status === "paused",
   );
+
+  // Filter protocols based on search query
+  const filteredActiveProtocols = useMemo(() => {
+    if (!searchQuery.trim()) return activeProtocols;
+
+    const query = searchQuery.toLowerCase();
+    return activeProtocols.filter((protocol) => {
+      // Search in template name
+      if (protocol.template?.name.toLowerCase().includes(query)) return true;
+
+      // Search in substance names
+      const hasMatchingSubstance = protocol.substances.some((ps) =>
+        ps.substance.name.toLowerCase().includes(query),
+      );
+      if (hasMatchingSubstance) return true;
+
+      // Search in notes
+      if (protocol.notes?.toLowerCase().includes(query)) return true;
+
+      return false;
+    });
+  }, [activeProtocols, searchQuery]);
+
+  const filteredInactiveProtocols = useMemo(() => {
+    if (!searchQuery.trim()) return inactiveProtocols;
+
+    const query = searchQuery.toLowerCase();
+    return inactiveProtocols.filter((protocol) => {
+      if (protocol.template?.name.toLowerCase().includes(query)) return true;
+      const hasMatchingSubstance = protocol.substances.some((ps) =>
+        ps.substance.name.toLowerCase().includes(query),
+      );
+      if (hasMatchingSubstance) return true;
+      if (protocol.notes?.toLowerCase().includes(query)) return true;
+      return false;
+    });
+  }, [inactiveProtocols, searchQuery]);
 
   // Calculate today's progress
   const dosesCompletedToday = todayDoses.filter(
@@ -259,12 +303,54 @@ export function Dashboard() {
           </Link>
         </div>
 
-        {activeProtocols.length > 0 ? (
-          <div className="space-y-3">
-            {activeProtocols.map((protocol) => (
-              <ProtocolCard key={protocol.id} protocol={protocol} />
-            ))}
+        {activeProtocols.length > 0 && (
+          <div className="mb-4">
+            <ProtocolSearch onSearchChange={setSearchQuery} />
           </div>
+        )}
+
+        {activeProtocols.length > 0 ? (
+          <>
+            {filteredActiveProtocols.length > 0 ? (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {filteredActiveProtocols.map((protocol) => (
+                  <ProtocolCard
+                    key={protocol.id}
+                    protocol={protocol}
+                    doses={allDoses}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="bg-gray-50 rounded-xl p-8 text-center border border-dashed border-gray-300">
+                <svg
+                  className="w-12 h-12 mx-auto text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+                <h3 className="mt-4 text-base font-medium text-gray-900">
+                  No protocols found
+                </h3>
+                <p className="mt-1 text-sm text-gray-500">
+                  Try adjusting your search terms
+                </p>
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="mt-4 inline-flex items-center px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-700 hover:bg-primary-50 rounded-lg transition-colors"
+                >
+                  Clear search
+                </button>
+              </div>
+            )}
+          </>
         ) : (
           <div className="bg-gray-50 rounded-xl p-8 text-center border border-dashed border-gray-300">
             <svg
@@ -302,11 +388,24 @@ export function Dashboard() {
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
             Past Protocols
           </h2>
-          <div className="space-y-3">
-            {inactiveProtocols.map((protocol) => (
-              <ProtocolCard key={protocol.id} protocol={protocol} inactive />
-            ))}
-          </div>
+          {filteredInactiveProtocols.length > 0 ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {filteredInactiveProtocols.map((protocol) => (
+                <ProtocolCard
+                  key={protocol.id}
+                  protocol={protocol}
+                  doses={allDoses}
+                  inactive
+                />
+              ))}
+            </div>
+          ) : searchQuery ? (
+            <div className="bg-gray-50 rounded-xl p-6 text-center border border-dashed border-gray-300">
+              <p className="text-sm text-gray-500">
+                No past protocols match your search
+              </p>
+            </div>
+          ) : null}
         </div>
       )}
 
@@ -335,79 +434,6 @@ export function Dashboard() {
         </div>
       )}
     </div>
-  );
-}
-
-// Protocol Card Component
-function ProtocolCard({
-  protocol,
-  inactive = false,
-}: {
-  protocol: Protocol;
-  inactive?: boolean;
-}) {
-  const substanceNames = protocol.substances
-    .map((s) => s.substance.name)
-    .join(", ");
-
-  const statusColors = {
-    active: "bg-green-100 text-green-700",
-    paused: "bg-yellow-100 text-yellow-700",
-    completed: "bg-gray-100 text-gray-700",
-    draft: "bg-blue-100 text-blue-700",
-  };
-
-  const formatDate = (dateStr: string | null) => {
-    if (!dateStr) return null;
-    return new Date(dateStr).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
-
-  return (
-    <Link
-      to={`/protocols/${protocol.id}`}
-      className={`block bg-white rounded-xl p-4 border border-gray-200 hover:border-primary-300 hover:shadow-sm transition-all ${inactive ? "opacity-75" : ""}`}
-    >
-      <div className="flex items-start justify-between">
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <h3 className="font-medium text-gray-900 truncate">
-              {protocol.template?.name || substanceNames || "Custom Protocol"}
-            </h3>
-            <span
-              className={`px-2 py-0.5 text-xs font-medium rounded-full ${statusColors[protocol.status]}`}
-            >
-              {protocol.status}
-            </span>
-          </div>
-          <p className="mt-1 text-sm text-gray-500 truncate">
-            {substanceNames}
-          </p>
-          {protocol.startDate && (
-            <p className="mt-1 text-xs text-gray-400">
-              Started {formatDate(protocol.startDate)}
-              {protocol.endDate && ` - Ends ${formatDate(protocol.endDate)}`}
-            </p>
-          )}
-        </div>
-        <svg
-          className="w-5 h-5 text-gray-400 flex-shrink-0 ml-2"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M9 5l7 7-7 7"
-          />
-        </svg>
-      </div>
-    </Link>
   );
 }
 
