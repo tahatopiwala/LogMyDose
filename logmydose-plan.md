@@ -10,7 +10,7 @@ A dosage tracking platform launching with **peptide therapy** as the initial ver
 
 **AI Differentiator:** Ambient intelligence through proactive insight cards, inline annotations, contextual decision support, smart UI highlights, periodic AI reports, and tap-to-explain "Why" layer. AI that tells you what you need to know vs. waiting for you to ask.
 
-**Tech Stack:** Native iOS (Swift) → Android later, Express.js/TypeScript backend, React (Vite) web portals, PostgreSQL (Supabase), Supabase Storage, Stripe, LLM API (Anthropic/OpenAI)
+**Tech Stack:** React Native with TypeScript (iOS & Android), Express.js/TypeScript backend, React (Vite) web portals, PostgreSQL (Supabase), Supabase Storage, Stripe, LLM API (Anthropic/OpenAI)
 
 **Launch Vertical:** Peptide therapy (BPC-157, Semaglutide, etc.)
 
@@ -294,6 +294,7 @@ LogMyDose is now live, and as a waitlist member,
 you get first access.
 
 [Download on App Store]
+[Download on Google Play]
 [Open Web App]
 
 Launch pricing (first 100 users only):
@@ -352,7 +353,7 @@ tracking. I read every response.
 | Paid conversions | 20 | 75 |
 | MRR | $100 | $400 |
 | Day 7 retention | 35% | 40% |
-| App Store rating | 4.5+ | 4.5+ |
+| App ratings (iOS & Android) | 4.5+ | 4.5+ |
 
 ---
 
@@ -480,7 +481,7 @@ Features to prioritize for peptide users specifically:
 - [ ] AI: Bloodwork interpretation
 - [ ] Supplier/batch tracking (controversial but requested)
 - [ ] Community features (anonymous protocol sharing)
-- [ ] Apple Health integration
+- [ ] Apple Health & Google Fit / Health Connect integration
 
 ---
 
@@ -523,9 +524,10 @@ Features to prioritize for peptide users specifically:
 | Domain + Hosting | $20/mo | Vercel, Supabase free tiers |
 | Email tool | $0-29/mo | ConvertKit free tier, then paid |
 | App Store fees | $99/year | Apple Developer Program |
+| Google Play fees | $25 one-time | Google Play Console |
 | Content (optional) | $0-500 | Could outsource some writing |
 | Influencer gifts | $0 | Free access, no payment |
-| **Total Pre-Launch** | **<$500** | Lean operation |
+| **Total Pre-Launch** | **~$525** | Lean operation |
 
 ---
 
@@ -538,7 +540,7 @@ Features to prioritize for peptide users specifically:
 | Month 1 MRR | $400+ |
 | Month 6 MRR | $2,000+ |
 | Paid subscribers | 300+ |
-| App Store rating | 4.5+ stars |
+| App ratings (iOS & Android) | 4.5+ stars |
 | Clinic pilots | 2-3 |
 | Reddit mentions (organic) | 20+ |
 
@@ -1583,12 +1585,14 @@ Hosting
 ├── Web Apps: Vercel or Cloudflare Pages
 └── Alternatively: Single VPS (DigitalOcean/Hetzner)
 
-iOS App
-├── Swift 5.9+
-├── SwiftUI
-├── Combine/async-await
-├── KeychainSwift (secure storage)
-└── URLSession (networking)
+Mobile App (React Native)
+├── React Native with TypeScript
+├── Expo for development workflow
+├── React Navigation for routing
+├── React Query for data fetching (shared with web)
+├── NativeWind or Tamagui for styling
+├── Expo SecureStore (secure storage)
+└── Axios (networking)
 
 Web Portals (React + Vite)
 ├── React 18+
@@ -1603,11 +1607,11 @@ Web Portals (React + Vite)
 
 ## 3. Feature Breakdown by Component
 
-### 3.1 iOS App (Swift/SwiftUI)
+### 3.1 Mobile App (React Native - iOS & Android)
 
 **Onboarding (D2C Flow)**
 - [ ] App-branded splash/login
-- [ ] Email/password registration (or Apple Sign-In)
+- [ ] Email/password registration (or Apple/Google Sign-In)
 - [ ] Onboarding quiz: goals, experience level, peptides interested in
 - [ ] Browse protocol templates by category/peptide
 - [ ] Select template → customize dosing → start protocol
@@ -1750,7 +1754,7 @@ Mirrors iOS app functionality for desktop access:
 | Resend / SendGrid | Transactional emails | P1 |
 | node-cron / Bull | Scheduled jobs (alerts, reminders, AI batch processing) | P1 |
 | Twilio | SMS reminders (optional) | P2 |
-| Apple Health | Sync weight/measurements (iOS) | P2 |
+| Apple Health & Google Fit | Sync weight/measurements | P2 |
 | Sentry | Error tracking and monitoring | P2 |
 | Lab APIs | Direct bloodwork import (future) | P3 |
 
@@ -1778,13 +1782,13 @@ Mirrors iOS app functionality for desktop access:
 4. Basic protocol builder
 5. White-label theming system
 
-### Phase 3: iOS App MVP (Months 4-5)
-1. Swift/SwiftUI project setup
+### Phase 3: Mobile App MVP (Months 4-5)
+1. React Native with Expo project setup
 2. White-label theming infrastructure
 3. Onboarding flow
 4. Dashboard
 5. Protocol view and dose logging
-6. Push notifications
+6. Push notifications (Expo Notifications)
 
 ### Phase 4: Core Features + AI MVP (Months 6-7)
 1. Progress photo/bloodwork upload
@@ -1809,16 +1813,16 @@ Mirrors iOS app functionality for desktop access:
 ### Phase 6: Launch Prep + AI Polish (Months 10-11)
 1. Security audit
 2. Performance optimization
-3. App Store submission
+3. App Store & Google Play submission
 4. Documentation
 5. Clinic onboarding materials
 6. **AI: "Why" layer (tap-to-explain)**
 7. **AI: Monthly comprehensive reports**
 8. **AI: Safety rails and escalation triggers testing**
 
-### Phase 7: Post-Launch & Android (Month 12+)
+### Phase 7: Post-Launch Iteration (Month 12+)
 1. Bug fixes and user feedback iteration
-2. Android app development begins
+2. Continuous improvements to both iOS and Android
 3. Clinic partnership expansion
 4. Feature enhancements based on real usage
 5. **AI: Comparative benchmarks (anonymized population data)**
@@ -1977,14 +1981,15 @@ To maximize acquisition value for telehealth platforms:
 ### Development Testing
 - Unit tests for all API endpoints
 - Integration tests for critical flows
-- UI tests for iOS app (XCTest)
+- Component tests for React Native app (Jest + React Native Testing Library)
+- E2E tests with Detox or Maestro
 - React Testing Library for web portals
 
 ### Pre-Launch Validation
 1. Internal testing with mock clinic data
 2. Security audit (third-party recommended)
 3. HIPAA compliance review
-4. TestFlight beta with 2-3 friendly clinics
+4. Beta testing (TestFlight for iOS, internal testing for Android) with 2-3 friendly clinics
 5. Load testing (simulate 1000+ concurrent patients)
 
 ### Post-Launch Monitoring
@@ -2082,24 +2087,36 @@ logmydose/
 │   └── patient-portal/               # React + Vite
 │       └── (same structure)
 │
-├── ios/
-│   └── LogMyDose/
-│       ├── LogMyDose.xcodeproj
-│       ├── Sources/
-│       │   ├── App/
-│       │   ├── Features/
-│       │   │   ├── Auth/
-│       │   │   ├── Dashboard/
-│       │   │   ├── Protocols/
-│       │   │   ├── Doses/
-│       │   │   ├── Progress/
-│       │   │   └── Education/
-│       │   ├── Services/
-│       │   │   ├── APIClient.swift
-│       │   │   ├── AuthService.swift
-│       │   │   └── StorageService.swift
-│       │   └── UI/
-│       └── Tests/
+├── mobile/                              # React Native app (iOS & Android)
+│   ├── app/                             # Expo Router app directory
+│   │   ├── (auth)/                      # Auth screens
+│   │   ├── (tabs)/                      # Tab navigation
+│   │   │   ├── index.tsx                # Dashboard
+│   │   │   ├── protocols.tsx
+│   │   │   ├── progress.tsx
+│   │   │   └── education.tsx
+│   │   └── _layout.tsx
+│   ├── src/
+│   │   ├── components/                  # Shared components
+│   │   ├── features/                    # Feature modules
+│   │   │   ├── auth/
+│   │   │   ├── dashboard/
+│   │   │   ├── protocols/
+│   │   │   ├── doses/
+│   │   │   ├── progress/
+│   │   │   └── education/
+│   │   ├── services/
+│   │   │   ├── api.ts                   # API client
+│   │   │   ├── auth.ts
+│   │   │   └── storage.ts
+│   │   └── types/
+│   ├── package.json
+│   └── app.json                         # Expo configuration
+│
+├── shared/                              # Shared TypeScript code
+│   ├── types/                           # Shared types between web/mobile
+│   ├── schemas/                         # Zod schemas for validation
+│   └── utils/                           # Shared utilities
 │
 ├── docs/
 │   ├── HIPAA-compliance.md
@@ -2117,7 +2134,7 @@ logmydose/
 2. **Month 1, Week 1-2:** Initialize Express.js project, configure Prisma ORM, create database schema
 3. **Month 1, Week 3-4:** Build authentication system and core API routes, seed peptide database
 4. **Month 2:** Start clinic portal (React + Vite) with patient/protocol management
-5. **Month 3+:** Begin iOS app foundation while iterating on backend
+5. **Month 3+:** Begin React Native mobile app foundation with Expo while iterating on backend
 6. **Pre-Launch:** Sign up for Supabase Pro+, request BAA for HIPAA compliance, migrate data
 
 ---
@@ -2133,7 +2150,7 @@ This plan provides a comprehensive roadmap to build a peptide therapy tracking p
 4. Clinics become upsell opportunity, not launch blocker
 
 **Key Technical Decisions:**
-- **iOS first** with Android following post-launch
+- **React Native with Expo** for iOS & Android simultaneously
 - **Express.js API** hosted on Railway/Render
 - **PostgreSQL (Supabase)** - clinic_id is optional (NULL = D2C user)
 - **Docker PostgreSQL** for local development

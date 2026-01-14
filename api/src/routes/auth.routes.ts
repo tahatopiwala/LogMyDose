@@ -153,7 +153,12 @@ router.post("/login", async (req, res, next) => {
     });
 
     // Set httpOnly cookies for web clients
-    setAuthCookies(res, result.accessToken, result.refreshToken, data.rememberMe);
+    setAuthCookies(
+      res,
+      result.accessToken,
+      result.refreshToken,
+      data.rememberMe,
+    );
 
     res.json(result);
   } catch (error) {

@@ -48,9 +48,7 @@ export interface ITenantRepository extends IBaseRepository<
   findAllWithCounts(
     options?: FindManyOptions,
   ): Promise<PaginatedResponse<TenantWithCounts>>;
-  findByIdWithUsers(
-    id: string,
-  ): Promise<
+  findByIdWithUsers(id: string): Promise<
     | (Tenant & {
         users: Array<{
           id: string;

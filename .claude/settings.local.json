@@ -41,7 +41,13 @@
       "Bash(npm run prettier:*)",
       "Bash(npx prettier --write \"**/*.{ts,tsx}\")",
       "Bash(npm run:*)",
-      "Bash(npx prettier:*)"
+      "Bash(npx prettier:*)",
+      "Bash(npm ls:*)",
+      "Bash(xargs ls:*)",
+      "Bash(source .env)",
+      "Bash(tsx prisma/seed.ts:*)",
+      "Bash(npm show:*)",
+      "Bash(pgrep:*)"
     ]
   }
 }

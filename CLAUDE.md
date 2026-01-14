@@ -23,8 +23,12 @@ LogMyDose is a peptide therapy tracking platform with a D2C-first model and opti
 - React Query for data fetching
 - Three portals: clinic-portal, admin-portal, patient-portal
 
-### iOS App (to be built in `/ios`)
-- Swift 5.9+ with SwiftUI
+### Mobile App (to be built in `/mobile`)
+- React Native with TypeScript
+- Expo for development workflow
+- React Navigation for routing
+- React Query for data fetching (shared with web)
+- NativeWind or Tamagui for styling (TailwindCSS-compatible)
 
 ## Architecture Decisions
 
@@ -62,7 +66,8 @@ The platform's core differentiator is AI that works proactively, not reactively:
   /clinic-portal        # Clinic management React app
   /admin-portal         # Super admin React app
   /patient-portal       # Patient web app
-/ios                    # Swift/SwiftUI iOS app
+/mobile                 # React Native app (iOS & Android)
+/shared                 # Shared TypeScript types, schemas, utilities
 ```
 
 ## Key Data Models

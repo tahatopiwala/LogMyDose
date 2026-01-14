@@ -47,9 +47,7 @@ export interface ITenantService {
   ): Promise<PaginatedResponse<TenantWithCounts>>;
   createTenant(data: CreateTenantInput): Promise<Tenant>;
   getTenantById(id: string): Promise<TenantWithCounts | null>;
-  getTenantWithUsers(
-    id: string,
-  ): Promise<
+  getTenantWithUsers(id: string): Promise<
     | (Tenant & {
         users: Array<{
           id: string;

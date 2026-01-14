@@ -32,7 +32,9 @@
     "lint:ui": "npm run lint -w @logmydose/ui",
     "lint:landing": "npm run lint -w @logmydose/web-landing",
     "lint:app": "npm run lint -w @logmydose/web-app",
-    "typecheck": "npm run typecheck --workspaces --if-present"
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down"
   },
   "engines": {
     "node": ">=20.0.0"
