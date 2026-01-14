@@ -9,8 +9,12 @@ import "./index.css";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5,
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      gcTime: 1000 * 60 * 10, // 10 minutes (formerly cacheTime)
       retry: 1,
+      refetchOnWindowFocus: false, // Prevent refetch on tab focus
+      refetchOnMount: false, // Prevent refetch on component mount if data exists
+      refetchOnReconnect: false, // Prevent refetch on network reconnect
     },
   },
 });
