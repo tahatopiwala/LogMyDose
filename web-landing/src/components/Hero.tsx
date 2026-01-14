@@ -73,14 +73,20 @@ export function Hero() {
             <div className="absolute w-[200px] h-[200px] bg-gradient-to-r from-amber-200/40 to-orange-100/30 rounded-full blur-3xl top-20 right-1/3" />
 
             {/* Carousel Container */}
-            <div className="relative z-10 w-full h-[520px]">
+            <div className="relative z-10 w-full h-[520px]" style={{ perspective: "1200px" }}>
               {/* Slide 1: Fanned Phone Mockups */}
               <div
                 className={`absolute inset-0 flex items-center justify-center transition-all duration-700 ease-in-out ${
                   activeSlide === 0
-                    ? "opacity-100 translate-x-0"
-                    : "opacity-0 -translate-x-full pointer-events-none"
+                    ? "opacity-100"
+                    : "opacity-0 pointer-events-none"
                 }`}
+                style={{
+                  transform: activeSlide === 0
+                    ? "translateX(0) translateZ(0) rotateY(0deg) scale(1)"
+                    : "translateX(-100%) translateZ(-400px) rotateY(-60deg) scale(0.7)",
+                  transformStyle: "preserve-3d",
+                }}
               >
                 <div className="relative">
                   {/* Back Phone - Log Dose Screen */}
@@ -253,9 +259,15 @@ export function Hero() {
               <div
                 className={`absolute inset-0 flex items-center justify-center transition-all duration-700 ease-in-out ${
                   activeSlide === 1
-                    ? "opacity-100 translate-x-0"
-                    : "opacity-0 translate-x-full pointer-events-none"
+                    ? "opacity-100"
+                    : "opacity-0 pointer-events-none"
                 }`}
+                style={{
+                  transform: activeSlide === 1
+                    ? "translateX(0) translateZ(0) rotateY(0deg) scale(1)"
+                    : "translateX(100%) translateZ(-400px) rotateY(60deg) scale(0.7)",
+                  transformStyle: "preserve-3d",
+                }}
               >
                 {/* Browser Window Mockup */}
                 <div className="relative w-full max-w-lg transform lg:rotate-2">
