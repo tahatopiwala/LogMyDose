@@ -100,3 +100,7 @@ When implementing AI features:
 ## Build Guidelines
 
 - Always run build, lint and pretty print when building the project
+
+## File Creation Guidelines
+
+- For markdown files (.md) other than CLAUDE.md the naming convention should always be kebab case instead of upper case. 
