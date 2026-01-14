@@ -2337,6 +2337,388 @@ async function main() {
 
   console.log(`Seeded ${templateCount} protocol templates`);
 
+  // Seed global products (branded versions of substances)
+  const products = [
+    // Semaglutide products (GLP-1)
+    {
+      substanceName: "Semaglutide",
+      name: "Ozempic 0.25mg",
+      defaultDose: 0.25,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "Semaglutide",
+      name: "Ozempic 0.5mg",
+      defaultDose: 0.5,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "Semaglutide",
+      name: "Ozempic 1mg",
+      defaultDose: 1,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "Semaglutide",
+      name: "Ozempic 2mg",
+      defaultDose: 2,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "Semaglutide",
+      name: "Wegovy 0.25mg",
+      defaultDose: 0.25,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "Semaglutide",
+      name: "Wegovy 0.5mg",
+      defaultDose: 0.5,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "Semaglutide",
+      name: "Wegovy 1mg",
+      defaultDose: 1,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "Semaglutide",
+      name: "Wegovy 1.7mg",
+      defaultDose: 1.7,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "Semaglutide",
+      name: "Wegovy 2.4mg",
+      defaultDose: 2.4,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "Semaglutide",
+      name: "Rybelsus 3mg (Oral)",
+      defaultDose: 3,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "Semaglutide",
+      name: "Rybelsus 7mg (Oral)",
+      defaultDose: 7,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "Semaglutide",
+      name: "Rybelsus 14mg (Oral)",
+      defaultDose: 14,
+      doseUnit: "mg",
+    },
+    // Tirzepatide products (GLP-1/GIP)
+    {
+      substanceName: "Tirzepatide",
+      name: "Mounjaro 2.5mg",
+      defaultDose: 2.5,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "Tirzepatide",
+      name: "Mounjaro 5mg",
+      defaultDose: 5,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "Tirzepatide",
+      name: "Mounjaro 7.5mg",
+      defaultDose: 7.5,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "Tirzepatide",
+      name: "Mounjaro 10mg",
+      defaultDose: 10,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "Tirzepatide",
+      name: "Mounjaro 12.5mg",
+      defaultDose: 12.5,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "Tirzepatide",
+      name: "Mounjaro 15mg",
+      defaultDose: 15,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "Tirzepatide",
+      name: "Zepbound 2.5mg",
+      defaultDose: 2.5,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "Tirzepatide",
+      name: "Zepbound 5mg",
+      defaultDose: 5,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "Tirzepatide",
+      name: "Zepbound 7.5mg",
+      defaultDose: 7.5,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "Tirzepatide",
+      name: "Zepbound 10mg",
+      defaultDose: 10,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "Tirzepatide",
+      name: "Zepbound 12.5mg",
+      defaultDose: 12.5,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "Tirzepatide",
+      name: "Zepbound 15mg",
+      defaultDose: 15,
+      doseUnit: "mg",
+    },
+    // Testosterone products
+    {
+      substanceName: "Testosterone Cypionate",
+      name: "Depo-Testosterone 100mg/ml",
+      defaultDose: 100,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "Testosterone Cypionate",
+      name: "Depo-Testosterone 200mg/ml",
+      defaultDose: 200,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "Testosterone Enanthate",
+      name: "Delatestryl 200mg/ml",
+      defaultDose: 200,
+      doseUnit: "mg",
+    },
+    // Estradiol products
+    {
+      substanceName: "Estradiol",
+      name: "Estrace 0.5mg",
+      defaultDose: 0.5,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "Estradiol",
+      name: "Estrace 1mg",
+      defaultDose: 1,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "Estradiol",
+      name: "Estrace 2mg",
+      defaultDose: 2,
+      doseUnit: "mg",
+    },
+    // Progesterone products
+    {
+      substanceName: "Progesterone",
+      name: "Prometrium 100mg",
+      defaultDose: 100,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "Progesterone",
+      name: "Prometrium 200mg",
+      defaultDose: 200,
+      doseUnit: "mg",
+    },
+    // Thyroid products
+    {
+      substanceName: "Liothyronine",
+      name: "Cytomel 5mcg",
+      defaultDose: 5,
+      doseUnit: "mcg",
+    },
+    {
+      substanceName: "Liothyronine",
+      name: "Cytomel 25mcg",
+      defaultDose: 25,
+      doseUnit: "mcg",
+    },
+    {
+      substanceName: "Liothyronine",
+      name: "Cytomel 50mcg",
+      defaultDose: 50,
+      doseUnit: "mcg",
+    },
+    // HCG products
+    {
+      substanceName: "HCG",
+      name: "Pregnyl 10,000 IU",
+      defaultDose: 10000,
+      doseUnit: "iu",
+    },
+    {
+      substanceName: "HCG",
+      name: "Novarel 10,000 IU",
+      defaultDose: 10000,
+      doseUnit: "iu",
+    },
+    // PT-141 products
+    {
+      substanceName: "PT-141",
+      name: "Vyleesi 1.75mg",
+      defaultDose: 1.75,
+      doseUnit: "mg",
+    },
+    // Tesamorelin products
+    {
+      substanceName: "Tesamorelin",
+      name: "Egrifta 1mg",
+      defaultDose: 1,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "Tesamorelin",
+      name: "Egrifta 2mg",
+      defaultDose: 2,
+      doseUnit: "mg",
+    },
+    // BPC-157 compounded products
+    {
+      substanceName: "BPC-157",
+      name: "BPC-157 5mg Vial",
+      defaultDose: 250,
+      doseUnit: "mcg",
+    },
+    {
+      substanceName: "BPC-157",
+      name: "BPC-157 10mg Vial",
+      defaultDose: 250,
+      doseUnit: "mcg",
+    },
+    // TB-500 compounded products
+    {
+      substanceName: "TB-500",
+      name: "TB-500 5mg Vial",
+      defaultDose: 2.5,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "TB-500",
+      name: "TB-500 10mg Vial",
+      defaultDose: 2.5,
+      doseUnit: "mg",
+    },
+    // CJC-1295 compounded products
+    {
+      substanceName: "CJC-1295",
+      name: "CJC-1295 with DAC 2mg Vial",
+      defaultDose: 1000,
+      doseUnit: "mcg",
+    },
+    {
+      substanceName: "CJC-1295",
+      name: "CJC-1295 no DAC (Mod GRF 1-29) 2mg Vial",
+      defaultDose: 100,
+      doseUnit: "mcg",
+    },
+    // Ipamorelin compounded products
+    {
+      substanceName: "Ipamorelin",
+      name: "Ipamorelin 5mg Vial",
+      defaultDose: 200,
+      doseUnit: "mcg",
+    },
+    // Sermorelin products
+    {
+      substanceName: "Sermorelin",
+      name: "Sermorelin 3mg Vial",
+      defaultDose: 200,
+      doseUnit: "mcg",
+    },
+    {
+      substanceName: "Sermorelin",
+      name: "Sermorelin 6mg Vial",
+      defaultDose: 200,
+      doseUnit: "mcg",
+    },
+    // NAD+ products
+    {
+      substanceName: "NAD+",
+      name: "NAD+ 100mg/ml Injectable",
+      defaultDose: 100,
+      doseUnit: "mg",
+    },
+    {
+      substanceName: "NAD+",
+      name: "NAD+ 500mg IV Infusion",
+      defaultDose: 500,
+      doseUnit: "mg",
+    },
+    // GHK-Cu products
+    {
+      substanceName: "GHK-Cu",
+      name: "GHK-Cu 50mg Vial",
+      defaultDose: 1,
+      doseUnit: "mg",
+    },
+    // AOD-9604 products
+    {
+      substanceName: "AOD-9604",
+      name: "AOD-9604 5mg Vial",
+      defaultDose: 300,
+      doseUnit: "mcg",
+    },
+  ];
+
+  let productCount = 0;
+  for (const product of products) {
+    const substanceId = substanceIds[product.substanceName];
+    if (!substanceId) {
+      console.warn(`Substance not found for product: ${product.name}`);
+      continue;
+    }
+
+    // Check if product exists by name and substanceId
+    const existing = await prisma.product.findFirst({
+      where: {
+        name: product.name,
+        substanceId,
+      },
+    });
+
+    if (existing) {
+      await prisma.product.update({
+        where: { id: existing.id },
+        data: {
+          defaultDose: product.defaultDose,
+          doseUnit: product.doseUnit,
+          isGlobal: true,
+          isActive: true,
+        },
+      });
+    } else {
+      await prisma.product.create({
+        data: {
+          substanceId,
+          name: product.name,
+          defaultDose: product.defaultDose,
+          doseUnit: product.doseUnit,
+          isGlobal: true,
+          isActive: true,
+        },
+      });
+    }
+    productCount++;
+  }
+
+  console.log(`Seeded ${productCount} global products`);
+
   console.log("Database seeding completed!");
 }
 

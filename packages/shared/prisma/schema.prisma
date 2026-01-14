@@ -109,6 +109,7 @@ model Patient {
   aiInsights           AiInsight[]
   aiAnnotations        AiAnnotation[]
   aiReports            AiReport[]
+  customProducts       Product[]
 
   @@map("patients")
 }
@@ -217,8 +218,33 @@ model Substance {
   protocolSubstances          ProtocolSubstance[]
   doses                       Dose[]
   sideEffects                 SideEffect[]
+  products                    Product[]
 
   @@map("substances")
+}
+
+// Products - branded versions of substances (e.g., "Ozempic 0.25mg" for Semaglutide)
+model Product {
+  id            String    @id @default(uuid()) @db.Uuid
+  substanceId   String    @map("substance_id") @db.Uuid
+  name          String    @db.VarChar(255)
+  defaultDose   Decimal?  @map("default_dose")
+  doseUnit      String?   @map("dose_unit") @db.VarChar(20)
+  isGlobal      Boolean   @default(false) @map("is_global")
+  patientId     String?   @map("patient_id") @db.Uuid
+  isActive      Boolean   @default(true) @map("is_active")
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  substance          Substance           @relation(fields: [substanceId], references: [id])
+  patient            Patient?            @relation(fields: [patientId], references: [id])
+  protocolSubstances ProtocolSubstance[]
+  doses              Dose[]
+
+  @@index([substanceId])
+  @@index([patientId])
+  @@index([isGlobal])
+  @@map("products")
 }
 
 // Protocol templates (public library)
@@ -254,6 +280,8 @@ model ProtocolTemplate {
 model Protocol {
   id              String    @id @default(uuid()) @db.Uuid
   patientId       String    @map("patient_id") @db.Uuid
+  name            String?   @db.VarChar(255)
+  description     String?   @db.Text
 
   // Source tracking
   source          String    @db.VarChar(50) // template, clinic_assigned, custom
@@ -288,6 +316,7 @@ model ProtocolSubstance {
   id                   String    @id @default(uuid()) @db.Uuid
   protocolId           String    @map("protocol_id") @db.Uuid
   substanceId          String    @map("substance_id") @db.Uuid
+  productId            String?   @map("product_id") @db.Uuid
   dose                 Decimal
   doseUnit             String?   @map("dose_unit") @db.VarChar(20)
   frequency            String?   @db.VarChar(50) // daily, 2x_daily, 3x_weekly, etc.
@@ -306,6 +335,7 @@ model ProtocolSubstance {
   // Relations
   protocol             Protocol  @relation(fields: [protocolId], references: [id], onDelete: Cascade)
   substance            Substance @relation(fields: [substanceId], references: [id])
+  product              Product?  @relation(fields: [productId], references: [id])
   doses                Dose[]
 
   @@map("protocol_substances")
@@ -318,8 +348,9 @@ model ProtocolSubstance {
 model Dose {
   id                   String    @id @default(uuid()) @db.Uuid
   patientId            String    @map("patient_id") @db.Uuid
-  protocolSubstanceId  String?   @map("protocol_substance_id") @db.Uuid
+  protocolSubstanceId  String    @map("protocol_substance_id") @db.Uuid
   substanceId          String    @map("substance_id") @db.Uuid
+  productId            String?   @map("product_id") @db.Uuid
   dose                 Decimal
   doseUnit             String?   @map("dose_unit") @db.VarChar(20)
   scheduledAt          DateTime? @map("scheduled_at")
@@ -331,8 +362,9 @@ model Dose {
 
   // Relations
   patient              Patient            @relation(fields: [patientId], references: [id])
-  protocolSubstance    ProtocolSubstance? @relation(fields: [protocolSubstanceId], references: [id])
+  protocolSubstance    ProtocolSubstance  @relation(fields: [protocolSubstanceId], references: [id])
   substance            Substance          @relation(fields: [substanceId], references: [id])
+  product              Product?           @relation(fields: [productId], references: [id])
   sideEffects          SideEffect[]
 
   @@map("doses")

@@ -35,3 +35,8 @@ export {
   GetStatsQuery,
 } from "./IDoseService.js";
 export { IQueueService, JobOptions } from "./IQueueService.js";
+export {
+  IProductService,
+  GetProductsQuery,
+  CreateCustomProductInput,
+} from "./IProductService.js";

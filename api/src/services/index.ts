@@ -5,3 +5,4 @@ export { SubstanceService } from "./SubstanceService.js";
 export { ProtocolService } from "./ProtocolService.js";
 export { DoseService } from "./DoseService.js";
 export { QueueService } from "./QueueService.js";
+export { ProductService } from "./ProductService.js";

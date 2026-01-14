@@ -3,6 +3,7 @@ import {
   ProtocolWithDetails,
   TemplateWithRelations,
   UpdateProtocolInput,
+  ActiveProtocolSubstance,
 } from "../repositories/IProtocolRepository.js";
 import { PaginatedResponse } from "../../types/index.js";
 import { CurrentUser } from "./IAuthService.js";
@@ -18,6 +19,7 @@ export interface GetTemplatesQuery {
 
 export interface CreateProtocolSubstanceInput {
   substanceId: string;
+  productId?: string;
   dose: number;
   doseUnit?: string;
   frequency?: string;
@@ -31,6 +33,8 @@ export interface CreateProtocolSubstanceInput {
 export interface CreateProtocolInput {
   source: "template" | "custom";
   templateId?: string;
+  name?: string;
+  description?: string;
   startDate?: string;
   endDate?: string;
   notes?: string;
@@ -116,4 +120,9 @@ export interface IProtocolService {
     startDate?: string,
     endDate?: string,
   ): Promise<ProtocolSchedule>;
+
+  // Active protocol substances for dose logging
+  getActiveProtocolSubstances(
+    patientId: string,
+  ): Promise<ActiveProtocolSubstance[]>;
 }

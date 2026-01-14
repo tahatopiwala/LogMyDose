@@ -3,6 +3,7 @@ export interface ProtocolSubstance {
   id: string;
   protocolId: string;
   substanceId: string;
+  productId: string | null;
   dose: number | string;
   doseUnit: string | null;
   frequency: string | null;
@@ -16,6 +17,12 @@ export interface ProtocolSubstance {
     doseUnit: string | null;
     administrationRoute: string | null;
   };
+  product?: {
+    id: string;
+    name: string;
+    defaultDose: number | string | null;
+    doseUnit: string | null;
+  } | null;
 }
 
 export interface Protocol {
@@ -51,12 +58,47 @@ export interface ProtocolTemplate {
   substance?: { id: string; name: string; doseUnit: string | null } | null;
 }
 
+// Active protocol substance for dose logging (from GET /protocols/my-substances)
+export interface ActiveProtocolSubstance {
+  id: string;
+  protocolId: string;
+  substanceId: string;
+  productId: string | null;
+  dose: number | string;
+  doseUnit: string | null;
+  frequency: string | null;
+  schedule: unknown | null;
+  cycleOnWeeks: number | null;
+  cycleOffWeeks: number | null;
+  notes: string | null;
+  substance: {
+    id: string;
+    name: string;
+    doseUnit: string | null;
+    administrationRoute: string | null;
+  };
+  product?: {
+    id: string;
+    name: string;
+    defaultDose: number | string | null;
+    doseUnit: string | null;
+  } | null;
+  protocol: {
+    id: string;
+    status: string;
+    startDate: string | null;
+    endDate: string | null;
+    source: string;
+  };
+}
+
 // Dose types
 export interface Dose {
   id: string;
   patientId: string;
   substanceId: string;
-  protocolSubstanceId: string | null;
+  protocolSubstanceId: string;
+  productId: string | null;
   dose: number | string;
   doseUnit: string | null;
   scheduledAt: string | null;
@@ -69,6 +111,10 @@ export interface Dose {
     name: string;
     doseUnit: string | null;
   };
+  product?: {
+    id: string;
+    name: string;
+  } | null;
 }
 
 export interface DoseStats {
@@ -130,6 +176,25 @@ export interface SubstanceCategory {
   displayName: string;
   description: string | null;
   icon: string | null;
+}
+
+// Product types (branded versions of substances)
+export interface Product {
+  id: string;
+  substanceId: string;
+  name: string;
+  defaultDose: number | string | null;
+  doseUnit: string | null;
+  isGlobal: boolean;
+  patientId: string | null;
+  isActive: boolean;
+  createdAt: string;
+  substance?: {
+    id: string;
+    name: string;
+    categoryId: string;
+    doseUnit: string | null;
+  };
 }
 
 // Paginated response

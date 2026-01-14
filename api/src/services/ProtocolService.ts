@@ -13,6 +13,7 @@ import {
   ProtocolWithDetails,
   TemplateWithRelations,
   UpdateProtocolInput,
+  ActiveProtocolSubstance,
 } from "../interfaces/repositories/IProtocolRepository.js";
 import { ISubstanceRepository } from "../interfaces/repositories/ISubstanceRepository.js";
 import { PaginatedResponse } from "../types/index.js";
@@ -178,12 +179,15 @@ export class ProtocolService implements IProtocolService {
       patientId,
       source: input.source,
       templateId: input.templateId,
+      name: input.name,
+      description: input.description,
       startDate: input.startDate ? new Date(input.startDate) : undefined,
       endDate: input.endDate ? new Date(input.endDate) : undefined,
       notes: input.notes,
       status: "active",
       substances: input.substances.map((s) => ({
         substanceId: s.substanceId,
+        productId: s.productId,
         dose: s.dose,
         doseUnit: s.doseUnit,
         frequency: s.frequency,
@@ -293,5 +297,13 @@ export class ProtocolService implements IProtocolService {
     }));
 
     return { schedule, startDate: start, endDate: end };
+  }
+
+  async getActiveProtocolSubstances(
+    patientId: string,
+  ): Promise<ActiveProtocolSubstance[]> {
+    return this.protocolRepository.findActiveProtocolSubstancesByPatient(
+      patientId,
+    );
   }
 }

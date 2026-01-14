@@ -8,6 +8,7 @@ import {
   ISubstanceRepository,
   IProtocolRepository,
   IDoseRepository,
+  IProductRepository,
 } from "../interfaces/repositories/index.js";
 
 // Repository implementations
@@ -18,6 +19,7 @@ import {
   SubstanceRepository,
   ProtocolRepository,
   DoseRepository,
+  ProductRepository,
 } from "../repositories/index.js";
 
 // Service interfaces
@@ -29,6 +31,7 @@ import {
   IProtocolService,
   IDoseService,
   IQueueService,
+  IProductService,
 } from "../interfaces/services/index.js";
 
 // Service implementations
@@ -40,6 +43,7 @@ import {
   ProtocolService,
   DoseService,
   QueueService,
+  ProductService,
 } from "../services/index.js";
 
 import { env } from "../lib/env.js";
@@ -54,6 +58,7 @@ export class Container {
   readonly substanceRepository: ISubstanceRepository;
   readonly protocolRepository: IProtocolRepository;
   readonly doseRepository: IDoseRepository;
+  readonly productRepository: IProductRepository;
 
   // Services
   readonly authService: IAuthService;
@@ -63,6 +68,7 @@ export class Container {
   readonly protocolService: IProtocolService;
   readonly doseService: IDoseService;
   readonly queueService: IQueueService;
+  readonly productService: IProductService;
 
   private constructor(prisma: PrismaClient) {
     // Initialize repositories
@@ -72,6 +78,7 @@ export class Container {
     this.substanceRepository = new SubstanceRepository(prisma);
     this.protocolRepository = new ProtocolRepository(prisma);
     this.doseRepository = new DoseRepository(prisma);
+    this.productRepository = new ProductRepository(prisma);
 
     // Initialize queue service
     this.queueService = new QueueService({
@@ -110,6 +117,11 @@ export class Container {
       this.doseRepository,
       this.substanceRepository,
       this.protocolRepository,
+    );
+
+    this.productService = new ProductService(
+      this.productRepository,
+      this.substanceRepository,
     );
   }
 

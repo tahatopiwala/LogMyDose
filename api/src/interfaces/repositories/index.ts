@@ -5,3 +5,4 @@ export * from "./ITenantRepository.js";
 export * from "./ISubstanceRepository.js";
 export * from "./IProtocolRepository.js";
 export * from "./IDoseRepository.js";
+export * from "./IProductRepository.js";

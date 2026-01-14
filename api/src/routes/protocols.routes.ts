@@ -15,6 +15,8 @@ const router = Router();
 const createProtocolSchema = z.object({
   source: z.enum(["template", "custom"]),
   templateId: z.string().uuid().optional(),
+  name: z.string().max(255).optional(),
+  description: z.string().optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   notes: z.string().optional(),
@@ -22,6 +24,7 @@ const createProtocolSchema = z.object({
     .array(
       z.object({
         substanceId: z.string().uuid(),
+        productId: z.string().uuid().optional(),
         dose: z.number().positive(),
         doseUnit: z.string().max(20).optional(),
         frequency: z.string().max(50).optional(),
@@ -37,6 +40,8 @@ const createProtocolSchema = z.object({
 
 const updateProtocolSchema = z.object({
   status: z.enum(["draft", "active", "paused", "completed"]).optional(),
+  name: z.string().max(255).optional(),
+  description: z.string().optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   notes: z.string().optional(),
@@ -191,6 +196,25 @@ router.delete(
   },
 );
 
+// GET /api/v1/protocols/my-substances (patient's active protocol substances for dose logging)
+router.get(
+  "/my-substances",
+  authenticate,
+  requirePatient,
+  async (req, res, next) => {
+    try {
+      const protocolService = getContainer().protocolService;
+      const substances = await protocolService.getActiveProtocolSubstances(
+        req.user!.id,
+      );
+
+      res.json({ substances });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
 // POST /api/v1/protocols (create from template or custom)
 router.post("/", authenticate, requirePatient, async (req, res, next) => {
   try {
@@ -242,6 +266,8 @@ router.put("/:id", authenticate, async (req, res, next) => {
       id,
       {
         status: data.status,
+        name: data.name,
+        description: data.description,
         startDate: data.startDate ? new Date(data.startDate) : undefined,
         endDate: data.endDate ? new Date(data.endDate) : undefined,
         notes: data.notes,

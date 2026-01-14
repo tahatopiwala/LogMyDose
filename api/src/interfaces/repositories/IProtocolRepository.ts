@@ -9,6 +9,7 @@ import { PaginatedResponse } from "../../types/index.js";
 
 export interface CreateProtocolSubstanceInput {
   substanceId: string;
+  productId?: string;
   dose: Prisma.Decimal | number;
   doseUnit?: string;
   frequency?: string;
@@ -23,6 +24,8 @@ export interface CreateProtocolInput {
   patientId: string;
   source: string;
   templateId?: string;
+  name?: string;
+  description?: string;
   clinicId?: string;
   providerId?: string;
   startDate?: Date;
@@ -34,6 +37,8 @@ export interface CreateProtocolInput {
 
 export interface UpdateProtocolInput {
   status?: string;
+  name?: string;
+  description?: string;
   startDate?: Date;
   endDate?: Date;
   notes?: string;
@@ -111,6 +116,22 @@ export interface TemplateWithRelations extends ProtocolTemplate {
   substance?: { id: string; name: string; doseUnit: string | null } | null;
 }
 
+export interface ActiveProtocolSubstance extends ProtocolSubstance {
+  substance: {
+    id: string;
+    name: string;
+    doseUnit: string | null;
+    administrationRoute: string | null;
+  };
+  protocol: {
+    id: string;
+    status: string;
+    startDate: Date | null;
+    endDate: Date | null;
+    source: string;
+  };
+}
+
 export interface IProtocolRepository extends IBaseRepository<
   Protocol,
   CreateProtocolInput,
@@ -135,4 +156,9 @@ export interface IProtocolRepository extends IBaseRepository<
   findProtocolSubstanceById(
     id: string,
   ): Promise<(ProtocolSubstance & { protocol: Protocol }) | null>;
+
+  // Active protocol substances for dose logging
+  findActiveProtocolSubstancesByPatient(
+    patientId: string,
+  ): Promise<ActiveProtocolSubstance[]>;
 }

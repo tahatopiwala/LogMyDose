@@ -8,7 +8,7 @@ const router = Router();
 
 // Validation schemas
 const logDoseSchema = z.object({
-  protocolSubstanceId: z.string().uuid().optional(),
+  protocolSubstanceId: z.string().uuid(),
   substanceId: z.string().uuid(),
   dose: z.number().positive(),
   doseUnit: z.string().max(20).optional(),

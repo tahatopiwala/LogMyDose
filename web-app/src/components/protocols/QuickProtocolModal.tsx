@@ -40,6 +40,9 @@ export function QuickProtocolModal({
     null,
   );
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [substanceSearch, setSubstanceSearch] = useState("");
+  const [protocolName, setProtocolName] = useState<string>("");
+  const [protocolDescription, setProtocolDescription] = useState<string>("");
   const [dose, setDose] = useState<string>("");
   const [doseUnit, setDoseUnit] = useState<string>("mcg");
   const [frequency, setFrequency] = useState<string>("daily");
@@ -139,6 +142,8 @@ export function QuickProtocolModal({
         "/protocols",
         {
           source: "custom",
+          name: protocolName || undefined,
+          description: protocolDescription || undefined,
           startDate,
           endDate: endDate || undefined,
           substances: [
@@ -178,6 +183,9 @@ export function QuickProtocolModal({
     setStep("substance");
     setSelectedSubstance(null);
     setSelectedProduct(null);
+    setSubstanceSearch("");
+    setProtocolName("");
+    setProtocolDescription("");
     setDose("");
     setDoseUnit("mcg");
     setFrequency("daily");
@@ -185,6 +193,15 @@ export function QuickProtocolModal({
     setEndDate("");
     setError(null);
   };
+
+  // Filter substances by search
+  const filteredSubstances = substances.filter(
+    (s) =>
+      s.name.toLowerCase().includes(substanceSearch.toLowerCase()) ||
+      s.category?.displayName
+        ?.toLowerCase()
+        .includes(substanceSearch.toLowerCase()),
+  );
 
   const handleClose = () => {
     resetForm();
@@ -281,13 +298,40 @@ export function QuickProtocolModal({
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Select a substance to create a protocol for:
               </label>
+              {/* Search Input */}
+              <div className="relative mb-3">
+                <svg
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+                <input
+                  type="text"
+                  placeholder="Search substances..."
+                  value={substanceSearch}
+                  onChange={(e) => setSubstanceSearch(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                />
+              </div>
               {loading ? (
                 <div className="flex items-center justify-center py-8">
                   <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600"></div>
                 </div>
+              ) : filteredSubstances.length === 0 ? (
+                <div className="py-8 text-center text-sm text-gray-500">
+                  No substances found matching "{substanceSearch}"
+                </div>
               ) : (
                 <div className="max-h-64 overflow-y-auto space-y-2">
-                  {substances.map((substance) => (
+                  {filteredSubstances.map((substance) => (
                     <button
                       key={substance.id}
                       type="button"
@@ -399,6 +443,44 @@ export function QuickProtocolModal({
                   ? `${selectedProduct.name} (${selectedSubstance.name})`
                   : selectedSubstance.name}
               </div>
+            </div>
+
+            {/* Protocol Name */}
+            <div>
+              <label
+                htmlFor="protocolName"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Protocol Name{" "}
+                <span className="text-gray-400 font-normal">(optional)</span>
+              </label>
+              <input
+                type="text"
+                id="protocolName"
+                value={protocolName}
+                onChange={(e) => setProtocolName(e.target.value)}
+                placeholder="e.g., My Semaglutide Protocol"
+                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+              />
+            </div>
+
+            {/* Protocol Description */}
+            <div>
+              <label
+                htmlFor="protocolDescription"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Description{" "}
+                <span className="text-gray-400 font-normal">(optional)</span>
+              </label>
+              <textarea
+                id="protocolDescription"
+                value={protocolDescription}
+                onChange={(e) => setProtocolDescription(e.target.value)}
+                placeholder="Add any notes about this protocol..."
+                rows={2}
+                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500 resize-none"
+              />
             </div>
 
             {/* Dose Amount */}

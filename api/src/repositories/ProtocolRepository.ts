@@ -13,6 +13,7 @@ import {
   FindManyOptions,
   CreateTemplateInput,
   UpdateTemplateInput,
+  ActiveProtocolSubstance,
 } from "../interfaces/repositories/index.js";
 import { PaginatedResponse } from "../types/index.js";
 
@@ -113,6 +114,8 @@ export class ProtocolRepository implements IProtocolRepository {
         patientId: data.patientId,
         source: data.source,
         templateId: data.templateId,
+        name: data.name,
+        description: data.description,
         clinicId: data.clinicId,
         providerId: data.providerId,
         startDate: data.startDate,
@@ -122,6 +125,7 @@ export class ProtocolRepository implements IProtocolRepository {
         substances: {
           create: data.substances.map((s) => ({
             substanceId: s.substanceId,
+            productId: s.productId,
             dose: s.dose,
             doseUnit: s.doseUnit,
             frequency: s.frequency,
@@ -310,6 +314,43 @@ export class ProtocolRepository implements IProtocolRepository {
     await this.prisma.protocolTemplate.update({
       where: { id },
       data: { useCount: { increment: 1 } },
+    });
+  }
+
+  async findActiveProtocolSubstancesByPatient(
+    patientId: string,
+  ): Promise<ActiveProtocolSubstance[]> {
+    return this.prisma.protocolSubstance.findMany({
+      where: {
+        protocol: {
+          patientId,
+          status: "active",
+        },
+      },
+      include: {
+        substance: {
+          select: {
+            id: true,
+            name: true,
+            doseUnit: true,
+            administrationRoute: true,
+          },
+        },
+        protocol: {
+          select: {
+            id: true,
+            status: true,
+            startDate: true,
+            endDate: true,
+            source: true,
+          },
+        },
+      },
+      orderBy: {
+        substance: {
+          name: "asc",
+        },
+      },
     });
   }
 }

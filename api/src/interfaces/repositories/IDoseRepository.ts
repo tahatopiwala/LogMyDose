@@ -4,7 +4,7 @@ import { PaginatedResponse } from "../../types/index.js";
 
 export interface CreateDoseInput {
   patientId: string;
-  protocolSubstanceId?: string;
+  protocolSubstanceId: string;
   substanceId: string;
   dose: Prisma.Decimal | number;
   doseUnit?: string;
