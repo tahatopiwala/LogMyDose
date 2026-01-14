@@ -8,6 +8,12 @@ export interface Patient {
   accountType: string;
   subscriptionTier: string | null;
   subscriptionStatus: string | null;
+  stripeCustomerId: string | null;
+  stripeSubscriptionId: string | null;
+  subscriptionPeriodEnd: string | null;
+  subscriptionPriceId: string | null;
+  trialEndsAt: string | null;
+  cancelAtPeriodEnd: boolean;
   clinicId: string | null;
   createdAt: string;
 }

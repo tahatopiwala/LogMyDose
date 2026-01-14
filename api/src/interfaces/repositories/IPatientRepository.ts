@@ -72,4 +72,21 @@ export interface IPatientRepository extends IBaseRepository<
   markVerificationTokenUsed(token: string): Promise<void>;
   markEmailVerified(patientId: string): Promise<Patient>;
   deleteExpiredVerificationTokens(patientId: string): Promise<void>;
+  // Settings methods
+  updatePassword(id: string, passwordHash: string): Promise<void>;
+  softDelete(id: string): Promise<void>;
+  findByStripeCustomerId(customerId: string): Promise<Patient | null>;
+  updateSubscription(
+    id: string,
+    data: {
+      stripeCustomerId?: string;
+      stripeSubscriptionId?: string | null;
+      subscriptionTier?: string;
+      subscriptionStatus?: string;
+      subscriptionPeriodEnd?: Date | null;
+      subscriptionPriceId?: string | null;
+      trialEndsAt?: Date | null;
+      cancelAtPeriodEnd?: boolean;
+    },
+  ): Promise<Patient>;
 }

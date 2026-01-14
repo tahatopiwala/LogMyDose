@@ -19,7 +19,9 @@ const envSchema = z.object({
   // CORS (comma-separated list of allowed origins)
   CORS_ORIGINS: z
     .string()
-    .default("http://localhost:5173,http://localhost:3000,http://localhost:3001"),
+    .default(
+      "http://localhost:5173,http://localhost:3000,http://localhost:3001",
+    ),
 
   // Redis (for BullMQ job queues)
   REDIS_HOST: z.string().default("localhost"),
@@ -42,6 +44,13 @@ const envSchema = z.object({
   STORAGE_SECRET_KEY: z.string().optional(),
   STORAGE_BUCKET: z.string().optional(),
   STORAGE_REGION: z.string().optional(),
+
+  // Stripe (optional for now - required for subscription features)
+  STRIPE_SECRET_KEY: z.string().optional(),
+  STRIPE_PUBLISHABLE_KEY: z.string().optional(),
+  STRIPE_WEBHOOK_SECRET: z.string().optional(),
+  STRIPE_PRICE_PRO_MONTHLY: z.string().optional(),
+  STRIPE_PRICE_PRO_ANNUAL: z.string().optional(),
 });
 
 function validateEnv() {

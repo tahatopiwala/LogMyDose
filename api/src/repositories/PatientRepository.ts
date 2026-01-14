@@ -227,4 +227,51 @@ export class PatientRepository implements IPatientRepository {
       },
     });
   }
+
+  // Settings methods
+  async updatePassword(id: string, passwordHash: string): Promise<void> {
+    await this.prisma.patient.update({
+      where: { id },
+      data: { passwordHash },
+    });
+  }
+
+  async softDelete(id: string): Promise<void> {
+    await this.prisma.patient.update({
+      where: { id },
+      data: {
+        deletedAt: new Date(),
+        // Anonymize PII
+        email: `deleted_${id}@deleted.local`,
+        firstName: null,
+        lastName: null,
+        phone: null,
+      },
+    });
+  }
+
+  async findByStripeCustomerId(customerId: string): Promise<Patient | null> {
+    return this.prisma.patient.findFirst({
+      where: { stripeCustomerId: customerId },
+    });
+  }
+
+  async updateSubscription(
+    id: string,
+    data: {
+      stripeCustomerId?: string;
+      stripeSubscriptionId?: string | null;
+      subscriptionTier?: string;
+      subscriptionStatus?: string;
+      subscriptionPeriodEnd?: Date | null;
+      subscriptionPriceId?: string | null;
+      trialEndsAt?: Date | null;
+      cancelAtPeriodEnd?: boolean;
+    },
+  ): Promise<Patient> {
+    return this.prisma.patient.update({
+      where: { id },
+      data,
+    });
+  }
 }

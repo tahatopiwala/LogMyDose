@@ -15,6 +15,10 @@ import protocolsRoutes from "./routes/protocols.routes.js";
 import dosesRoutes from "./routes/doses.routes.js";
 import tenantsRoutes from "./routes/tenants.routes.js";
 import healthRoutes from "./routes/health.routes.js";
+import settingsRoutes from "./routes/settings.routes.js";
+import subscriptionRoutes, {
+  webhookHandler,
+} from "./routes/subscription.routes.js";
 
 export const app = express();
 
@@ -42,15 +46,26 @@ app.use(
   }),
 );
 
-// Rate limiting
+// Rate limiting (skip for localhost in development)
 const limiter = rateLimit({
   windowMs: env.RATE_LIMIT_WINDOW_MS,
   max: env.RATE_LIMIT_MAX,
   message: { error: "Too many requests, please try again later." },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => {
+    // Skip rate limiting for localhost in development
+    if (env.NODE_ENV === "development") {
+      const host = req.get("host") || "";
+      return host.includes("localhost") || host.includes("127.0.0.1");
+    }
+    return false;
+  },
 });
 app.use(limiter);
+
+// Webhook routes (must be before body parsing for raw body access)
+app.use("/api/v1/webhooks", webhookHandler);
 
 // Body parsing
 app.use(express.json({ limit: "10mb" }));
@@ -70,6 +85,8 @@ app.use("/api/v1/substances", substancesRoutes);
 app.use("/api/v1/protocols", protocolsRoutes);
 app.use("/api/v1/doses", dosesRoutes);
 app.use("/api/v1/tenants", tenantsRoutes);
+app.use("/api/v1/settings", settingsRoutes);
+app.use("/api/v1/subscription", subscriptionRoutes);
 
 // 404 handler
 app.use((_req, res) => {

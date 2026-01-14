@@ -4,6 +4,7 @@ import {
   useState,
   useEffect,
   useCallback,
+  useRef,
   ReactNode,
 } from "react";
 import { useNavigate } from "react-router-dom";
@@ -22,6 +23,7 @@ interface AuthContextType {
   login: (data: LoginRequest) => Promise<void>;
   register: (data: RegisterRequest) => Promise<void>;
   logout: () => Promise<void>;
+  refreshPatient: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -34,9 +36,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [patient, setPatient] = useState<Patient | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const hasCheckedAuth = useRef(false);
 
   // Check for existing session on mount
   useEffect(() => {
+    // Prevent duplicate calls during React StrictMode double-mounting
+    if (hasCheckedAuth.current) {
+      setIsLoading(false);
+      return;
+    }
+
+    hasCheckedAuth.current = true;
+
     apiClient
       .get<{ patient: Patient }>("/auth/me")
       .then((res) => setPatient(res.patient))
@@ -82,6 +93,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
     navigate("/login");
   }, [navigate]);
 
+  const refreshPatient = useCallback(async () => {
+    try {
+      const res = await apiClient.get<{ patient: Patient }>("/auth/me");
+      setPatient(res.patient);
+    } catch {
+      // If refresh fails, keep current state
+    }
+  }, []);
+
   return (
     <AuthContext.Provider
       value={{
@@ -91,6 +111,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         login,
         register,
         logout,
+        refreshPatient,
       }}
     >
       {children}

@@ -6,6 +6,7 @@ import { Login } from "./pages/Login";
 import { Signup } from "./pages/Signup";
 import { LogDose } from "./pages/LogDose";
 import { AddProtocol } from "./pages/AddProtocol";
+import { Settings } from "./pages/Settings";
 
 function History() {
   return (
@@ -42,18 +43,6 @@ function Protocol() {
       </p>
       <div className="mt-8 bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-500">
         Protocol management coming soon...
-      </div>
-    </div>
-  );
-}
-
-function Settings() {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-      <p className="text-gray-600 mt-1">Manage your account and preferences.</p>
-      <div className="mt-8 bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-500">
-        Settings coming soon...
       </div>
     </div>
   );
