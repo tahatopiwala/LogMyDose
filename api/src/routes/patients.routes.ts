@@ -170,4 +170,65 @@ router.get("/alerts", authenticate, requirePatient, async (req, res, next) => {
   }
 });
 
+// POST /api/v1/patients/me/export - Queue async PDF export (deprecated, use POST /api/v1/exports)
+const exportBodySchema = z.object({
+  startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format"),
+  endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format"),
+});
+
+router.post(
+  "/me/export",
+  authenticate,
+  requirePatient,
+  async (req, res, next) => {
+    try {
+      const container = getContainer();
+      const patientService = container.patientService;
+      const patientRepository = container.patientRepository;
+      const exportJobService = container.exportJobService;
+
+      // Check Pro subscription
+      const patient = await patientRepository.findById(req.user!.id);
+      if (!patient) {
+        throw new AppError(404, "Patient not found", "NOT_FOUND");
+      }
+      patientService.validateProSubscription(patient);
+
+      // Validate body parameters
+      const result = exportBodySchema.safeParse(req.body);
+      if (!result.success) {
+        throw new AppError(
+          400,
+          "Invalid request: startDate and endDate are required in YYYY-MM-DD format",
+          "INVALID_REQUEST",
+        );
+      }
+
+      const { startDate, endDate } = result.data;
+      const patientId = req.user!.id;
+
+      // Queue the export job
+      const job = await exportJobService.createExportJob(
+        patientId,
+        new Date(startDate),
+        new Date(endDate),
+      );
+
+      res.status(202).json({
+        message: "Export job queued successfully",
+        job: {
+          id: job.id,
+          status: job.status,
+          startDate: job.startDate,
+          endDate: job.endDate,
+          createdAt: job.createdAt,
+          expiresAt: job.expiresAt,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
 export default router;

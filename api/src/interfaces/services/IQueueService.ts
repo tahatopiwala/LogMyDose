@@ -2,6 +2,7 @@ import type {
   EmailJobType,
   WelcomeEmailPayload,
   VerifyEmailPayload,
+  PdfExportPatientReportPayload,
 } from "@logmydose/shared/queues";
 
 export interface JobOptions {
@@ -21,6 +22,10 @@ export interface IQueueService {
   addEmailJob(
     type: EmailJobType,
     payload: unknown,
+    options?: JobOptions,
+  ): Promise<void>;
+  addPdfExportJob(
+    payload: PdfExportPatientReportPayload,
     options?: JobOptions,
   ): Promise<void>;
   close(): Promise<void>;

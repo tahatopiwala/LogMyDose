@@ -7,6 +7,7 @@ import {
   IPatientRepository,
   PatientWithClinic,
   UpdatePatientInput,
+  PatientExportData,
 } from "../interfaces/repositories/IPatientRepository.js";
 import { ITenantRepository } from "../interfaces/repositories/ITenantRepository.js";
 import {
@@ -115,5 +116,66 @@ export class PatientService implements IPatientService {
 
   async getAlerts(patientId: string): Promise<Alert[]> {
     return this.doseRepository.findActiveAlerts(patientId);
+  }
+
+  validateProSubscription(patient: Patient): void {
+    const validTiers = ["pro", "premium"];
+    const validStatuses = ["active", "trialing"];
+
+    const tier = patient.subscriptionTier?.toLowerCase() || "";
+    const status = patient.subscriptionStatus?.toLowerCase() || "";
+
+    if (!validTiers.includes(tier)) {
+      throw new AppError(
+        403,
+        "Pro subscription required for data export",
+        "SUBSCRIPTION_REQUIRED",
+      );
+    }
+
+    if (!validStatuses.includes(status)) {
+      throw new AppError(
+        403,
+        "Active subscription required for data export",
+        "SUBSCRIPTION_INACTIVE",
+      );
+    }
+  }
+
+  async getExportData(
+    patientId: string,
+    startDate: Date,
+    endDate: Date,
+  ): Promise<PatientExportData> {
+    // Validate date range
+    if (startDate > endDate) {
+      throw new AppError(
+        400,
+        "Start date must be before end date",
+        "INVALID_DATE_RANGE",
+      );
+    }
+
+    // Validate date range is not too large (2 years max)
+    const maxRangeMs = 2 * 365 * 24 * 60 * 60 * 1000; // 2 years in milliseconds
+    if (endDate.getTime() - startDate.getTime() > maxRangeMs) {
+      throw new AppError(
+        400,
+        "Date range cannot exceed 2 years",
+        "DATE_RANGE_TOO_LARGE",
+      );
+    }
+
+    // Validate dates are not in the future
+    const now = new Date();
+    if (startDate > now || endDate > now) {
+      throw new AppError(
+        400,
+        "Dates cannot be in the future",
+        "INVALID_DATE_RANGE",
+      );
+    }
+
+    return this.patientRepository.getExportData(patientId, startDate, endDate);
   }
 }

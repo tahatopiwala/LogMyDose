@@ -72,3 +72,18 @@ export type EmailPayload =
   | { type: "email:password-reset"; data: PasswordResetEmailPayload }
   | { type: "email:dose-reminder"; data: DoseReminderEmailPayload }
   | { type: "email:weekly-summary"; data: WeeklySummaryEmailPayload };
+
+// =============================================================================
+// PDF EXPORT PAYLOADS
+// =============================================================================
+
+// Patient report export payload
+export const pdfExportPatientReportSchema = z.object({
+  exportJobId: z.string().uuid(),
+  patientId: z.string().uuid(),
+  startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+});
+export type PdfExportPatientReportPayload = z.infer<
+  typeof pdfExportPatientReportSchema
+>;

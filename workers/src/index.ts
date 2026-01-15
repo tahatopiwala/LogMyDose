@@ -1,14 +1,12 @@
 import "dotenv/config";
-import { createEmailWorker } from "./processors/index.js";
+import { createEmailWorker, createPdfExportWorker } from "./processors/index.js";
 import { redis } from "./lib/redis.js";
 
 console.log("Starting LogMyDose workers...");
 
 const workers = [
   createEmailWorker(),
-  // Future workers can be added here:
-  // createNotificationWorker(),
-  // createAiReportWorker(),
+  createPdfExportWorker(),
 ];
 
 console.log(

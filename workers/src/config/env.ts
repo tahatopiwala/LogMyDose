@@ -18,6 +18,13 @@ const envSchema = z.object({
 
   // Worker settings
   WORKER_CONCURRENCY: z.coerce.number().default(5),
+
+  // S3 Storage (for PDF exports)
+  S3_ENDPOINT: z.string().optional(),
+  S3_REGION: z.string().default("us-east-1"),
+  S3_BUCKET: z.string().default("logmydose-exports"),
+  S3_ACCESS_KEY_ID: z.string().optional(),
+  S3_SECRET_ACCESS_KEY: z.string().optional(),
 });
 
 function validateEnv() {

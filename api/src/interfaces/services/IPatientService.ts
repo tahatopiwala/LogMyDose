@@ -2,6 +2,7 @@ import { Patient, Dose, Alert } from "@logmydose/shared/prisma";
 import {
   PatientWithClinic,
   UpdatePatientInput,
+  PatientExportData,
 } from "../repositories/IPatientRepository.js";
 import { ProtocolWithDetails } from "../repositories/IProtocolRepository.js";
 import { PaginatedResponse } from "../../types/index.js";
@@ -27,4 +28,10 @@ export interface IPatientService {
     query: PatientDosesQuery,
   ): Promise<PaginatedResponse<Dose>>;
   getAlerts(patientId: string): Promise<Alert[]>;
+  validateProSubscription(patient: Patient): void;
+  getExportData(
+    patientId: string,
+    startDate: Date,
+    endDate: Date,
+  ): Promise<PatientExportData>;
 }

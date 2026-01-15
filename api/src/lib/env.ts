@@ -38,12 +38,12 @@ const envSchema = z.object({
   // AI (optional for now)
   ANTHROPIC_API_KEY: z.string().optional(),
 
-  // Storage (optional for now)
-  STORAGE_ENDPOINT: z.string().optional(),
-  STORAGE_ACCESS_KEY: z.string().optional(),
-  STORAGE_SECRET_KEY: z.string().optional(),
-  STORAGE_BUCKET: z.string().optional(),
-  STORAGE_REGION: z.string().optional(),
+  // Storage (for S3/MinIO - used for PDF exports)
+  S3_ENDPOINT: z.string().optional(),
+  S3_ACCESS_KEY_ID: z.string().optional(),
+  S3_SECRET_ACCESS_KEY: z.string().optional(),
+  S3_BUCKET: z.string().default("logmydose-exports"),
+  S3_REGION: z.string().default("us-east-1"),
 
   // Stripe (optional for now - required for subscription features)
   STRIPE_SECRET_KEY: z.string().optional(),

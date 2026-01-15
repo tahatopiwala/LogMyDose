@@ -24,4 +24,5 @@ export type {
   AiReport,
   Content,
   AuditLog,
+  ExportJob,
 } from "@prisma/client";

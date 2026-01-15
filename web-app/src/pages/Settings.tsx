@@ -2,6 +2,7 @@ import { AccountSection } from "@/components/settings/AccountSection";
 import { SecuritySection } from "@/components/settings/SecuritySection";
 import { ProfilePictureSection } from "@/components/settings/ProfilePictureSection";
 import { SubscriptionSection } from "@/components/settings/SubscriptionSection";
+import { DataExportSection } from "@/components/settings/DataExportSection";
 import { DangerZoneSection } from "@/components/settings/DangerZoneSection";
 
 export function Settings() {
@@ -26,6 +27,9 @@ export function Settings() {
 
       {/* Subscription */}
       <SubscriptionSection />
+
+      {/* Data Export */}
+      <DataExportSection />
 
       {/* Danger Zone */}
       <DangerZoneSection />

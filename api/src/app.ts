@@ -20,6 +20,7 @@ import subscriptionRoutes, {
   webhookHandler,
 } from "./routes/subscription.routes.js";
 import productsRoutes from "./routes/products.routes.js";
+import exportsRoutes from "./routes/exports.routes.js";
 
 export const app = express();
 
@@ -89,6 +90,7 @@ app.use("/api/v1/tenants", tenantsRoutes);
 app.use("/api/v1/settings", settingsRoutes);
 app.use("/api/v1/subscription", subscriptionRoutes);
 app.use("/api/v1/products", productsRoutes);
+app.use("/api/v1/exports", exportsRoutes);
 
 // 404 handler
 app.use((_req, res) => {

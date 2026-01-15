@@ -24,3 +24,10 @@ export const AI_REPORT_JOB_TYPES = {
 
 export type AiReportJobType =
   (typeof AI_REPORT_JOB_TYPES)[keyof typeof AI_REPORT_JOB_TYPES];
+
+export const PDF_EXPORT_JOB_TYPES = {
+  PATIENT_REPORT: "pdf-export:patient-report",
+} as const;
+
+export type PdfExportJobType =
+  (typeof PDF_EXPORT_JOB_TYPES)[keyof typeof PDF_EXPORT_JOB_TYPES];

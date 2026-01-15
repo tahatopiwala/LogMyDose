@@ -78,7 +78,7 @@ router.post("/email", authenticate, requirePatient, async (req, res, next) => {
     // For now, update email directly (in production, you'd want email verification)
     // TODO: Implement email change verification flow
     const oldEmail = patient.email;
-    const updatedPatient = await patientRepository.update(req.user!.id, {
+    await patientRepository.update(req.user!.id, {
       // Note: We need to add email update capability to repository
     });
 

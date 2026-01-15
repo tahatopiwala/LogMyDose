@@ -47,6 +47,47 @@ export interface FindClinicPatientsOptions extends FindManyOptions {
   status?: string;
 }
 
+export interface PatientExportData {
+  patient: {
+    firstName: string | null;
+    lastName: string | null;
+    email: string;
+    dateOfBirth: Date | null;
+  };
+  protocols: Array<{
+    id: string;
+    status: string;
+    startDate: Date | null;
+    endDate: Date | null;
+    source: string;
+    notes: string | null;
+    substances: Array<{
+      substance: {
+        name: string;
+        doseUnit: string | null;
+      };
+      dose: Prisma.Decimal;
+      doseUnit: string | null;
+      frequency: string | null;
+    }>;
+  }>;
+  doses: Array<{
+    id: string;
+    loggedAt: Date;
+    dose: Prisma.Decimal;
+    doseUnit: string | null;
+    status: string;
+    administrationSite: string | null;
+    notes: string | null;
+    substance: {
+      name: string;
+    };
+    product: {
+      name: string;
+    } | null;
+  }>;
+}
+
 export interface IPatientRepository extends IBaseRepository<
   Patient,
   CreatePatientInput,
@@ -89,4 +130,9 @@ export interface IPatientRepository extends IBaseRepository<
       cancelAtPeriodEnd?: boolean;
     },
   ): Promise<Patient>;
+  getExportData(
+    patientId: string,
+    startDate: Date,
+    endDate: Date,
+  ): Promise<PatientExportData>;
 }
