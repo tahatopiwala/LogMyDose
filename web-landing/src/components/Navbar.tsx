@@ -85,6 +85,12 @@ export function Navbar() {
             >
               Pricing
             </a>
+            <a
+              href="#faq"
+              className="text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              FAQ
+            </a>
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
@@ -145,6 +151,9 @@ export function Navbar() {
               </a>
               <a href="#pricing" className="text-gray-600 hover:text-gray-900">
                 Pricing
+              </a>
+              <a href="#faq" className="text-gray-600 hover:text-gray-900">
+                FAQ
               </a>
               <hr className="border-gray-100" />
               <a

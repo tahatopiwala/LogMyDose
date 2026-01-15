@@ -62,8 +62,12 @@ export function Footer() {
               <span className="text-xl font-bold">LogMyDose</span>
             </Link>
             <p className="mt-4 text-gray-400 max-w-md">
-              Smart peptide therapy tracking with AI-powered insights. Track
-              your doses, monitor progress, and optimize your results.
+              A simple tracking tool for your health protocols. GLP-1s,
+              peptides, HRT, supplements—organize your notes and share what
+              matters with your doctor.
+            </p>
+            <p className="mt-4 text-sm text-gray-500">
+              Your data is yours. Export anytime.
             </p>
           </div>
 
@@ -88,10 +92,15 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="https://app.logmydose.com"
+                  href="#how-it-works"
                   className="hover:text-white transition-colors"
                 >
-                  App
+                  How It Works
+                </a>
+              </li>
+              <li>
+                <a href="#faq" className="hover:text-white transition-colors">
+                  FAQ
                 </a>
               </li>
             </ul>
@@ -128,14 +137,18 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-gray-800 text-center text-gray-400 text-sm">
-          <p>
-            &copy; {new Date().getFullYear()} LogMyDose. All rights reserved.
-          </p>
-          <p className="mt-2">
-            Not medical advice. Always consult with your healthcare provider
-            about your treatment.
-          </p>
+        <div className="mt-12 pt-8 border-t border-gray-800">
+          <div className="text-center text-gray-400 text-sm">
+            <p>
+              &copy; {new Date().getFullYear()} LogMyDose. All rights reserved.
+            </p>
+            <p className="mt-4 text-gray-500 max-w-2xl mx-auto">
+              <strong>Medical Disclaimer:</strong> LogMyDose is a personal
+              tracking tool, not a medical device. It does not diagnose, treat,
+              or provide medical advice. Always consult your healthcare provider
+              for medical decisions.
+            </p>
+          </div>
         </div>
       </div>
     </footer>

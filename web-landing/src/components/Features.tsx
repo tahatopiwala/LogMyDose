@@ -1,8 +1,8 @@
 const features = [
   {
-    title: "Smart Dose Logging",
+    title: "Simple Dose Logging",
     description:
-      "Log your doses in seconds with our intuitive interface. Track timing, dosage, and injection sites with ease.",
+      "Log your doses in seconds with one tap. Track timing, dosage, and injection sites effortlessly.",
     icon: (
       <svg
         className="w-6 h-6"
@@ -20,29 +20,9 @@ const features = [
     ),
   },
   {
-    title: "AI-Powered Insights",
+    title: "See Your Patterns",
     description:
-      "Get proactive insights without asking. Our AI analyzes your patterns and surfaces what matters most.",
-    icon: (
-      <svg
-        className="w-6 h-6"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-        />
-      </svg>
-    ),
-  },
-  {
-    title: "Progress Tracking",
-    description:
-      "Visualize your journey with beautiful charts and progress indicators. See how far you have come.",
+      "View your data organized by time, side effects, and progress. Spot patterns to discuss with your doctor.",
     icon: (
       <svg
         className="w-6 h-6"
@@ -60,9 +40,9 @@ const features = [
     ),
   },
   {
-    title: "Side Effect Monitoring",
+    title: "Side Effect Notes",
     description:
-      "Log and track side effects to identify patterns. Share reports with your healthcare provider.",
+      "Log how you're feeling and see it alongside your dose history. Helpful info to share at appointments.",
     icon: (
       <svg
         className="w-6 h-6"
@@ -74,15 +54,15 @@ const features = [
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth={2}
-          d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+          d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
         />
       </svg>
     ),
   },
   {
-    title: "Smart Reminders",
+    title: "Progress Tracking",
     description:
-      "Never miss a dose with intelligent reminders that adapt to your schedule and preferences.",
+      "See your complete history at a glance. Know exactly what to tell your healthcare provider.",
     icon: (
       <svg
         className="w-6 h-6"
@@ -94,15 +74,15 @@ const features = [
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth={2}
-          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+          d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
         />
       </svg>
     ),
   },
   {
-    title: "Clinic Integration",
+    title: "Export & Share",
     description:
-      "Optionally connect with your clinic for seamless communication and protocol management.",
+      "Generate reports to share with your doctor. Your data, formatted and ready for appointments.",
     icon: (
       <svg
         className="w-6 h-6"
@@ -114,7 +94,27 @@ const features = [
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth={2}
-          d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+          d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+        />
+      </svg>
+    ),
+  },
+  {
+    title: "Private & Secure",
+    description:
+      "Your health notes stay yours. Export or delete anytime. We never sell your information.",
+    icon: (
+      <svg
+        className="w-6 h-6"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
         />
       </svg>
     ),
@@ -123,15 +123,15 @@ const features = [
 
 export function Features() {
   return (
-    <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+    <section id="features" className="py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
-            Everything you need to optimize your therapy
+            Everything you need to stay organized
           </h2>
           <p className="mt-4 text-xl text-gray-600">
-            Powerful features designed to make tracking effortless and insights
-            actionable.
+            Simple tracking tools for any health protocol—GLP-1s, peptides, HRT,
+            supplements, and more.
           </p>
         </div>
 
@@ -139,7 +139,7 @@ export function Features() {
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-md transition-shadow"
+              className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-md transition-shadow border border-gray-100"
             >
               <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center text-primary-600">
                 {feature.icon}
