@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { apiClient } from "@/lib/api-client";
 import { Protocol, Dose } from "@/types/domain";
+import { useUpdateProtocol } from "@/hooks/useProtocols";
 
 interface ProtocolStats {
   adherenceRate: number;
@@ -131,6 +132,8 @@ export function ProtocolDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const updateProtocol = useUpdateProtocol();
+
   console.log("ProtocolDetail component mounted with ID:", id);
 
   useEffect(() => {
@@ -165,6 +168,44 @@ export function ProtocolDetail() {
 
     fetchProtocolData();
   }, [id]);
+
+  const handlePauseProtocol = () => {
+    if (!protocol || !id) return;
+
+    const confirmed = window.confirm(
+      "Pausing this protocol will stop scheduled reminders and exclude it from dose logging. You can resume it at any time.\n\nAre you sure you want to pause this protocol?",
+    );
+
+    if (confirmed) {
+      updateProtocol.mutate(
+        { id, status: "paused" },
+        {
+          onSuccess: (data) => {
+            setProtocol(data.protocol);
+          },
+        },
+      );
+    }
+  };
+
+  const handleResumeProtocol = () => {
+    if (!protocol || !id) return;
+
+    const confirmed = window.confirm(
+      "Resuming this protocol will restore it to your active protocols and enable dose logging again.\n\nAre you sure you want to resume this protocol?",
+    );
+
+    if (confirmed) {
+      updateProtocol.mutate(
+        { id, status: "active" },
+        {
+          onSuccess: (data) => {
+            setProtocol(data.protocol);
+          },
+        },
+      );
+    }
+  };
 
   if (loading) {
     return (
@@ -276,6 +317,34 @@ export function ProtocolDetail() {
           )}
         </div>
       </div>
+
+      {/* Paused Protocol Banner */}
+      {protocol.status === "paused" && (
+        <div className="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-4">
+          <div className="flex items-center gap-3">
+            <svg
+              className="w-6 h-6 text-yellow-600 flex-shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <div>
+              <p className="font-medium text-yellow-800">Protocol Paused</p>
+              <p className="text-sm text-yellow-700">
+                This protocol is not active and won't appear in dose logging.
+                Resume it to continue tracking.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Glance View - Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -480,33 +549,43 @@ export function ProtocolDetail() {
 
       {/* Action Buttons */}
       <div className="flex gap-3">
-        <Link
-          to="/log"
-          className="flex-1 inline-flex items-center justify-center px-6 py-3 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 transition-colors shadow-sm"
-        >
-          <svg
-            className="w-5 h-5 mr-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+        {protocol.status === "active" && (
+          <Link
+            to="/log"
+            className="flex-1 inline-flex items-center justify-center px-6 py-3 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 transition-colors shadow-sm"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 4v16m8-8H4"
-            />
-          </svg>
-          Log a Dose
-        </Link>
+            <svg
+              className="w-5 h-5 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+            Log a Dose
+          </Link>
+        )}
         {protocol.status === "active" && (
           <button
-            onClick={() => {
-              /* TODO: Implement pause protocol */
-            }}
-            className="px-6 py-3 border-2 border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors"
+            onClick={handlePauseProtocol}
+            disabled={updateProtocol.isPending}
+            className="px-6 py-3 border-2 border-yellow-400 text-yellow-700 font-medium rounded-xl hover:bg-yellow-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Pause Protocol
+            {updateProtocol.isPending ? "Pausing..." : "Pause Protocol"}
+          </button>
+        )}
+        {protocol.status === "paused" && (
+          <button
+            onClick={handleResumeProtocol}
+            disabled={updateProtocol.isPending}
+            className="flex-1 px-6 py-3 bg-green-600 text-white font-medium rounded-xl hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {updateProtocol.isPending ? "Resuming..." : "Resume Protocol"}
           </button>
         )}
       </div>

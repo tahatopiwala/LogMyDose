@@ -1,0 +1,303 @@
+import React from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { useProtocol, useUpdateProtocolStatus } from "../../../src/hooks/useProtocols";
+import { Card, Badge } from "../../../src/components/ui";
+
+export default function ProtocolDetailScreen() {
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const router = useRouter();
+  const { data: protocol, isLoading, error } = useProtocol(id || "");
+  const updateStatus = useUpdateProtocolStatus();
+
+  const getStatusVariant = (status: string) => {
+    switch (status) {
+      case "active":
+        return "active";
+      case "paused":
+        return "paused";
+      case "completed":
+        return "completed";
+      default:
+        return "default";
+    }
+  };
+
+  const handlePauseProtocol = () => {
+    if (!protocol) return;
+
+    Alert.alert(
+      "Pause Protocol",
+      "Pausing this protocol will stop scheduled reminders and exclude it from dose logging. You can resume it at any time.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Pause",
+          style: "destructive",
+          onPress: () => {
+            updateStatus.mutate(
+              { id: protocol.id, status: "paused" },
+              {
+                onSuccess: () => {
+                  Alert.alert("Protocol Paused", "You can resume it anytime from this screen.");
+                },
+                onError: () => {
+                  Alert.alert("Error", "Failed to pause protocol. Please try again.");
+                },
+              }
+            );
+          },
+        },
+      ]
+    );
+  };
+
+  const handleResumeProtocol = () => {
+    if (!protocol) return;
+
+    Alert.alert(
+      "Resume Protocol",
+      "Resume this protocol to continue tracking doses?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Resume",
+          onPress: () => {
+            updateStatus.mutate(
+              { id: protocol.id, status: "active" },
+              {
+                onSuccess: () => {
+                  Alert.alert("Protocol Resumed", "Your protocol is now active again.");
+                },
+                onError: () => {
+                  Alert.alert("Error", "Failed to resume protocol. Please try again.");
+                },
+              }
+            );
+          },
+        },
+      ]
+    );
+  };
+
+  const formatDate = (dateStr: string | null) => {
+    if (!dateStr) return null;
+    return new Date(dateStr).toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator color="#BE3455" size="large" />
+          <Text className="text-gray-500 mt-4">Loading protocol...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (error || !protocol) {
+    return (
+      <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
+        <View className="flex-1 items-center justify-center px-6">
+          <Ionicons name="alert-circle-outline" size={64} color="#EF4444" />
+          <Text className="text-gray-900 font-semibold text-lg mt-4">
+            Protocol not found
+          </Text>
+          <Text className="text-gray-500 mt-2 text-center">
+            {error?.message || "Unable to load protocol details."}
+          </Text>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            className="mt-6 bg-primary-500 px-6 py-3 rounded-xl"
+          >
+            <Text className="text-white font-semibold">Go Back</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
+      <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 24 }}>
+        {/* Header */}
+        <View className="px-5 pt-4 pb-2">
+          <TouchableOpacity
+            onPress={() => router.back()}
+            className="flex-row items-center mb-4"
+          >
+            <Ionicons name="chevron-back" size={24} color="#6B7280" />
+            <Text className="text-gray-600 ml-1">Back</Text>
+          </TouchableOpacity>
+
+          <View className="flex-row items-center gap-2">
+            <Text className="text-2xl font-bold text-gray-900 flex-1">
+              {protocol.template?.name || "Custom Protocol"}
+            </Text>
+            <Badge variant={getStatusVariant(protocol.status)}>
+              {protocol.status}
+            </Badge>
+          </View>
+
+          {protocol.startDate && (
+            <Text className="text-gray-500 mt-2">
+              Started {formatDate(protocol.startDate)}
+              {protocol.endDate && ` • Ends ${formatDate(protocol.endDate)}`}
+            </Text>
+          )}
+        </View>
+
+        {/* Paused Banner */}
+        {protocol.status === "paused" && (
+          <View className="mx-5 mt-4 bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+            <View className="flex-row items-center">
+              <Ionicons name="pause-circle" size={24} color="#CA8A04" />
+              <View className="ml-3 flex-1">
+                <Text className="font-semibold text-yellow-800">
+                  Protocol Paused
+                </Text>
+                <Text className="text-yellow-700 text-sm mt-1">
+                  This protocol won't appear in dose logging. Resume it to continue tracking.
+                </Text>
+              </View>
+            </View>
+          </View>
+        )}
+
+        {/* Substances */}
+        <View className="px-5 mt-6">
+          <Text className="text-lg font-semibold text-gray-900 mb-4">
+            Substances
+          </Text>
+
+          {protocol.substances.map((ps) => (
+            <Card key={ps.id} className="mb-3">
+              <Text className="font-semibold text-gray-900 text-lg">
+                {ps.substance.name}
+              </Text>
+
+              <View className="flex-row flex-wrap mt-3 gap-x-6 gap-y-2">
+                <View>
+                  <Text className="text-gray-500 text-xs uppercase font-medium">
+                    Dose
+                  </Text>
+                  <Text className="text-gray-900 mt-1">
+                    {ps.dose} {ps.doseUnit || ps.substance.doseUnit || ""}
+                  </Text>
+                </View>
+
+                <View>
+                  <Text className="text-gray-500 text-xs uppercase font-medium">
+                    Frequency
+                  </Text>
+                  <Text className="text-gray-900 mt-1">
+                    {ps.frequency?.replace(/_/g, " ") || "as needed"}
+                  </Text>
+                </View>
+
+                {ps.cycleOnWeeks && (
+                  <View>
+                    <Text className="text-gray-500 text-xs uppercase font-medium">
+                      Cycling
+                    </Text>
+                    <Text className="text-gray-900 mt-1">
+                      {ps.cycleOnWeeks}w on / {ps.cycleOffWeeks || 0}w off
+                    </Text>
+                  </View>
+                )}
+
+                {ps.substance.administrationRoute && (
+                  <View>
+                    <Text className="text-gray-500 text-xs uppercase font-medium">
+                      Route
+                    </Text>
+                    <Text className="text-gray-900 mt-1">
+                      {ps.substance.administrationRoute}
+                    </Text>
+                  </View>
+                )}
+              </View>
+
+              {ps.notes && (
+                <View className="mt-3 bg-gray-50 rounded-lg p-3">
+                  <Text className="text-gray-700 text-sm">{ps.notes}</Text>
+                </View>
+              )}
+            </Card>
+          ))}
+        </View>
+
+        {/* Protocol Notes */}
+        {protocol.notes && (
+          <View className="px-5 mt-6">
+            <Text className="text-lg font-semibold text-gray-900 mb-4">
+              Notes
+            </Text>
+            <Card>
+              <Text className="text-gray-700 leading-relaxed">
+                {protocol.notes}
+              </Text>
+            </Card>
+          </View>
+        )}
+
+        {/* Action Buttons */}
+        <View className="px-5 mt-8 gap-3">
+          {protocol.status === "active" && (
+            <>
+              <TouchableOpacity
+                onPress={() => router.push("/(app)/log")}
+                className="bg-primary-500 rounded-xl py-4 flex-row items-center justify-center"
+              >
+                <Ionicons name="add-circle" size={24} color="white" />
+                <Text className="text-white font-semibold text-lg ml-2">
+                  Log a Dose
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={handlePauseProtocol}
+                disabled={updateStatus.isPending}
+                className="border-2 border-yellow-400 rounded-xl py-4 flex-row items-center justify-center"
+                style={{ opacity: updateStatus.isPending ? 0.5 : 1 }}
+              >
+                <Ionicons name="pause-circle-outline" size={24} color="#CA8A04" />
+                <Text className="text-yellow-700 font-semibold text-lg ml-2">
+                  {updateStatus.isPending ? "Pausing..." : "Pause Protocol"}
+                </Text>
+              </TouchableOpacity>
+            </>
+          )}
+
+          {protocol.status === "paused" && (
+            <TouchableOpacity
+              onPress={handleResumeProtocol}
+              disabled={updateStatus.isPending}
+              className="bg-green-600 rounded-xl py-4 flex-row items-center justify-center"
+              style={{ opacity: updateStatus.isPending ? 0.5 : 1 }}
+            >
+              <Ionicons name="play-circle" size={24} color="white" />
+              <Text className="text-white font-semibold text-lg ml-2">
+                {updateStatus.isPending ? "Resuming..." : "Resume Protocol"}
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
