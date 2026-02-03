@@ -55,6 +55,33 @@ export function Hero() {
                 See How It Works
               </a>
             </div>
+
+            {/* App Store Badges */}
+            <div className="mt-6 flex flex-wrap items-center gap-4">
+              <a
+                href="#"
+                className="transition-opacity hover:opacity-80"
+                aria-label="Download on the App Store"
+              >
+                <img
+                  src="/ios-badge.svg"
+                  alt="Download on the App Store"
+                  className="h-10"
+                />
+              </a>
+              <a
+                href="#"
+                className="transition-opacity hover:opacity-80"
+                aria-label="Get it on Google Play"
+              >
+                <img
+                  src="/android-badge.svg"
+                  alt="Get it on Google Play"
+                  className="h-10"
+                />
+              </a>
+            </div>
+
             <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-gray-500">
               <span className="flex items-center gap-1.5">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
