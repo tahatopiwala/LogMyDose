@@ -6,31 +6,39 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 LogMyDose is a peptide therapy tracking platform with a D2C-first model and optional clinic integration. The platform provides AI-powered ambient intelligence that proactively surfaces insights without requiring user prompts.
 
-**Current Status**: Planning phase - see `VISION.md` for product vision and `logmydose-plan.md` for detailed implementation plan.
+**Current Status**: Active development - see `vision.md` for product vision and `logmydose-plan.md` for detailed implementation plan.
 
-## Target Tech Stack
+## Tech Stack
 
-### Backend (to be built in `/api`)
+### Backend (`/api`)
 - Express.js with TypeScript
 - PostgreSQL via Prisma ORM (Supabase for production, Docker for local dev)
 - JWT authentication (access + refresh tokens)
 - Anthropic Claude API for AI features
 - Zod for request validation
 
-### Web Portals (to be built in `/web`)
+### Web Applications
 - React 18+ with Vite
 - TailwindCSS
 - React Query for data fetching
-- Three portals: clinic-portal, admin-portal, patient-portal
+- Shared UI components from `@logmydose/ui`
 
-### Mobile App (to be built in `/mobile`)
+### Mobile App (`/mobile`)
 - React Native with TypeScript
-- Expo for development workflow
-- React Navigation for routing
-- React Query for data fetching (shared with web)
-- NativeWind or Tamagui for styling (TailwindCSS-compatible)
+- Expo with file-based routing (Expo Router)
+- NativeWind for styling (TailwindCSS-compatible)
+- React Query for data fetching
+
+### Background Workers (`/workers`)
+- BullMQ for job processing
+- PDF export, email notifications, async tasks
 
 ## Architecture Decisions
+
+### Monorepo Structure
+- npm workspaces for package management
+- Shared packages in `/packages` for code reuse
+- Run `npm run build` from root to build all packages
 
 ### Multi-tenancy
 - All tenant-scoped tables include `tenant_id` with Row Level Security (RLS) policies
@@ -51,38 +59,85 @@ The platform's core differentiator is AI that works proactively, not reactively:
 - Build with HIPAA-ready architecture from start
 - BAAs required with Supabase, hosting provider for PHI
 
-## Project Structure (Planned)
+## Project Structure
 
 ```
 /api                    # Express.js backend
   /src/routes           # API routes
   /src/services         # Business logic
-  /src/services/ai      # AI services (insights, annotations, reports)
-  /src/ai/providers     # LLM clients (Anthropic, OpenAI)
-  /src/ai/prompts       # Prompt templates
+  /src/repositories     # Data access layer
   /src/middleware       # Auth, tenant context, audit logging
-  /prisma               # Database schema and migrations
-/web
-  /clinic-portal        # Clinic management React app
-  /admin-portal         # Super admin React app
-  /patient-portal       # Patient web app
-/mobile                 # React Native app (iOS & Android)
-/shared                 # Shared TypeScript types, schemas, utilities
+  /src/lib              # Utilities and helpers
+/web-app                # Patient portal (React + Vite)
+  /src/pages            # Page components
+  /src/components       # UI components
+  /src/hooks            # Custom React hooks
+/admin-app              # Admin portal (React + Vite)
+  /src/pages            # Admin pages
+  /src/components       # Admin components
+/web-landing            # Marketing landing page
+  /src/components       # Landing page components
+/mobile                 # React Native app (Expo)
+  /app                  # File-based routing (Expo Router)
+  /src/components       # Mobile components
+  /src/hooks            # Mobile hooks
+  /src/contexts         # React contexts
+/packages
+  /shared               # Shared TypeScript types, entities, DTOs
+    /src/entities       # Entity definitions
+    /src/types          # Type definitions
+    /src/queues         # Queue job definitions
+    /prisma             # Prisma schema and migrations
+  /ui                   # Shared UI component library
+    /src/components     # Reusable React components
+/workers                # Background job workers (BullMQ)
+  /src/processors       # Job processors
+  /src/services         # Worker services
+  /src/templates        # Email/PDF templates
 ```
 
 ## Key Data Models
 
-Core entities from the planned schema:
+Core entities (defined in `/packages/shared/src/entities`):
 - `tenants`: Clinic/white-label instances
 - `patients`: Unified D2C and clinic-managed users
-- `substances`: Generic substance database (peptides, hormones, supplements)
-- `substance_categories`: Extensible categories for future verticals
+- `products`: Products (peptides, hormones, supplements)
 - `protocols`: Patient's active protocols
 - `doses`: Dose logging
 - `side_effects`: Side effect tracking
 - `ai_insights`: Pre-generated AI insight cards
 - `ai_annotations`: Cached AI annotations for data points
 - `ai_reports`: Weekly/monthly AI reports
+
+## Development Commands
+
+```bash
+# Install dependencies
+npm install
+
+# Start development (API + landing + web app)
+npm run dev
+
+# Individual services
+npm run dev:api        # Backend API
+npm run dev:app        # Patient web app
+npm run dev:admin      # Admin portal
+npm run dev:landing    # Landing page
+npm run dev:workers    # Background workers
+
+# Build
+npm run build          # Build all packages
+npm run build:api      # Build API only
+npm run build:app      # Build web app only
+
+# Infrastructure
+npm run docker:up      # Start PostgreSQL + Redis
+npm run docker:down    # Stop containers
+
+# Quality
+npm run lint           # Lint all workspaces
+npm run typecheck      # Type check all workspaces
+```
 
 ## Medical/Safety Constraints
 
