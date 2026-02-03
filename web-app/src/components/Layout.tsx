@@ -33,7 +33,7 @@ export function Layout({ children }: LayoutProps) {
   return (
     <div className="bg-gray-50">
       {/* Header with horizontal navigation */}
-      <header className="sticky top-0 z-40 bg-white border-b border-gray-200">
+      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
@@ -187,7 +187,7 @@ export function Layout({ children }: LayoutProps) {
 
         {/* Mobile navigation menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 bg-white">
+          <div className="md:hidden border-t border-gray-100 bg-white/80 backdrop-blur-md">
             <nav className="px-4 py-3 space-y-1">
               {navigation.map((item) => (
                 <Link
