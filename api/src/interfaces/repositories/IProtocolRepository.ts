@@ -116,6 +116,7 @@ export interface ActiveProtocolSubstance extends ProtocolSubstance {
   };
   protocol: {
     id: string;
+    name: string | null;
     status: string;
     startDate: Date | null;
     endDate: Date | null;

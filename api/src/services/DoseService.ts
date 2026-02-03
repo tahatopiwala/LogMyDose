@@ -37,35 +37,38 @@ export class DoseService implements IDoseService {
       throw new AppError(404, "Substance not found", "SUBSTANCE_NOT_FOUND");
     }
 
-    // Verify protocolSubstanceId belongs to patient's active protocol
-    const protocolSubstance =
-      await this.protocolRepository.findProtocolSubstanceById(
-        input.protocolSubstanceId,
-      );
+    // If protocolSubstanceId is provided, validate it belongs to patient's active protocol
+    if (input.protocolSubstanceId) {
+      const protocolSubstance =
+        await this.protocolRepository.findProtocolSubstanceById(
+          input.protocolSubstanceId,
+        );
 
-    if (!protocolSubstance) {
-      throw new AppError(
-        400,
-        "Protocol substance not found",
-        "PROTOCOL_SUBSTANCE_NOT_FOUND",
-      );
-    }
+      if (!protocolSubstance) {
+        throw new AppError(
+          400,
+          "Protocol substance not found",
+          "PROTOCOL_SUBSTANCE_NOT_FOUND",
+        );
+      }
 
-    if (protocolSubstance.protocol.patientId !== patientId) {
-      throw new AppError(
-        403,
-        "Protocol substance does not belong to this patient",
-        "FORBIDDEN",
-      );
-    }
+      if (protocolSubstance.protocol.patientId !== patientId) {
+        throw new AppError(
+          403,
+          "Protocol substance does not belong to this patient",
+          "FORBIDDEN",
+        );
+      }
 
-    if (protocolSubstance.protocol.status !== "active") {
-      throw new AppError(
-        400,
-        "Cannot log dose against inactive protocol",
-        "PROTOCOL_NOT_ACTIVE",
-      );
+      if (protocolSubstance.protocol.status !== "active") {
+        throw new AppError(
+          400,
+          "Cannot log dose against inactive protocol",
+          "PROTOCOL_NOT_ACTIVE",
+        );
+      }
     }
+    // If no protocolSubstanceId, this is an ad-hoc dose - allowed
 
     return this.doseRepository.create({
       patientId,

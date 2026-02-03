@@ -2,6 +2,26 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../lib/api-client";
 import { Protocol, ActiveProtocolSubstance } from "../types/domain";
 
+// Substance type for ad-hoc logging
+interface Substance {
+  id: string;
+  name: string;
+  aliases?: string[];
+  defaultDose: number | string | null;
+  doseUnit: string | null;
+  administrationRoute: string | null;
+}
+
+export function useSubstances() {
+  return useQuery({
+    queryKey: ["substances"],
+    queryFn: async () => {
+      const res = await api.get<{ substances: Substance[] }>("/substances?limit=100");
+      return res.substances;
+    },
+  });
+}
+
 export function useProtocols() {
   return useQuery({
     queryKey: ["protocols"],

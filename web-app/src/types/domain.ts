@@ -87,6 +87,7 @@ export interface ActiveProtocolSubstance {
   } | null;
   protocol: {
     id: string;
+    name: string | null;
     status: string;
     startDate: string | null;
     endDate: string | null;
@@ -99,7 +100,7 @@ export interface Dose {
   id: string;
   patientId: string;
   substanceId: string;
-  protocolSubstanceId: string;
+  protocolSubstanceId: string | null; // Nullable for ad-hoc logging
   productId: string | null;
   dose: number | string;
   doseUnit: string | null;

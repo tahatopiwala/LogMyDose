@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useMemo } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { apiClient } from "../lib/api-client";
 import { ActiveProtocolSubstance, Substance, Dose } from "../types/domain";
-import { QuickProtocolModal } from "../components/protocols/QuickProtocolModal";
 
 const INJECTION_SITES = [
   "Subcutaneous - Abdomen",
@@ -11,6 +10,17 @@ const INJECTION_SITES = [
   "Intramuscular - Deltoid",
   "Intramuscular - Gluteal",
 ];
+
+type LogType = "protocol" | "adhoc" | null;
+
+interface ProtocolGroup {
+  protocol: {
+    id: string;
+    name: string | null;
+    status: string;
+  };
+  substances: ActiveProtocolSubstance[];
+}
 
 export function LogDose() {
   const navigate = useNavigate();
@@ -23,18 +33,21 @@ export function LogDose() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Form state
+  // Flow state
+  const [logType, setLogType] = useState<LogType>(null);
   const [selectedProtocolSubstance, setSelectedProtocolSubstance] =
     useState<ActiveProtocolSubstance | null>(null);
+  const [selectedSubstance, setSelectedSubstance] = useState<Substance | null>(
+    null
+  );
+
+  // Form state
   const [dose, setDose] = useState<string>("");
+  const [doseUnit, setDoseUnit] = useState<string>("");
   const [site, setSite] = useState(INJECTION_SITES[0]);
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
-
-  // Modal state
-  const [showQuickProtocolModal, setShowQuickProtocolModal] = useState(false);
-  const [selectedSubstanceForProtocol, setSelectedSubstanceForProtocol] =
-    useState<Substance | null>(null);
+  const [adHocSearch, setAdHocSearch] = useState("");
 
   // Fetch data on mount
   useEffect(() => {
@@ -48,7 +61,7 @@ export function LogDose() {
       const [substancesRes, protocolSubstancesRes] = await Promise.all([
         apiClient.get<{ substances: Substance[] }>("/substances?limit=100"),
         apiClient.get<{ substances: ActiveProtocolSubstance[] }>(
-          "/protocols/my-substances",
+          "/protocols/my-substances"
         ),
       ]);
 
@@ -61,35 +74,74 @@ export function LogDose() {
     }
   };
 
+  // Calculate current step
+  const currentStep = useMemo(() => {
+    if (!logType) return 1;
+    if (!selectedProtocolSubstance && !selectedSubstance) return 2;
+    return 3;
+  }, [logType, selectedProtocolSubstance, selectedSubstance]);
+
+  // Group protocol substances by protocol
+  const protocolGroups = useMemo((): ProtocolGroup[] => {
+    const grouped = new Map<string, ProtocolGroup>();
+
+    protocolSubstances.forEach((ps) => {
+      const existing = grouped.get(ps.protocol.id);
+      if (existing) {
+        existing.substances.push(ps);
+      } else {
+        grouped.set(ps.protocol.id, {
+          protocol: {
+            id: ps.protocol.id,
+            name: ps.protocol.name,
+            status: ps.protocol.status,
+          },
+          substances: [ps],
+        });
+      }
+    });
+
+    return Array.from(grouped.values());
+  }, [protocolSubstances]);
+
+  // Filter substances for ad-hoc search
+  const filteredSubstances = useMemo(() => {
+    if (!adHocSearch.trim()) return substances.slice(0, 20);
+    const search = adHocSearch.toLowerCase();
+    return substances.filter(
+      (s) =>
+        s.name.toLowerCase().includes(search) ||
+        s.aliases?.some((a) => a.toLowerCase().includes(search))
+    );
+  }, [substances, adHocSearch]);
+
+  const handleSelectLogType = (type: LogType) => {
+    setLogType(type);
+  };
+
   const handleProtocolSubstanceSelect = (ps: ActiveProtocolSubstance) => {
     setSelectedProtocolSubstance(ps);
+    setSelectedSubstance(null);
     setDose(String(ps.dose));
+    setDoseUnit(ps.doseUnit || ps.substance.doseUnit || "");
   };
 
-  const handleAddNewSubstance = (substance: Substance) => {
-    setSelectedSubstanceForProtocol(substance);
-    setShowQuickProtocolModal(true);
-  };
-
-  const handleProtocolCreated = async (protocolSubstanceId: string) => {
-    // Refresh the list and select the new protocol substance
-    await fetchData();
-    setShowQuickProtocolModal(false);
-    setSelectedSubstanceForProtocol(null);
-
-    // Find and select the newly created protocol substance
-    const newPs = protocolSubstances.find(
-      (ps) => ps.id === protocolSubstanceId,
-    );
-    if (newPs) {
-      handleProtocolSubstanceSelect(newPs);
-    }
+  const handleAdHocSubstanceSelect = (substance: Substance) => {
+    setSelectedSubstance(substance);
+    setSelectedProtocolSubstance(null);
+    setDose(substance.defaultDose ? String(substance.defaultDose) : "");
+    setDoseUnit(substance.doseUnit || "");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!selectedProtocolSubstance) {
+    if (logType === "protocol" && !selectedProtocolSubstance) {
+      setError("Please select a substance from your protocol");
+      return;
+    }
+
+    if (logType === "adhoc" && !selectedSubstance) {
       setError("Please select a substance to log");
       return;
     }
@@ -98,15 +150,28 @@ export function LogDose() {
     setError(null);
 
     try {
-      await apiClient.post<{ dose: Dose }>("/doses", {
-        protocolSubstanceId: selectedProtocolSubstance.id,
-        substanceId: selectedProtocolSubstance.substanceId,
-        dose: Number(dose),
-        doseUnit: selectedProtocolSubstance.doseUnit,
-        status: "taken",
-        administrationSite: site,
-        notes: notes || undefined,
-      });
+      if (logType === "protocol" && selectedProtocolSubstance) {
+        await apiClient.post<{ dose: Dose }>("/doses", {
+          protocolSubstanceId: selectedProtocolSubstance.id,
+          substanceId: selectedProtocolSubstance.substanceId,
+          dose: Number(dose),
+          doseUnit:
+            selectedProtocolSubstance.doseUnit ||
+            selectedProtocolSubstance.substance.doseUnit,
+          status: "taken",
+          administrationSite: site,
+          notes: notes || undefined,
+        });
+      } else if (logType === "adhoc" && selectedSubstance) {
+        await apiClient.post<{ dose: Dose }>("/doses", {
+          substanceId: selectedSubstance.id,
+          dose: Number(dose),
+          doseUnit: doseUnit || selectedSubstance.doseUnit,
+          status: "taken",
+          administrationSite: site,
+          notes: notes || undefined,
+        });
+      }
 
       navigate("/dashboard");
     } catch (err) {
@@ -116,238 +181,468 @@ export function LogDose() {
     }
   };
 
-  // Group substances by whether user has active protocol for them
-  const substancesWithProtocol = new Set(
-    protocolSubstances.map((ps) => ps.substanceId),
-  );
-  const substancesWithoutProtocol = substances.filter(
-    (s) => !substancesWithProtocol.has(s.id),
-  );
+  const handleBack = () => {
+    if (currentStep === 3) {
+      setSelectedProtocolSubstance(null);
+      setSelectedSubstance(null);
+      setDose("");
+      setDoseUnit("");
+    } else if (currentStep === 2) {
+      setLogType(null);
+      setAdHocSearch("");
+    } else {
+      navigate("/dashboard");
+    }
+  };
+
+  const currentDoseUnit =
+    logType === "protocol" && selectedProtocolSubstance
+      ? selectedProtocolSubstance.doseUnit ||
+        selectedProtocolSubstance.substance.doseUnit ||
+        "units"
+      : logType === "adhoc" && selectedSubstance
+        ? doseUnit || selectedSubstance.doseUnit || "units"
+        : "units";
+
+  const stepLabels = ["Choose type", "Select substance", "Enter details"];
 
   if (loading) {
     return (
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-2xl font-bold text-gray-900">Log Dose</h1>
-        <p className="text-gray-600 mt-1">Loading your protocols...</p>
-        <div className="mt-8 flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+      <div className="max-w-2xl mx-auto px-4 py-8">
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto"></div>
+          <p className="text-gray-600 mt-4">Loading your protocols...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold text-gray-900">Log Dose</h1>
-      <p className="text-gray-600 mt-1">Record your dose quickly and easily.</p>
+    <div className="max-w-2xl mx-auto px-4 py-6">
+      {/* Header with Step Counter */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-2">
+          <h1 className="text-2xl font-bold text-gray-900">Log Dose</h1>
+          <span className="text-sm text-gray-500">
+            Step {currentStep} of 3
+          </span>
+        </div>
 
-      {error && (
-        <div className="mt-4 p-3 text-sm text-red-600 bg-red-50 rounded-lg">
-          {error}
+        {/* Step Progress Bar */}
+        <div className="flex gap-2 mb-3">
+          {[1, 2, 3].map((step) => (
+            <div
+              key={step}
+              className={`flex-1 h-1.5 rounded-full transition-colors ${
+                step <= currentStep ? "bg-primary-600" : "bg-gray-200"
+              }`}
+            />
+          ))}
+        </div>
+
+        <p className="text-gray-600">{stepLabels[currentStep - 1]}</p>
+
+        {error && (
+          <div className="mt-4 p-3 text-sm text-red-600 bg-red-50 rounded-lg">
+            {error}
+          </div>
+        )}
+      </div>
+
+      {/* Step 1: Choose Log Type */}
+      {currentStep === 1 && (
+        <div className="space-y-4">
+          {/* Protocol Option */}
+          <button
+            type="button"
+            onClick={() => handleSelectLogType("protocol")}
+            disabled={protocolGroups.length === 0}
+            className={`w-full p-6 rounded-xl border-2 text-left transition-all ${
+              protocolGroups.length === 0
+                ? "border-gray-100 bg-gray-50 cursor-not-allowed"
+                : "border-gray-200 hover:border-primary-300 hover:bg-primary-50"
+            }`}
+          >
+            <div className="flex items-start gap-4">
+              <div
+                className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                  protocolGroups.length === 0 ? "bg-gray-100" : "bg-primary-100"
+                }`}
+              >
+                <svg
+                  className={`w-6 h-6 ${
+                    protocolGroups.length === 0
+                      ? "text-gray-400"
+                      : "text-primary-600"
+                  }`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                  />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <h3
+                  className={`font-semibold text-lg ${
+                    protocolGroups.length === 0
+                      ? "text-gray-400"
+                      : "text-gray-900"
+                  }`}
+                >
+                  Log from Protocol
+                </h3>
+                <p
+                  className={`text-sm mt-1 ${
+                    protocolGroups.length === 0
+                      ? "text-gray-400"
+                      : "text-gray-500"
+                  }`}
+                >
+                  {protocolGroups.length === 0
+                    ? "No active protocols available"
+                    : `${protocolGroups.length} active protocol${protocolGroups.length > 1 ? "s" : ""} with tracking`}
+                </p>
+              </div>
+              {protocolGroups.length > 0 && (
+                <svg
+                  className="w-5 h-5 text-gray-400 mt-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              )}
+            </div>
+          </button>
+
+          {/* Ad-hoc Option */}
+          <button
+            type="button"
+            onClick={() => handleSelectLogType("adhoc")}
+            className="w-full p-6 rounded-xl border-2 border-gray-200 text-left hover:border-primary-300 hover:bg-primary-50 transition-all"
+          >
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
+                <svg
+                  className="w-6 h-6 text-blue-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                  />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-lg text-gray-900">
+                  Quick Log
+                </h3>
+                <p className="text-sm text-gray-500 mt-1">
+                  Log a one-time dose without protocol tracking
+                </p>
+              </div>
+              <svg
+                className="w-5 h-5 text-gray-400 mt-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </div>
+          </button>
+
+          {/* Create Protocol Option */}
+          <Link
+            to="/protocols/new"
+            className="block w-full p-6 rounded-xl border-2 border-dashed border-gray-300 text-left hover:border-primary-300 hover:bg-primary-50 transition-all"
+          >
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center">
+                <svg
+                  className="w-6 h-6 text-gray-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-lg text-gray-900">
+                  Create Custom Protocol
+                </h3>
+                <p className="text-sm text-gray-500 mt-1">
+                  Set up a new protocol with schedule and tracking
+                </p>
+              </div>
+              <svg
+                className="w-5 h-5 text-gray-400 mt-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </div>
+          </Link>
+
+          {/* Cancel Button */}
+          <button
+            type="button"
+            onClick={() => navigate("/dashboard")}
+            className="w-full py-3 px-4 text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors"
+          >
+            Cancel
+          </button>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-        {/* Protocol Substance Selection */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-3">
-            Select Substance
-          </label>
-
-          {protocolSubstances.length > 0 ? (
-            <>
-              <p className="text-sm text-gray-500 mb-3">
-                Your active protocol substances:
-              </p>
-              <div className="grid grid-cols-1 gap-3">
-                {protocolSubstances.map((ps) => (
+      {/* Step 2: Select Substance */}
+      {currentStep === 2 && logType === "protocol" && (
+        <div className="space-y-4">
+          {protocolGroups.map((group) => (
+            <div
+              key={group.protocol.id}
+              className="border border-gray-200 rounded-xl overflow-hidden"
+            >
+              <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
+                <h3 className="font-medium text-gray-900">
+                  {group.protocol.name || "Unnamed Protocol"}
+                </h3>
+              </div>
+              <div className="divide-y divide-gray-100">
+                {group.substances.map((ps) => (
                   <button
                     key={ps.id}
                     type="button"
                     onClick={() => handleProtocolSubstanceSelect(ps)}
-                    className={`p-4 rounded-xl border-2 text-left transition-colors ${
-                      selectedProtocolSubstance?.id === ps.id
-                        ? "border-primary-600 bg-primary-50"
-                        : "border-gray-200 hover:border-gray-300"
-                    }`}
+                    className="w-full p-4 text-left hover:bg-gray-50 transition-colors flex justify-between items-center"
                   >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <div className="font-medium text-gray-900">
-                          {ps.substance.name}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {ps.dose} {ps.doseUnit || ps.substance.doseUnit} •{" "}
-                          {ps.frequency?.replace("_", " ") || "as needed"}
-                        </div>
+                    <div>
+                      <div className="font-medium text-gray-900">
+                        {ps.substance.name}
                       </div>
-                      {selectedProtocolSubstance?.id === ps.id && (
-                        <svg
-                          className="w-5 h-5 text-primary-600"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      )}
+                      <div className="text-sm text-gray-500">
+                        {ps.dose} {ps.doseUnit || ps.substance.doseUnit} •{" "}
+                        {ps.frequency?.replace("_", " ") || "as needed"}
+                      </div>
                     </div>
+                    <svg
+                      className="w-5 h-5 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
                   </button>
                 ))}
               </div>
-            </>
-          ) : (
-            <div className="p-4 bg-gray-50 rounded-xl border border-gray-200 text-center">
-              <p className="text-gray-600">
-                You don't have any active protocols yet.
-              </p>
-              <p className="text-sm text-gray-500 mt-1">
-                Create a protocol below to start logging doses.
-              </p>
             </div>
-          )}
+          ))}
 
-          {/* Add New Substance Section */}
-          {substancesWithoutProtocol.length > 0 && (
-            <div className="mt-6">
-              <p className="text-sm text-gray-500 mb-3">
-                Or start a new protocol for:
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {substancesWithoutProtocol.slice(0, 6).map((substance) => (
-                  <button
-                    key={substance.id}
-                    type="button"
-                    onClick={() => handleAddNewSubstance(substance)}
-                    className="px-3 py-1.5 text-sm border border-gray-300 rounded-full text-gray-600 hover:bg-gray-50 hover:border-gray-400 transition-colors"
-                  >
-                    + {substance.name}
-                  </button>
-                ))}
-                {substancesWithoutProtocol.length > 6 && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSelectedSubstanceForProtocol(null);
-                      setShowQuickProtocolModal(true);
-                    }}
-                    className="px-3 py-1.5 text-sm border border-dashed border-gray-300 rounded-full text-gray-500 hover:bg-gray-50 hover:border-gray-400 transition-colors"
-                  >
-                    + More...
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
+          <button
+            type="button"
+            onClick={handleBack}
+            className="w-full py-3 px-4 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            Back
+          </button>
         </div>
+      )}
 
-        {/* Dose Amount (shown when substance selected) */}
-        {selectedProtocolSubstance && (
-          <>
-            <div>
-              <label
-                htmlFor="dose"
-                className="block text-sm font-medium text-gray-700"
+      {currentStep === 2 && logType === "adhoc" && (
+        <div className="space-y-4">
+          <div>
+            <input
+              type="text"
+              placeholder="Search substances..."
+              value={adHocSearch}
+              onChange={(e) => setAdHocSearch(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              autoFocus
+            />
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {filteredSubstances.map((substance) => (
+              <button
+                key={substance.id}
+                type="button"
+                onClick={() => handleAdHocSubstanceSelect(substance)}
+                className="px-4 py-2.5 text-sm border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-colors"
               >
-                Dose Amount
-              </label>
-              <div className="mt-1 flex rounded-lg shadow-sm">
-                <input
-                  type="number"
-                  step="any"
-                  id="dose"
-                  value={dose}
-                  onChange={(e) => setDose(e.target.value)}
-                  className="flex-1 block w-full px-3 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                  required
-                />
-                <span className="inline-flex items-center px-4 border border-l-0 border-gray-300 bg-gray-50 text-gray-500 rounded-r-lg">
-                  {selectedProtocolSubstance.doseUnit ||
-                    selectedProtocolSubstance.substance.doseUnit ||
-                    "units"}
-                </span>
+                {substance.name}
+              </button>
+            ))}
+            {filteredSubstances.length === 0 && adHocSearch && (
+              <p className="text-sm text-gray-500 py-4">
+                No substances found matching "{adHocSearch}"
+              </p>
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={handleBack}
+            className="w-full py-3 px-4 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            Back
+          </button>
+        </div>
+      )}
+
+      {/* Step 3: Enter Dose Details */}
+      {currentStep === 3 && (
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Selected item header */}
+          <div className="flex items-center justify-between p-4 bg-primary-50 border border-primary-200 rounded-xl">
+            <div>
+              <div className="text-sm text-primary-600 font-medium">
+                {logType === "protocol" ? "Protocol Dose" : "Quick Log"}
               </div>
+              <div className="font-semibold text-gray-900">
+                {logType === "protocol" && selectedProtocolSubstance
+                  ? selectedProtocolSubstance.substance.name
+                  : selectedSubstance?.name}
+              </div>
+              {logType === "protocol" && selectedProtocolSubstance && (
+                <div className="text-sm text-gray-500">
+                  from{" "}
+                  {selectedProtocolSubstance.protocol.name || "Unnamed Protocol"}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Dose Amount */}
+          <div>
+            <label
+              htmlFor="dose"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Dose Amount
+            </label>
+            <div className="mt-1 flex rounded-lg shadow-sm">
+              <input
+                type="number"
+                step="any"
+                id="dose"
+                value={dose}
+                onChange={(e) => setDose(e.target.value)}
+                className="flex-1 block w-full px-3 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                required
+                autoFocus
+              />
+              <span className="inline-flex items-center px-4 border border-l-0 border-gray-300 bg-gray-50 text-gray-500 rounded-r-lg">
+                {currentDoseUnit}
+              </span>
+            </div>
+            {logType === "protocol" && selectedProtocolSubstance && (
               <p className="mt-1 text-xs text-gray-500">
                 Protocol dose: {selectedProtocolSubstance.dose}{" "}
                 {selectedProtocolSubstance.doseUnit ||
                   selectedProtocolSubstance.substance.doseUnit}
               </p>
-            </div>
+            )}
+          </div>
 
-            {/* Injection Site */}
-            <div>
-              <label
-                htmlFor="site"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Injection Site
-              </label>
-              <select
-                id="site"
-                value={site}
-                onChange={(e) => setSite(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-              >
-                {INJECTION_SITES.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
-            </div>
+          {/* Injection Site */}
+          <div>
+            <label
+              htmlFor="site"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Administration Site
+            </label>
+            <select
+              id="site"
+              value={site}
+              onChange={(e) => setSite(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+            >
+              {INJECTION_SITES.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+          </div>
 
-            {/* Notes */}
-            <div>
-              <label
-                htmlFor="notes"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Notes (optional)
-              </label>
-              <textarea
-                id="notes"
-                rows={3}
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                placeholder="Any observations or side effects..."
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-              />
-            </div>
-          </>
-        )}
+          {/* Notes */}
+          <div>
+            <label
+              htmlFor="notes"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Notes (optional)
+            </label>
+            <textarea
+              id="notes"
+              rows={2}
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Any observations or side effects..."
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+            />
+          </div>
 
-        {/* Submit */}
-        <div className="flex gap-4">
-          <button
-            type="button"
-            onClick={() => navigate("/dashboard")}
-            className="flex-1 py-3 px-4 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={!selectedProtocolSubstance || submitting || !dose}
-            className="flex-1 py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            {submitting ? "Logging..." : "Log Dose"}
-          </button>
-        </div>
-      </form>
-
-      {/* Quick Protocol Modal */}
-      <QuickProtocolModal
-        isOpen={showQuickProtocolModal}
-        onClose={() => {
-          setShowQuickProtocolModal(false);
-          setSelectedSubstanceForProtocol(null);
-        }}
-        onProtocolCreated={handleProtocolCreated}
-        preselectedSubstance={selectedSubstanceForProtocol}
-      />
+          {/* Actions */}
+          <div className="flex gap-4 pt-2">
+            <button
+              type="button"
+              onClick={handleBack}
+              className="flex-1 py-3 px-4 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              Back
+            </button>
+            <button
+              type="submit"
+              disabled={submitting || !dose}
+              className="flex-1 py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {submitting ? "Logging..." : "Log Dose"}
+            </button>
+          </div>
+        </form>
+      )}
     </div>
   );
 }

@@ -8,7 +8,7 @@ import {
 import { PaginatedResponse } from "../../types/index.js";
 
 export interface LogDoseInput {
-  protocolSubstanceId: string;
+  protocolSubstanceId?: string; // Optional for ad-hoc logging
   substanceId: string;
   dose: number;
   doseUnit?: string;

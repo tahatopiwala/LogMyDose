@@ -328,6 +328,7 @@ export class ProtocolRepository implements IProtocolRepository {
         protocol: {
           select: {
             id: true,
+            name: true,
             status: true,
             startDate: true,
             endDate: true,

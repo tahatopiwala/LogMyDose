@@ -287,7 +287,7 @@ model ProtocolSubstance {
 model Dose {
   id                   String    @id @default(uuid()) @db.Uuid
   patientId            String    @map("patient_id") @db.Uuid
-  protocolSubstanceId  String    @map("protocol_substance_id") @db.Uuid
+  protocolSubstanceId  String?   @map("protocol_substance_id") @db.Uuid // Nullable for ad-hoc logging
   substanceId          String    @map("substance_id") @db.Uuid
   productId            String?   @map("product_id") @db.Uuid
   dose                 Decimal
@@ -301,7 +301,7 @@ model Dose {
 
   // Relations
   patient              Patient            @relation(fields: [patientId], references: [id])
-  protocolSubstance    ProtocolSubstance  @relation(fields: [protocolSubstanceId], references: [id])
+  protocolSubstance    ProtocolSubstance? @relation(fields: [protocolSubstanceId], references: [id], onDelete: SetNull)
   substance            Substance          @relation(fields: [substanceId], references: [id])
   product              Product?           @relation(fields: [productId], references: [id])
   sideEffects          SideEffect[]
