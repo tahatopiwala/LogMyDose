@@ -535,6 +535,154 @@ export function ProtocolDetail() {
         </div>
       </div>
 
+      {/* Dose History */}
+      {(() => {
+        const protocolDoses = doses
+          .filter((d) =>
+            protocol.substances.some((ps) => ps.substanceId === d.substanceId),
+          )
+          .sort(
+            (a, b) =>
+              new Date(b.loggedAt).getTime() - new Date(a.loggedAt).getTime(),
+          );
+
+        const statusStyles = {
+          taken: "bg-green-100 text-green-700",
+          missed: "bg-red-100 text-red-700",
+          skipped: "bg-gray-100 text-gray-600",
+        };
+
+        const formatDoseDate = (dateStr: string) => {
+          const date = new Date(dateStr);
+          const today = new Date();
+          const yesterday = new Date(today);
+          yesterday.setDate(yesterday.getDate() - 1);
+
+          if (date.toDateString() === today.toDateString()) {
+            return `Today at ${date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}`;
+          }
+          if (date.toDateString() === yesterday.toDateString()) {
+            return `Yesterday at ${date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}`;
+          }
+          return date.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year:
+              date.getFullYear() !== today.getFullYear() ? "numeric" : undefined,
+            hour: "numeric",
+            minute: "2-digit",
+          });
+        };
+
+        return (
+          <div className="bg-white rounded-xl border-2 border-gray-200 overflow-hidden">
+            <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
+              <h2 className="text-lg font-semibold text-gray-900">
+                Dose History
+              </h2>
+              <p className="text-sm text-gray-500 mt-1">
+                {protocolDoses.length} dose
+                {protocolDoses.length !== 1 ? "s" : ""} logged
+              </p>
+            </div>
+            {protocolDoses.length > 0 ? (
+              <div className="divide-y divide-gray-100">
+                {protocolDoses.map((dose) => (
+                  <div
+                    key={dose.id}
+                    className="px-6 py-4 hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3">
+                          <h4 className="text-sm font-medium text-gray-900 truncate">
+                            {dose.substance.name}
+                          </h4>
+                          <span
+                            className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${statusStyles[dose.status]}`}
+                          >
+                            {dose.status}
+                          </span>
+                        </div>
+                        <div className="mt-1 flex items-center gap-4 text-sm text-gray-500">
+                          <span>
+                            {dose.dose} {dose.doseUnit || dose.substance.doseUnit || ""}
+                          </span>
+                          {dose.administrationSite && (
+                            <span className="flex items-center gap-1">
+                              <svg
+                                className="w-3.5 h-3.5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                                />
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                                />
+                              </svg>
+                              {dose.administrationSite}
+                            </span>
+                          )}
+                        </div>
+                        {dose.notes && (
+                          <p className="mt-2 text-sm text-gray-600 italic">
+                            "{dose.notes}"
+                          </p>
+                        )}
+                      </div>
+                      <div className="ml-4 text-right flex-shrink-0">
+                        <p className="text-sm text-gray-500">
+                          {formatDoseDate(dose.loggedAt)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="px-6 py-12 text-center">
+                <svg
+                  className="mx-auto h-12 w-12 text-gray-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                  />
+                </svg>
+                <p className="mt-4 text-sm font-medium text-gray-900">
+                  No doses logged yet
+                </p>
+                <p className="mt-1 text-sm text-gray-500">
+                  Start logging doses to track your progress
+                </p>
+                {protocol.status === "active" && (
+                  <Link
+                    to="/log"
+                    className="mt-4 inline-flex items-center px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors"
+                  >
+                    Log Your First Dose
+                  </Link>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      })()}
+
       {/* Protocol Notes */}
       {protocol.notes && (
         <div className="bg-white rounded-xl border-2 border-gray-200 p-6">
