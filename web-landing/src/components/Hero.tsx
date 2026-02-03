@@ -89,7 +89,7 @@ export function Hero() {
             <div className="relative z-10 transform lg:rotate-2">
               <div className="relative bg-gray-900 rounded-[3rem] p-3 shadow-2xl shadow-gray-400/30">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-7 bg-gray-900 rounded-b-2xl z-10" />
-                <div className="bg-gray-50 rounded-[2.25rem] w-72 sm:w-80 h-[580px] overflow-hidden">
+                <div className="bg-gray-50 rounded-[2.25rem] w-72 sm:w-80 h-[620px] overflow-hidden">
                   {/* Status Bar */}
                   <div className="bg-white px-6 pt-8 pb-2 flex justify-between items-center text-xs text-gray-600">
                     <span className="font-medium">9:41</span>
