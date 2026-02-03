@@ -12,9 +12,9 @@ import { Settings } from "./pages/Settings";
 function History() {
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900">Dose History</h1>
-      <p className="text-gray-600 mt-1">View all your logged doses.</p>
-      <div className="mt-8 bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-500">
+      <h1 className="text-2xl font-bold text-gray-100">Dose History</h1>
+      <p className="text-gray-400 mt-1">View all your logged doses.</p>
+      <div className="mt-8 bg-surface-card rounded-xl border border-surface-border p-8 text-center text-gray-400">
         History view coming soon...
       </div>
     </div>
@@ -24,11 +24,11 @@ function History() {
 function Insights() {
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900">AI Insights</h1>
-      <p className="text-gray-600 mt-1">
+      <h1 className="text-2xl font-bold text-gray-100">AI Insights</h1>
+      <p className="text-gray-400 mt-1">
         Personalized insights from your therapy data.
       </p>
-      <div className="mt-8 bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-500">
+      <div className="mt-8 bg-surface-card rounded-xl border border-surface-border p-8 text-center text-gray-400">
         AI insights coming soon...
       </div>
     </div>

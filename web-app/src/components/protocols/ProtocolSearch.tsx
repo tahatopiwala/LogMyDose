@@ -43,13 +43,13 @@ export function ProtocolSearch({
         value={searchQuery}
         onChange={(e) => handleSearchChange(e.target.value)}
         placeholder={placeholder}
-        className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
+        className="block w-full pl-10 pr-10 py-3 border border-surface-border rounded-xl leading-5 bg-surface-raised text-gray-100 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all"
       />
       {searchQuery && (
         <button
           type="button"
           onClick={clearSearch}
-          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-300 transition-colors"
         >
           <svg
             className="h-5 w-5"

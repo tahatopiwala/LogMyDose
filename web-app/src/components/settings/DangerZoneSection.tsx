@@ -6,12 +6,12 @@ export function DangerZoneSection() {
 
   return (
     <>
-      <div className="bg-white rounded-xl p-5 border-2 border-red-200 shadow-sm">
+      <div className="bg-surface-card rounded-xl p-5 border border-red-800 shadow-sm">
         <h2 className="text-lg font-semibold text-red-600 mb-4">Danger Zone</h2>
 
         <div className="space-y-4">
           <div>
-            <h3 className="text-sm font-medium text-gray-900">
+            <h3 className="text-sm font-medium text-gray-100">
               Delete Account
             </h3>
             <p className="mt-1 text-sm text-gray-500">

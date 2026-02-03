@@ -17,16 +17,16 @@ export function Input({
   return (
     <View className={`mb-4 ${containerClassName}`}>
       {label && (
-        <Text className="text-gray-700 mb-2 font-medium text-sm">{label}</Text>
+        <Text className="text-gray-300 mb-2 font-medium text-sm">{label}</Text>
       )}
       <TextInput
-        className={`border rounded-lg px-4 py-3 text-gray-900 bg-white ${
-          error ? "border-red-500" : "border-gray-300"
+        className={`border rounded-lg px-4 py-3 text-gray-100 bg-surface-raised ${
+          error ? "border-red-500" : "border-surface-border"
         } ${className}`}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#6B7280"
         {...props}
       />
-      {error && <Text className="text-red-500 text-sm mt-1">{error}</Text>}
+      {error && <Text className="text-red-400 text-sm mt-1">{error}</Text>}
     </View>
   );
 }

@@ -53,19 +53,19 @@ export function Modal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
       onClick={handleBackdropClick}
     >
       <div
         ref={modalRef}
-        className={`w-full ${sizeClasses[size]} bg-white rounded-xl shadow-xl`}
+        className={`w-full ${sizeClasses[size]} !bg-surface-card rounded-xl shadow-xl border border-surface-border`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-surface-border">
+          <h2 className="text-lg font-semibold text-gray-100">{title}</h2>
           <button
             onClick={onClose}
-            className="p-1 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
+            className="p-1 text-gray-400 hover:text-gray-200 rounded-lg hover:bg-surface-hover transition-colors"
           >
             <svg
               className="w-5 h-5"

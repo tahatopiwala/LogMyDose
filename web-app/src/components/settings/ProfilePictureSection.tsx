@@ -10,24 +10,24 @@ export function ProfilePictureSection() {
     : "U";
 
   return (
-    <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">
+    <div className="bg-surface-card rounded-xl p-5 border border-surface-border">
+      <h2 className="text-lg font-semibold text-gray-100 mb-4">
         Profile Picture
       </h2>
 
       <div className="flex flex-col items-center py-4">
         {/* Current avatar with initials */}
-        <div className="w-24 h-24 bg-primary-100 rounded-full flex items-center justify-center mb-4">
-          <span className="text-primary-700 font-semibold text-2xl">
+        <div className="w-24 h-24 bg-primary-500/20 rounded-full flex items-center justify-center mb-4">
+          <span className="text-primary-400 font-semibold text-2xl">
             {initials}
           </span>
         </div>
 
         {/* Coming Soon placeholder */}
         <div className="text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-gray-100 rounded-full mb-3">
+          <div className="inline-flex items-center justify-center w-12 h-12 bg-surface-elevated rounded-full mb-3">
             <svg
-              className="w-6 h-6 text-gray-400"
+              className="w-6 h-6 text-gray-500"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -40,8 +40,8 @@ export function ProfilePictureSection() {
               />
             </svg>
           </div>
-          <p className="text-sm font-medium text-gray-900">Coming Soon</p>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-sm font-medium text-gray-100">Coming Soon</p>
+          <p className="text-xs text-gray-400 mt-1">
             Profile picture upload will be available in a future update.
           </p>
         </div>

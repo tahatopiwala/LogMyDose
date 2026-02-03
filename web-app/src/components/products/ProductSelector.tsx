@@ -103,7 +103,7 @@ export function ProductSelector({
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-300 mb-2">
           Product{" "}
           <span className="text-gray-400 font-normal">(optional)</span>
         </label>
@@ -114,7 +114,7 @@ export function ProductSelector({
       </div>
 
       {error && (
-        <div className="p-2 text-sm text-red-600 bg-red-50 rounded-lg">
+        <div className="p-2 text-sm text-red-600 bg-red-900/30 rounded-lg">
           {error}
         </div>
       )}
@@ -139,7 +139,7 @@ export function ProductSelector({
           placeholder="Search products..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+          className="w-full pl-9 pr-3 py-2 border border-surface-border rounded-lg text-sm bg-surface-raised text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
         />
       </div>
 
@@ -149,15 +149,15 @@ export function ProductSelector({
         <button
           type="button"
           onClick={() => onProductSelect(null)}
-          className={`w-full p-3 rounded-lg border-2 text-left transition-colors ${
+          className={`w-full p-3 rounded-lg border text-left transition-colors ${
             selectedProductId === null
-              ? "border-primary-600 bg-primary-50"
-              : "border-gray-200 hover:border-gray-300"
+              ? "border-primary-600 bg-primary-500/20"
+              : "border-surface-border hover:border-surface-border"
           }`}
         >
           <div className="flex items-center justify-between">
             <div>
-              <div className="font-medium text-gray-900">
+              <div className="font-medium text-gray-100">
                 No specific product
               </div>
               <div className="text-sm text-gray-500">
@@ -166,7 +166,7 @@ export function ProductSelector({
             </div>
             {selectedProductId === null && (
               <svg
-                className="w-5 h-5 text-primary-600"
+                className="w-5 h-5 text-primary-500"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -188,15 +188,15 @@ export function ProductSelector({
               key={product.id}
               type="button"
               onClick={() => onProductSelect(product)}
-              className={`w-full p-3 rounded-lg border-2 text-left transition-colors ${
+              className={`w-full p-3 rounded-lg border text-left transition-colors ${
                 selectedProductId === product.id
-                  ? "border-primary-600 bg-primary-50"
-                  : "border-gray-200 hover:border-gray-300"
+                  ? "border-primary-600 bg-primary-500/20"
+                  : "border-surface-border hover:border-surface-border"
               }`}
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="font-medium text-gray-900">{product.name}</div>
+                  <div className="font-medium text-gray-100">{product.name}</div>
                   <div className="text-sm text-gray-500">
                     {product.defaultDose && product.doseUnit
                       ? `${product.defaultDose} ${product.doseUnit}`
@@ -205,7 +205,7 @@ export function ProductSelector({
                 </div>
                 {selectedProductId === product.id && (
                   <svg
-                    className="w-5 h-5 text-primary-600"
+                    className="w-5 h-5 text-primary-500"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -233,15 +233,15 @@ export function ProductSelector({
                   key={product.id}
                   type="button"
                   onClick={() => onProductSelect(product)}
-                  className={`w-full p-3 rounded-lg border-2 text-left transition-colors ${
+                  className={`w-full p-3 rounded-lg border text-left transition-colors ${
                     selectedProductId === product.id
-                      ? "border-primary-600 bg-primary-50"
-                      : "border-gray-200 hover:border-gray-300"
+                      ? "border-primary-600 bg-primary-500/20"
+                      : "border-surface-border hover:border-surface-border"
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="font-medium text-gray-900">
+                      <div className="font-medium text-gray-100">
                         {product.name}
                       </div>
                       <div className="text-sm text-gray-500">
@@ -253,7 +253,7 @@ export function ProductSelector({
                     </div>
                     {selectedProductId === product.id && (
                       <svg
-                        className="w-5 h-5 text-primary-600"
+                        className="w-5 h-5 text-primary-500"
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
@@ -283,7 +283,7 @@ export function ProductSelector({
         <button
           type="button"
           onClick={() => setShowCreateForm(true)}
-          className="w-full p-3 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-600 hover:border-gray-400 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+          className="w-full p-3 border border-dashed border-surface-border rounded-lg text-sm text-gray-400 hover:border-surface-hover hover:bg-surface-elevated transition-colors flex items-center justify-center gap-2"
         >
           <svg
             className="w-4 h-4"
@@ -301,15 +301,15 @@ export function ProductSelector({
           Create custom product
         </button>
       ) : (
-        <div className="p-4 border border-gray-200 rounded-lg bg-gray-50">
-          <h4 className="text-sm font-medium text-gray-900 mb-3">
+        <div className="p-4 border border-surface-border rounded-lg bg-surface-elevated">
+          <h4 className="text-sm font-medium text-gray-100 mb-3">
             Create Custom Product
           </h4>
           <form onSubmit={handleCreateProduct} className="space-y-3">
             <div>
               <label
                 htmlFor="productName"
-                className="block text-xs font-medium text-gray-700 mb-1"
+                className="block text-xs font-medium text-gray-300 mb-1"
               >
                 Product Name *
               </label>
@@ -321,7 +321,7 @@ export function ProductSelector({
                   setCreateForm((prev) => ({ ...prev, name: e.target.value }))
                 }
                 placeholder="e.g., Ozempic 0.25mg"
-                className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                className="block w-full px-3 py-2 text-sm border border-surface-border rounded-lg bg-surface-raised text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                 required
               />
             </div>
@@ -329,7 +329,7 @@ export function ProductSelector({
               <div>
                 <label
                   htmlFor="productDose"
-                  className="block text-xs font-medium text-gray-700 mb-1"
+                  className="block text-xs font-medium text-gray-300 mb-1"
                 >
                   Default Dose
                 </label>
@@ -345,13 +345,13 @@ export function ProductSelector({
                     }))
                   }
                   placeholder="250"
-                  className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  className="block w-full px-3 py-2 text-sm border border-surface-border rounded-lg bg-surface-raised text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                 />
               </div>
               <div>
                 <label
                   htmlFor="productUnit"
-                  className="block text-xs font-medium text-gray-700 mb-1"
+                  className="block text-xs font-medium text-gray-300 mb-1"
                 >
                   Unit
                 </label>
@@ -364,7 +364,7 @@ export function ProductSelector({
                       doseUnit: e.target.value,
                     }))
                   }
-                  className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  className="block w-full px-3 py-2 text-sm border border-surface-border rounded-lg bg-surface-raised text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                 >
                   <option value="mcg">mcg</option>
                   <option value="mg">mg</option>
@@ -381,7 +381,7 @@ export function ProductSelector({
                   setShowCreateForm(false);
                   setCreateForm({ name: "", defaultDose: "", doseUnit: "mcg" });
                 }}
-                className="flex-1 py-2 px-3 text-sm border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+                className="flex-1 py-2 px-3 text-sm border border-surface-border rounded-lg text-gray-300 hover:bg-surface-elevated transition-colors"
                 disabled={creating}
               >
                 Cancel
@@ -389,7 +389,7 @@ export function ProductSelector({
               <button
                 type="submit"
                 disabled={creating || !createForm.name}
-                className="flex-1 py-2 px-3 text-sm border border-transparent rounded-lg text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="flex-1 py-2 px-3 text-sm border border-transparent rounded-lg text-white bg-primary-500 hover:bg-primary-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {creating ? "Creating..." : "Create"}
               </button>

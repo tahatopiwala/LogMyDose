@@ -44,10 +44,10 @@ export function Pricing() {
     <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <FadeIn className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-100">
             Simple pricing. Real value.
           </h2>
-          <p className="mt-4 text-xl text-gray-600">
+          <p className="mt-4 text-xl text-gray-400">
             Free to start tracking. Upgrade when you want more features.
           </p>
         </FadeIn>
@@ -58,41 +58,41 @@ export function Pricing() {
               <div
               className={`rounded-2xl p-8 h-full ${
                 plan.highlighted
-                  ? "bg-primary-600 text-white ring-4 ring-primary-600 ring-offset-2"
-                  : "bg-white border border-gray-200"
+                  ? "bg-gradient-to-br from-primary-500/20 to-primary-400/10 text-white ring-2 ring-primary-500 border border-primary-500/30"
+                  : "bg-surface-card border border-surface-border"
               }`}
             >
               <h3
-                className={`text-xl font-semibold ${plan.highlighted ? "text-white" : "text-gray-900"}`}
+                className={`text-xl font-semibold ${plan.highlighted ? "text-primary-400" : "text-gray-100"}`}
               >
                 {plan.name}
               </h3>
               <div className="mt-4 flex items-baseline">
                 <span
-                  className={`text-4xl font-bold ${plan.highlighted ? "text-white" : "text-gray-900"}`}
+                  className={`text-4xl font-bold ${plan.highlighted ? "text-gray-100" : "text-gray-100"}`}
                 >
                   {plan.price}
                 </span>
                 <span
-                  className={`ml-1 ${plan.highlighted ? "text-primary-100" : "text-gray-500"}`}
+                  className={`ml-1 ${plan.highlighted ? "text-gray-400" : "text-gray-500"}`}
                 >
                   {plan.period}
                 </span>
               </div>
               {plan.annualPrice && (
                 <div
-                  className={`mt-2 text-sm ${plan.highlighted ? "text-primary-100" : "text-gray-500"}`}
+                  className={`mt-2 text-sm ${plan.highlighted ? "text-gray-400" : "text-gray-500"}`}
                 >
                   or {plan.annualPrice}{" "}
                   <span
-                    className={`font-medium ${plan.highlighted ? "text-primary-200" : "text-primary-600"}`}
+                    className={`font-medium ${plan.highlighted ? "text-primary-400" : "text-primary-500"}`}
                   >
                     ({plan.annualSavings})
                   </span>
                 </div>
               )}
               <p
-                className={`mt-4 ${plan.highlighted ? "text-primary-100" : "text-gray-600"}`}
+                className={`mt-4 ${plan.highlighted ? "text-gray-300" : "text-gray-400"}`}
               >
                 {plan.description}
               </p>
@@ -100,7 +100,7 @@ export function Pricing() {
                 {plan.features.map((feature) => (
                   <li key={feature} className="flex items-center">
                     <svg
-                      className={`w-5 h-5 mr-3 flex-shrink-0 ${plan.highlighted ? "text-primary-200" : "text-primary-600"}`}
+                      className={`w-5 h-5 mr-3 flex-shrink-0 ${plan.highlighted ? "text-primary-400" : "text-primary-500"}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -114,7 +114,7 @@ export function Pricing() {
                     </svg>
                     <span
                       className={
-                        plan.highlighted ? "text-white" : "text-gray-600"
+                        plan.highlighted ? "text-gray-200" : "text-gray-300"
                       }
                     >
                       {feature}
@@ -126,8 +126,8 @@ export function Pricing() {
                 href={getAppUrl(plan.ctaPath)}
                 className={`mt-8 block w-full py-3 px-4 rounded-xl text-center font-semibold transition-colors ${
                   plan.highlighted
-                    ? "bg-white text-primary-600 hover:bg-primary-50"
-                    : "bg-primary-600 text-white hover:bg-primary-700"
+                    ? "bg-primary-500 text-surface-base hover:bg-primary-400 shadow-glow-sm shadow-primary-500/40"
+                    : "bg-surface-elevated text-gray-100 hover:bg-surface-hover border border-surface-border"
                 }`}
               >
                 {plan.cta}
@@ -138,7 +138,7 @@ export function Pricing() {
         </StaggerContainer>
 
         <FadeIn delay={0.3}>
-          <p className="mt-8 text-center text-gray-500 text-sm">
+          <p className="mt-8 text-center text-gray-400 text-sm">
             No credit card required to start. Cancel anytime. Your data is always
             exportable.
           </p>

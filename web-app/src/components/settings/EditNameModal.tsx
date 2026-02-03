@@ -50,7 +50,7 @@ export function EditNameModal({ isOpen, onClose }: EditNameModalProps) {
     <Modal isOpen={isOpen} onClose={onClose} title="Edit Name">
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
-          <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+          <div className="p-3 rounded-lg bg-red-900/30 border border-red-800 text-red-400 text-sm">
             {error}
           </div>
         )}
@@ -58,7 +58,7 @@ export function EditNameModal({ isOpen, onClose }: EditNameModalProps) {
         <div>
           <label
             htmlFor="firstName"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-medium text-gray-300"
           >
             First Name
           </label>
@@ -68,7 +68,7 @@ export function EditNameModal({ isOpen, onClose }: EditNameModalProps) {
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             disabled={isSubmitting}
-            className="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+            className="mt-1 appearance-none block w-full px-3 py-2 border border-surface-border rounded-lg bg-surface-raised text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 disabled:bg-surface-elevated disabled:cursor-not-allowed"
             placeholder="Enter your first name"
           />
         </div>
@@ -76,7 +76,7 @@ export function EditNameModal({ isOpen, onClose }: EditNameModalProps) {
         <div>
           <label
             htmlFor="lastName"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-medium text-gray-300"
           >
             Last Name
           </label>
@@ -86,7 +86,7 @@ export function EditNameModal({ isOpen, onClose }: EditNameModalProps) {
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             disabled={isSubmitting}
-            className="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+            className="mt-1 appearance-none block w-full px-3 py-2 border border-surface-border rounded-lg bg-surface-raised text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 disabled:bg-surface-elevated disabled:cursor-not-allowed"
             placeholder="Enter your last name"
           />
         </div>
@@ -96,14 +96,14 @@ export function EditNameModal({ isOpen, onClose }: EditNameModalProps) {
             type="button"
             onClick={onClose}
             disabled={isSubmitting}
-            className="flex-1 py-2 px-4 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 py-2 px-4 border border-surface-border rounded-lg text-sm font-medium text-gray-300 hover:bg-surface-elevated disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex-1 py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-500 hover:bg-primary-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? "Saving..." : "Save Changes"}
           </button>

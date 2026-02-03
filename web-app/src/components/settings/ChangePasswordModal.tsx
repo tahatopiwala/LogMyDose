@@ -82,7 +82,7 @@ export function ChangePasswordModal({
     <Modal isOpen={isOpen} onClose={handleClose} title="Change Password">
       {success ? (
         <div className="space-y-4">
-          <div className="p-4 rounded-lg bg-green-50 border border-green-200">
+          <div className="p-4 rounded-lg bg-green-50 border border-green-800">
             <div className="flex items-start">
               <svg
                 className="w-5 h-5 text-green-500 mt-0.5"
@@ -98,10 +98,10 @@ export function ChangePasswordModal({
                 />
               </svg>
               <div className="ml-3">
-                <p className="text-sm font-medium text-green-800">
+                <p className="text-sm font-medium text-green-400">
                   Password changed successfully!
                 </p>
-                <p className="mt-1 text-sm text-green-700">
+                <p className="mt-1 text-sm text-green-400">
                   Your password has been updated. You may need to sign in again
                   on other devices.
                 </p>
@@ -110,7 +110,7 @@ export function ChangePasswordModal({
           </div>
           <button
             onClick={handleClose}
-            className="w-full py-2 px-4 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="w-full py-2 px-4 border border-surface-border rounded-lg text-sm font-medium text-gray-300 hover:bg-surface-elevated"
           >
             Close
           </button>
@@ -118,7 +118,7 @@ export function ChangePasswordModal({
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+            <div className="p-3 rounded-lg bg-red-900/30 border border-red-800 text-red-400 text-sm">
               {error}
             </div>
           )}
@@ -126,7 +126,7 @@ export function ChangePasswordModal({
           <div>
             <label
               htmlFor="currentPassword"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-300"
             >
               Current Password
             </label>
@@ -137,7 +137,7 @@ export function ChangePasswordModal({
               onChange={(e) => setCurrentPassword(e.target.value)}
               disabled={isSubmitting}
               required
-              className="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+              className="mt-1 appearance-none block w-full px-3 py-2 border border-surface-border rounded-lg bg-surface-raised text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 disabled:bg-surface-elevated disabled:cursor-not-allowed"
               placeholder="Enter your current password"
             />
           </div>
@@ -145,7 +145,7 @@ export function ChangePasswordModal({
           <div>
             <label
               htmlFor="newPassword"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-300"
             >
               New Password
             </label>
@@ -156,7 +156,7 @@ export function ChangePasswordModal({
               onChange={(e) => setNewPassword(e.target.value)}
               disabled={isSubmitting}
               required
-              className="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+              className="mt-1 appearance-none block w-full px-3 py-2 border border-surface-border rounded-lg bg-surface-raised text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 disabled:bg-surface-elevated disabled:cursor-not-allowed"
               placeholder="Enter new password"
             />
             {/* Password requirements */}
@@ -241,7 +241,7 @@ export function ChangePasswordModal({
           <div>
             <label
               htmlFor="confirmPassword"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-300"
             >
               Confirm New Password
             </label>
@@ -252,7 +252,7 @@ export function ChangePasswordModal({
               onChange={(e) => setConfirmPassword(e.target.value)}
               disabled={isSubmitting}
               required
-              className="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+              className="mt-1 appearance-none block w-full px-3 py-2 border border-surface-border rounded-lg bg-surface-raised text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 disabled:bg-surface-elevated disabled:cursor-not-allowed"
               placeholder="Confirm new password"
             />
             {confirmPassword.length > 0 && !passwordsMatch && (
@@ -270,14 +270,14 @@ export function ChangePasswordModal({
               type="button"
               onClick={handleClose}
               disabled={isSubmitting}
-              className="flex-1 py-2 px-4 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 py-2 px-4 border border-surface-border rounded-lg text-sm font-medium text-gray-300 hover:bg-surface-elevated disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting || !isPasswordValid || !passwordsMatch}
-              className="flex-1 py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-500 hover:bg-primary-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? "Changing..." : "Change Password"}
             </button>

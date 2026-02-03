@@ -211,7 +211,7 @@ export function LogDose() {
       <div className="max-w-2xl mx-auto px-4 py-8">
         <div className="text-center py-12">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto"></div>
-          <p className="text-gray-600 mt-4">Loading your protocols...</p>
+          <p className="text-gray-400 mt-4">Loading your protocols...</p>
         </div>
       </div>
     );
@@ -222,7 +222,7 @@ export function LogDose() {
       {/* Header with Step Counter */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-2">
-          <h1 className="text-2xl font-bold text-gray-900">Log Dose</h1>
+          <h1 className="text-2xl font-bold text-gray-100">Log Dose</h1>
           <span className="text-sm text-gray-500">
             Step {currentStep} of 3
           </span>
@@ -234,16 +234,16 @@ export function LogDose() {
             <div
               key={step}
               className={`flex-1 h-1.5 rounded-full transition-colors ${
-                step <= currentStep ? "bg-primary-600" : "bg-gray-200"
+                step <= currentStep ? "bg-primary-500" : "bg-gray-200"
               }`}
             />
           ))}
         </div>
 
-        <p className="text-gray-600">{stepLabels[currentStep - 1]}</p>
+        <p className="text-gray-400">{stepLabels[currentStep - 1]}</p>
 
         {error && (
-          <div className="mt-4 p-3 text-sm text-red-600 bg-red-50 rounded-lg">
+          <div className="mt-4 p-3 text-sm text-red-600 bg-red-900/30 rounded-lg">
             {error}
           </div>
         )}
@@ -257,23 +257,23 @@ export function LogDose() {
             type="button"
             onClick={() => handleSelectLogType("protocol")}
             disabled={protocolGroups.length === 0}
-            className={`w-full p-6 rounded-xl border-2 text-left transition-all ${
+            className={`w-full p-6 rounded-xl border text-left transition-all ${
               protocolGroups.length === 0
-                ? "border-gray-100 bg-gray-50 cursor-not-allowed"
-                : "border-gray-200 hover:border-primary-300 hover:bg-primary-50"
+                ? "border-surface-border bg-surface-elevated cursor-not-allowed"
+                : "border-surface-border hover:border-primary-300 hover:bg-primary-500/20"
             }`}
           >
             <div className="flex items-start gap-4">
               <div
                 className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                  protocolGroups.length === 0 ? "bg-gray-100" : "bg-primary-100"
+                  protocolGroups.length === 0 ? "bg-surface-elevated" : "bg-primary-500/20"
                 }`}
               >
                 <svg
                   className={`w-6 h-6 ${
                     protocolGroups.length === 0
                       ? "text-gray-400"
-                      : "text-primary-600"
+                      : "text-primary-500"
                   }`}
                   fill="none"
                   stroke="currentColor"
@@ -292,7 +292,7 @@ export function LogDose() {
                   className={`font-semibold text-lg ${
                     protocolGroups.length === 0
                       ? "text-gray-400"
-                      : "text-gray-900"
+                      : "text-gray-100"
                   }`}
                 >
                   Log from Protocol
@@ -331,10 +331,10 @@ export function LogDose() {
           <button
             type="button"
             onClick={() => handleSelectLogType("adhoc")}
-            className="w-full p-6 rounded-xl border-2 border-gray-200 text-left hover:border-primary-300 hover:bg-primary-50 transition-all"
+            className="w-full p-6 rounded-xl border border-surface-border text-left hover:border-primary-300 hover:bg-primary-500/20 transition-all"
           >
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-blue-900/40 flex items-center justify-center">
                 <svg
                   className="w-6 h-6 text-blue-600"
                   fill="none"
@@ -350,7 +350,7 @@ export function LogDose() {
                 </svg>
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-lg text-gray-900">
+                <h3 className="font-semibold text-lg text-gray-100">
                   Quick Log
                 </h3>
                 <p className="text-sm text-gray-500 mt-1">
@@ -376,12 +376,12 @@ export function LogDose() {
           {/* Create Protocol Option */}
           <Link
             to="/protocols/new"
-            className="block w-full p-6 rounded-xl border-2 border-dashed border-gray-300 text-left hover:border-primary-300 hover:bg-primary-50 transition-all"
+            className="block w-full p-6 rounded-xl border border-dashed border-surface-border text-left hover:border-primary-300 hover:bg-primary-500/20 transition-all"
           >
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-surface-elevated flex items-center justify-center">
                 <svg
-                  className="w-6 h-6 text-gray-600"
+                  className="w-6 h-6 text-gray-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -395,7 +395,7 @@ export function LogDose() {
                 </svg>
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-lg text-gray-900">
+                <h3 className="font-semibold text-lg text-gray-100">
                   Create Custom Protocol
                 </h3>
                 <p className="text-sm text-gray-500 mt-1">
@@ -422,7 +422,7 @@ export function LogDose() {
           <button
             type="button"
             onClick={() => navigate("/dashboard")}
-            className="w-full py-3 px-4 text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors"
+            className="w-full py-3 px-4 text-sm font-medium text-gray-400 hover:text-gray-200 transition-colors"
           >
             Cancel
           </button>
@@ -435,10 +435,10 @@ export function LogDose() {
           {protocolGroups.map((group) => (
             <div
               key={group.protocol.id}
-              className="border border-gray-200 rounded-xl overflow-hidden"
+              className="border border-surface-border rounded-xl overflow-hidden"
             >
-              <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
-                <h3 className="font-medium text-gray-900">
+              <div className="bg-surface-elevated px-4 py-3 border-b border-surface-border">
+                <h3 className="font-medium text-gray-100">
                   {group.protocol.name || "Unnamed Protocol"}
                 </h3>
               </div>
@@ -448,10 +448,10 @@ export function LogDose() {
                     key={ps.id}
                     type="button"
                     onClick={() => handleProtocolSubstanceSelect(ps)}
-                    className="w-full p-4 text-left hover:bg-gray-50 transition-colors flex justify-between items-center"
+                    className="w-full p-4 text-left hover:bg-surface-elevated transition-colors flex justify-between items-center"
                   >
                     <div>
-                      <div className="font-medium text-gray-900">
+                      <div className="font-medium text-gray-100">
                         {ps.substance.name}
                       </div>
                       <div className="text-sm text-gray-500">
@@ -481,7 +481,7 @@ export function LogDose() {
           <button
             type="button"
             onClick={handleBack}
-            className="w-full py-3 px-4 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+            className="w-full py-3 px-4 border border-surface-border rounded-lg text-sm font-medium text-gray-300 hover:bg-surface-elevated transition-colors"
           >
             Back
           </button>
@@ -496,7 +496,7 @@ export function LogDose() {
               placeholder="Search substances..."
               value={adHocSearch}
               onChange={(e) => setAdHocSearch(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className="w-full px-4 py-3 border border-surface-border rounded-lg bg-surface-raised text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               autoFocus
             />
           </div>
@@ -507,7 +507,7 @@ export function LogDose() {
                 key={substance.id}
                 type="button"
                 onClick={() => handleAdHocSubstanceSelect(substance)}
-                className="px-4 py-2.5 text-sm border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-colors"
+                className="px-4 py-2.5 text-sm border border-surface-border rounded-lg text-gray-300 hover:bg-surface-elevated hover:border-surface-hover transition-colors"
               >
                 {substance.name}
               </button>
@@ -522,7 +522,7 @@ export function LogDose() {
           <button
             type="button"
             onClick={handleBack}
-            className="w-full py-3 px-4 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+            className="w-full py-3 px-4 border border-surface-border rounded-lg text-sm font-medium text-gray-300 hover:bg-surface-elevated transition-colors"
           >
             Back
           </button>
@@ -533,12 +533,12 @@ export function LogDose() {
       {currentStep === 3 && (
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Selected item header */}
-          <div className="flex items-center justify-between p-4 bg-primary-50 border border-primary-200 rounded-xl">
+          <div className="flex items-center justify-between p-4 bg-primary-500/20 border border-primary-200 rounded-xl">
             <div>
-              <div className="text-sm text-primary-600 font-medium">
+              <div className="text-sm text-primary-500 font-medium">
                 {logType === "protocol" ? "Protocol Dose" : "Quick Log"}
               </div>
-              <div className="font-semibold text-gray-900">
+              <div className="font-semibold text-gray-100">
                 {logType === "protocol" && selectedProtocolSubstance
                   ? selectedProtocolSubstance.substance.name
                   : selectedSubstance?.name}
@@ -556,7 +556,7 @@ export function LogDose() {
           <div>
             <label
               htmlFor="dose"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-300"
             >
               Dose Amount
             </label>
@@ -567,11 +567,11 @@ export function LogDose() {
                 id="dose"
                 value={dose}
                 onChange={(e) => setDose(e.target.value)}
-                className="flex-1 block w-full px-3 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                className="flex-1 block w-full px-3 py-2 border border-surface-border rounded-l-lg bg-surface-raised text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                 required
                 autoFocus
               />
-              <span className="inline-flex items-center px-4 border border-l-0 border-gray-300 bg-gray-50 text-gray-500 rounded-r-lg">
+              <span className="inline-flex items-center px-4 border border-l-0 border-surface-border bg-surface-elevated text-gray-500 rounded-r-lg">
                 {currentDoseUnit}
               </span>
             </div>
@@ -588,7 +588,7 @@ export function LogDose() {
           <div>
             <label
               htmlFor="site"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-300"
             >
               Administration Site
             </label>
@@ -596,7 +596,7 @@ export function LogDose() {
               id="site"
               value={site}
               onChange={(e) => setSite(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+              className="mt-1 block w-full px-3 py-2 border border-surface-border rounded-lg bg-surface-raised text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
             >
               {INJECTION_SITES.map((s) => (
                 <option key={s} value={s}>
@@ -610,7 +610,7 @@ export function LogDose() {
           <div>
             <label
               htmlFor="notes"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-300"
             >
               Notes (optional)
             </label>
@@ -620,7 +620,7 @@ export function LogDose() {
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Any observations or side effects..."
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+              className="mt-1 block w-full px-3 py-2 border border-surface-border rounded-lg bg-surface-raised text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
             />
           </div>
 
@@ -629,14 +629,14 @@ export function LogDose() {
             <button
               type="button"
               onClick={handleBack}
-              className="flex-1 py-3 px-4 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+              className="flex-1 py-3 px-4 border border-surface-border rounded-lg text-sm font-medium text-gray-300 hover:bg-surface-elevated transition-colors"
             >
               Back
             </button>
             <button
               type="submit"
               disabled={submitting || !dose}
-              className="flex-1 py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex-1 py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-500 hover:bg-primary-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {submitting ? "Logging..." : "Log Dose"}
             </button>

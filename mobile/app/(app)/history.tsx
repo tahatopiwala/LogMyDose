@@ -102,10 +102,10 @@ export default function HistoryScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-surface-base" edges={["top"]}>
       {/* Header */}
-      <View className="px-5 pt-4 pb-4 bg-white border-b border-gray-200">
-        <Text className="text-2xl font-bold text-gray-900">History</Text>
+      <View className="px-5 pt-4 pb-4 bg-surface-card border-b border-surface-border">
+        <Text className="text-2xl font-bold text-gray-100">History</Text>
 
         {/* Period Filter */}
         <View className="flex-row gap-2 mt-4">
@@ -117,12 +117,12 @@ export default function HistoryScreen() {
                 setPage(1);
               }}
               className={`px-4 py-2 rounded-full ${
-                period === p ? "bg-primary-500" : "bg-gray-100"
+                period === p ? "bg-primary-500" : "bg-surface-elevated"
               }`}
             >
               <Text
                 className={`font-medium capitalize ${
-                  period === p ? "text-white" : "text-gray-600"
+                  period === p ? "text-surface-base" : "text-gray-400"
                 }`}
               >
                 {p === "all" ? "All Time" : `This ${p}`}
@@ -139,22 +139,22 @@ export default function HistoryScreen() {
           <RefreshControl
             refreshing={isLoading}
             onRefresh={refetch}
-            tintColor="#BE3455"
+            tintColor="#39FF14"
           />
         }
       >
         {isLoading && doses.length === 0 ? (
           <View className="py-12 items-center">
-            <ActivityIndicator size="large" color="#BE3455" />
+            <ActivityIndicator size="large" color="#39FF14" />
           </View>
         ) : doses.length === 0 ? (
           <Card>
             <View className="items-center py-8">
-              <Ionicons name="calendar-outline" size={48} color="#9CA3AF" />
-              <Text className="text-gray-600 mt-4 text-center">
+              <Ionicons name="calendar-outline" size={48} color="#6B7280" />
+              <Text className="text-gray-300 mt-4 text-center">
                 No doses logged yet
               </Text>
-              <Text className="text-gray-400 text-sm mt-1 text-center">
+              <Text className="text-gray-500 text-sm mt-1 text-center">
                 Start logging doses to see your history
               </Text>
             </View>
@@ -162,7 +162,7 @@ export default function HistoryScreen() {
         ) : (
           Object.entries(groupedDoses).map(([date, dateDoses]) => (
             <View key={date} className="mb-6">
-              <Text className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+              <Text className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-3">
                 {formatDate(dateDoses[0].loggedAt)}
               </Text>
               {dateDoses.map((dose) => {
@@ -172,10 +172,10 @@ export default function HistoryScreen() {
                     <View className="flex-row items-center">
                       <Ionicons name={icon.name} size={24} color={icon.color} />
                       <View className="ml-3 flex-1">
-                        <Text className="font-medium text-gray-900">
+                        <Text className="font-medium text-gray-100">
                           {dose.substance.name}
                         </Text>
-                        <Text className="text-gray-500 text-sm">
+                        <Text className="text-gray-400 text-sm">
                           {dose.dose} {dose.doseUnit || ""} •{" "}
                           {formatTime(dose.loggedAt)}
                         </Text>
@@ -196,9 +196,9 @@ export default function HistoryScreen() {
               disabled={page === 1}
               className={`p-2 ${page === 1 ? "opacity-30" : ""}`}
             >
-              <Ionicons name="chevron-back" size={24} color="#BE3455" />
+              <Ionicons name="chevron-back" size={24} color="#39FF14" />
             </TouchableOpacity>
-            <Text className="text-gray-600">
+            <Text className="text-gray-400">
               Page {page} of {meta.totalPages}
             </Text>
             <TouchableOpacity
@@ -206,7 +206,7 @@ export default function HistoryScreen() {
               disabled={page === meta.totalPages}
               className={`p-2 ${page === meta.totalPages ? "opacity-30" : ""}`}
             >
-              <Ionicons name="chevron-forward" size={24} color="#BE3455" />
+              <Ionicons name="chevron-forward" size={24} color="#39FF14" />
             </TouchableOpacity>
           </View>
         )}

@@ -15,14 +15,14 @@ export function AccountSection() {
 
   return (
     <>
-      <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+      <div className="bg-surface-card rounded-xl p-5 border border-surface-border">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold text-gray-100">
             Account Information
           </h2>
           <button
             onClick={() => setIsEditNameOpen(true)}
-            className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+            className="text-sm text-primary-500 hover:text-primary-400 font-medium"
           >
             Edit
           </button>
@@ -31,22 +31,22 @@ export function AccountSection() {
         <div className="space-y-4">
           {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-500">
+            <label className="block text-sm font-medium text-gray-400">
               Name
             </label>
-            <p className="mt-1 text-gray-900">{fullName}</p>
+            <p className="mt-1 text-gray-100">{fullName}</p>
           </div>
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-medium text-gray-500">
+            <label className="block text-sm font-medium text-gray-400">
               Email
             </label>
             <div className="mt-1 flex items-center justify-between">
-              <p className="text-gray-900">{patient?.email}</p>
+              <p className="text-gray-100">{patient?.email}</p>
               <button
                 onClick={() => setIsChangeEmailOpen(true)}
-                className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+                className="text-sm text-primary-500 hover:text-primary-400 font-medium"
               >
                 Change Email
               </button>

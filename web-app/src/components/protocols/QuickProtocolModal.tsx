@@ -256,7 +256,7 @@ export function QuickProtocolModal({
             <div
               className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
                 i <= currentIndex
-                  ? "bg-primary-600 text-white"
+                  ? "bg-primary-500 text-white"
                   : "bg-gray-200 text-gray-500"
               }`}
             >
@@ -265,7 +265,7 @@ export function QuickProtocolModal({
             {i < steps.length - 1 && (
               <div
                 className={`w-12 h-0.5 ${
-                  i < currentIndex ? "bg-primary-600" : "bg-gray-200"
+                  i < currentIndex ? "bg-primary-500" : "bg-gray-200"
                 }`}
               />
             )}
@@ -286,7 +286,7 @@ export function QuickProtocolModal({
         {renderStepIndicator()}
 
         {error && (
-          <div className="mb-4 p-3 text-sm text-red-600 bg-red-50 rounded-lg">
+          <div className="mb-4 p-3 text-sm text-red-600 bg-red-900/30 rounded-lg">
             {error}
           </div>
         )}
@@ -295,7 +295,7 @@ export function QuickProtocolModal({
         {step === "substance" && (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Select a substance to create a protocol for:
               </label>
               {/* Search Input */}
@@ -318,7 +318,7 @@ export function QuickProtocolModal({
                   placeholder="Search substances..."
                   value={substanceSearch}
                   onChange={(e) => setSubstanceSearch(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  className="w-full pl-9 pr-3 py-2 border border-surface-border rounded-lg text-sm bg-surface-raised text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                 />
               </div>
               {loading ? (
@@ -336,15 +336,15 @@ export function QuickProtocolModal({
                       key={substance.id}
                       type="button"
                       onClick={() => handleSubstanceSelect(substance)}
-                      className={`w-full p-3 rounded-lg border-2 text-left transition-colors ${
+                      className={`w-full p-3 rounded-lg border text-left transition-colors ${
                         selectedSubstance?.id === substance.id
-                          ? "border-primary-600 bg-primary-50"
-                          : "border-gray-200 hover:border-gray-300"
+                          ? "border-primary-600 bg-primary-500/20"
+                          : "border-surface-border hover:border-surface-border"
                       }`}
                     >
                       <div className="flex items-center justify-between">
                         <div>
-                          <div className="font-medium text-gray-900">
+                          <div className="font-medium text-gray-100">
                             {substance.name}
                           </div>
                           {substance.category && (
@@ -355,7 +355,7 @@ export function QuickProtocolModal({
                         </div>
                         {selectedSubstance?.id === substance.id && (
                           <svg
-                            className="w-5 h-5 text-primary-600"
+                            className="w-5 h-5 text-primary-500"
                             fill="currentColor"
                             viewBox="0 0 20 20"
                           >
@@ -373,11 +373,11 @@ export function QuickProtocolModal({
               )}
             </div>
 
-            <div className="flex gap-3 pt-4 border-t border-gray-200">
+            <div className="flex gap-3 pt-4 border-t border-surface-border">
               <button
                 type="button"
                 onClick={handleClose}
-                className="flex-1 py-2.5 px-4 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                className="flex-1 py-2.5 px-4 border border-surface-border rounded-lg text-sm font-medium text-gray-300 hover:bg-surface-elevated transition-colors"
               >
                 Cancel
               </button>
@@ -385,7 +385,7 @@ export function QuickProtocolModal({
                 type="button"
                 onClick={goToNextStep}
                 disabled={!selectedSubstance}
-                className="flex-1 py-2.5 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="flex-1 py-2.5 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-primary-500 hover:bg-primary-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Continue
               </button>
@@ -396,9 +396,9 @@ export function QuickProtocolModal({
         {/* Step 2: Product Selection */}
         {step === "product" && selectedSubstance && (
           <div className="space-y-4">
-            <div className="p-3 bg-gray-50 rounded-lg border border-gray-200 mb-4">
+            <div className="p-3 bg-surface-elevated rounded-lg border border-surface-border mb-4">
               <div className="text-sm text-gray-500">Selected substance:</div>
-              <div className="font-medium text-gray-900">
+              <div className="font-medium text-gray-100">
                 {selectedSubstance.name}
               </div>
             </div>
@@ -411,12 +411,12 @@ export function QuickProtocolModal({
               onProductCreate={handleProductCreate}
             />
 
-            <div className="flex gap-3 pt-4 border-t border-gray-200">
+            <div className="flex gap-3 pt-4 border-t border-surface-border">
               {!preselectedSubstance && (
                 <button
                   type="button"
                   onClick={goToPreviousStep}
-                  className="flex-1 py-2.5 px-4 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="flex-1 py-2.5 px-4 border border-surface-border rounded-lg text-sm font-medium text-gray-300 hover:bg-surface-elevated transition-colors"
                 >
                   Back
                 </button>
@@ -424,7 +424,7 @@ export function QuickProtocolModal({
               <button
                 type="button"
                 onClick={goToNextStep}
-                className={`py-2.5 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 transition-colors ${preselectedSubstance ? "flex-1" : "flex-1"}`}
+                className={`py-2.5 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-primary-500 hover:bg-primary-400 transition-colors ${preselectedSubstance ? "flex-1" : "flex-1"}`}
               >
                 Continue
               </button>
@@ -436,9 +436,9 @@ export function QuickProtocolModal({
         {step === "details" && selectedSubstance && (
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Summary */}
-            <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+            <div className="p-3 bg-surface-elevated rounded-lg border border-surface-border">
               <div className="text-sm text-gray-500">Creating protocol for:</div>
-              <div className="font-medium text-gray-900">
+              <div className="font-medium text-gray-100">
                 {selectedProduct
                   ? `${selectedProduct.name} (${selectedSubstance.name})`
                   : selectedSubstance.name}
@@ -449,7 +449,7 @@ export function QuickProtocolModal({
             <div>
               <label
                 htmlFor="protocolName"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-gray-300 mb-1"
               >
                 Protocol Name{" "}
                 <span className="text-gray-400 font-normal">(optional)</span>
@@ -460,7 +460,7 @@ export function QuickProtocolModal({
                 value={protocolName}
                 onChange={(e) => setProtocolName(e.target.value)}
                 placeholder="e.g., My Semaglutide Protocol"
-                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                className="block w-full px-3 py-2 border border-surface-border rounded-lg bg-surface-raised text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
               />
             </div>
 
@@ -468,7 +468,7 @@ export function QuickProtocolModal({
             <div>
               <label
                 htmlFor="protocolDescription"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-gray-300 mb-1"
               >
                 Description{" "}
                 <span className="text-gray-400 font-normal">(optional)</span>
@@ -479,7 +479,7 @@ export function QuickProtocolModal({
                 onChange={(e) => setProtocolDescription(e.target.value)}
                 placeholder="Add any notes about this protocol..."
                 rows={2}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500 resize-none"
+                className="block w-full px-3 py-2 border border-surface-border rounded-lg bg-surface-raised text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 resize-none"
               />
             </div>
 
@@ -487,7 +487,7 @@ export function QuickProtocolModal({
             <div>
               <label
                 htmlFor="dose"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-gray-300 mb-1"
               >
                 Dose Amount
               </label>
@@ -499,13 +499,13 @@ export function QuickProtocolModal({
                   value={dose}
                   onChange={(e) => setDose(e.target.value)}
                   placeholder="250"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  className="flex-1 px-3 py-2 border border-surface-border rounded-lg bg-surface-raised text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                   required
                 />
                 <select
                   value={doseUnit}
                   onChange={(e) => setDoseUnit(e.target.value)}
-                  className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  className="w-24 px-3 py-2 border border-surface-border rounded-lg bg-surface-raised text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                 >
                   <option value="mcg">mcg</option>
                   <option value="mg">mg</option>
@@ -520,7 +520,7 @@ export function QuickProtocolModal({
             <div>
               <label
                 htmlFor="frequency"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-gray-300 mb-1"
               >
                 Frequency
               </label>
@@ -528,7 +528,7 @@ export function QuickProtocolModal({
                 id="frequency"
                 value={frequency}
                 onChange={(e) => setFrequency(e.target.value)}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                className="block w-full px-3 py-2 border border-surface-border rounded-lg bg-surface-raised text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
               >
                 {FREQUENCIES.map((f) => (
                   <option key={f.value} value={f.value}>
@@ -543,7 +543,7 @@ export function QuickProtocolModal({
               <div>
                 <label
                   htmlFor="startDate"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium text-gray-300 mb-1"
                 >
                   Start Date
                 </label>
@@ -552,14 +552,14 @@ export function QuickProtocolModal({
                   id="startDate"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  className="block w-full px-3 py-2 border border-surface-border rounded-lg bg-surface-raised text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                   required
                 />
               </div>
               <div>
                 <label
                   htmlFor="endDate"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-medium text-gray-300 mb-1"
                 >
                   End Date{" "}
                   <span className="text-gray-400 font-normal">(optional)</span>
@@ -570,17 +570,17 @@ export function QuickProtocolModal({
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
                   min={startDate}
-                  className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  className="block w-full px-3 py-2 border border-surface-border rounded-lg bg-surface-raised text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                 />
               </div>
             </div>
 
             {/* Actions */}
-            <div className="flex gap-3 pt-4 border-t border-gray-200">
+            <div className="flex gap-3 pt-4 border-t border-surface-border">
               <button
                 type="button"
                 onClick={goToPreviousStep}
-                className="flex-1 py-2.5 px-4 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                className="flex-1 py-2.5 px-4 border border-surface-border rounded-lg text-sm font-medium text-gray-300 hover:bg-surface-elevated transition-colors"
                 disabled={submitting}
               >
                 Back
@@ -588,7 +588,7 @@ export function QuickProtocolModal({
               <button
                 type="submit"
                 disabled={submitting || !dose}
-                className="flex-1 py-2.5 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="flex-1 py-2.5 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-primary-500 hover:bg-primary-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {submitting ? "Creating..." : "Create Protocol"}
               </button>

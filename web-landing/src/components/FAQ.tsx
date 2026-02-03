@@ -49,10 +49,10 @@ export function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section id="faq" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+    <section id="faq" className="py-20 px-4 sm:px-6 lg:px-8 bg-surface-raised">
       <div className="max-w-3xl mx-auto">
         <FadeIn className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-100">
             Questions? We've got answers.
           </h2>
         </FadeIn>
@@ -60,18 +60,18 @@ export function FAQ() {
         <StaggerContainer className="space-y-4" staggerDelay={0.05}>
           {faqs.map((faq, index) => (
             <StaggerItem key={index}>
-              <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              <div className="bg-surface-card rounded-xl border border-surface-border overflow-hidden">
                 <button
                   onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                  className="w-full px-6 py-5 text-left flex items-center justify-between gap-4 hover:bg-gray-50 transition-colors"
+                  className="w-full px-6 py-5 text-left flex items-center justify-between gap-4 hover:bg-surface-hover transition-colors"
                 >
-                  <span className="font-semibold text-gray-900">
+                  <span className="font-semibold text-gray-100">
                     {faq.question}
                   </span>
                   <motion.svg
                     animate={{ rotate: openIndex === index ? 180 : 0 }}
                     transition={{ duration: 0.2 }}
-                    className="w-5 h-5 text-gray-500 flex-shrink-0"
+                    className="w-5 h-5 text-gray-400 flex-shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -94,7 +94,7 @@ export function FAQ() {
                       className="overflow-hidden"
                     >
                       <div className="px-6 pb-5">
-                        <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
+                        <p className="text-gray-400 leading-relaxed">{faq.answer}</p>
                       </div>
                     </motion.div>
                   )}
@@ -106,8 +106,8 @@ export function FAQ() {
 
         {/* Disclaimer */}
         <FadeIn delay={0.3} className="mt-12">
-          <div className="p-6 bg-gray-50 rounded-xl border border-gray-200">
-            <p className="text-sm text-gray-600 text-center">
+          <div className="p-6 bg-surface-elevated rounded-xl border border-surface-border">
+            <p className="text-sm text-gray-400 text-center">
               <strong>Medical Disclaimer:</strong> BioStak is a personal
               tracking tool, not a medical device. It does not diagnose, treat, or
               provide medical advice. Always consult your healthcare provider for

@@ -54,7 +54,7 @@ export default function DashboardScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-surface-base" edges={["top"]}>
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ paddingBottom: 20 }}
@@ -62,16 +62,16 @@ export default function DashboardScreen() {
           <RefreshControl
             refreshing={isLoading}
             onRefresh={onRefresh}
-            tintColor="#BE3455"
+            tintColor="#39FF14"
           />
         }
       >
         {/* Header */}
         <View className="px-5 pt-4 pb-6">
-          <Text className="text-2xl font-bold text-gray-900">
+          <Text className="text-2xl font-bold text-gray-100">
             {getGreeting()}, {patient?.firstName || "there"}
           </Text>
-          <Text className="text-gray-500 mt-1">
+          <Text className="text-gray-400 mt-1">
             {new Date().toLocaleDateString("en-US", {
               weekday: "long",
               month: "long",
@@ -84,22 +84,22 @@ export default function DashboardScreen() {
         <View className="px-5 mb-6">
           <View className="flex-row gap-3">
             <Card className="flex-1">
-              <Text className="text-gray-500 text-xs font-medium uppercase tracking-wide">
+              <Text className="text-gray-400 text-xs font-medium uppercase tracking-wide">
                 Today
               </Text>
-              <Text className="text-3xl font-bold text-gray-900 mt-1">
+              <Text className="text-3xl font-bold text-gray-100 mt-1">
                 {todayDoses?.length || 0}
               </Text>
-              <Text className="text-gray-500 text-sm">doses logged</Text>
+              <Text className="text-gray-400 text-sm">doses logged</Text>
             </Card>
             <Card className="flex-1">
-              <Text className="text-gray-500 text-xs font-medium uppercase tracking-wide">
+              <Text className="text-gray-400 text-xs font-medium uppercase tracking-wide">
                 This Week
               </Text>
-              <Text className="text-3xl font-bold text-gray-900 mt-1">
+              <Text className="text-3xl font-bold text-gray-100 mt-1">
                 {stats?.adherenceRate ? `${Math.round(stats.adherenceRate)}%` : "—"}
               </Text>
-              <Text className="text-gray-500 text-sm">adherence</Text>
+              <Text className="text-gray-400 text-sm">adherence</Text>
             </Card>
           </View>
         </View>
@@ -110,8 +110,8 @@ export default function DashboardScreen() {
             className="bg-primary-500 rounded-xl py-4 flex-row items-center justify-center"
             onPress={() => router.push("/(app)/log")}
           >
-            <Ionicons name="add-circle" size={24} color="white" />
-            <Text className="text-white font-semibold text-lg ml-2">
+            <Ionicons name="add-circle" size={24} color="#0D0D0D" />
+            <Text className="text-surface-base font-semibold text-lg ml-2">
               Log a Dose
             </Text>
           </TouchableOpacity>
@@ -120,7 +120,7 @@ export default function DashboardScreen() {
         {/* Active Protocols */}
         <View className="px-5">
           <View className="flex-row items-center justify-between mb-4">
-            <Text className="text-lg font-semibold text-gray-900">
+            <Text className="text-lg font-semibold text-gray-100">
               Active Protocols
             </Text>
             {activeProtocols.length > 0 && (
@@ -132,16 +132,16 @@ export default function DashboardScreen() {
 
           {isLoading ? (
             <View className="py-8 items-center">
-              <ActivityIndicator color="#BE3455" />
+              <ActivityIndicator color="#39FF14" />
             </View>
           ) : activeProtocols.length === 0 ? (
             <Card>
               <View className="items-center py-6">
-                <Ionicons name="flask-outline" size={48} color="#9CA3AF" />
-                <Text className="text-gray-600 mt-4 text-center">
+                <Ionicons name="flask-outline" size={48} color="#6B7280" />
+                <Text className="text-gray-300 mt-4 text-center">
                   No active protocols yet
                 </Text>
-                <Text className="text-gray-400 text-sm mt-1 text-center">
+                <Text className="text-gray-500 text-sm mt-1 text-center">
                   Create your first protocol to start tracking
                 </Text>
                 <TouchableOpacity
@@ -150,7 +150,7 @@ export default function DashboardScreen() {
                     // Navigate to create protocol
                   }}
                 >
-                  <Text className="text-white font-medium">Add Protocol</Text>
+                  <Text className="text-surface-base font-medium">Add Protocol</Text>
                 </TouchableOpacity>
               </View>
             </Card>
@@ -165,32 +165,32 @@ export default function DashboardScreen() {
                   <View className="flex-row items-start justify-between">
                     <View className="flex-1">
                       <View className="flex-row items-center gap-2">
-                        <Text className="font-semibold text-gray-900">
+                        <Text className="font-semibold text-gray-100">
                           {protocol.template?.name || "Custom Protocol"}
                         </Text>
                         <Badge variant={getStatusVariant(protocol.status)}>
                           {protocol.status}
                         </Badge>
                       </View>
-                      <Text className="text-gray-500 text-sm mt-1">
+                      <Text className="text-gray-400 text-sm mt-1">
                         {protocol.substances.length} substance
                         {protocol.substances.length !== 1 ? "s" : ""}
                       </Text>
                       {protocol.substances.slice(0, 2).map((ps) => (
                         <Text
                           key={ps.id}
-                          className="text-gray-600 text-sm mt-1"
+                          className="text-gray-400 text-sm mt-1"
                         >
                           • {ps.substance.name} — {ps.dose} {ps.doseUnit || ""}
                         </Text>
                       ))}
                       {protocol.substances.length > 2 && (
-                        <Text className="text-gray-400 text-sm mt-1">
+                        <Text className="text-gray-500 text-sm mt-1">
                           +{protocol.substances.length - 2} more
                         </Text>
                       )}
                     </View>
-                    <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                    <Ionicons name="chevron-forward" size={20} color="#6B7280" />
                   </View>
                 </Card>
               </TouchableOpacity>
@@ -201,7 +201,7 @@ export default function DashboardScreen() {
         {/* Paused Protocols */}
         {pausedProtocols.length > 0 && (
           <View className="px-5 mt-6">
-            <Text className="text-lg font-semibold text-gray-900 mb-4">
+            <Text className="text-lg font-semibold text-gray-100 mb-4">
               Paused Protocols
             </Text>
             {pausedProtocols.map((protocol) => (
@@ -214,32 +214,32 @@ export default function DashboardScreen() {
                   <View className="flex-row items-start justify-between">
                     <View className="flex-1">
                       <View className="flex-row items-center gap-2">
-                        <Text className="font-semibold text-gray-900">
+                        <Text className="font-semibold text-gray-100">
                           {protocol.template?.name || "Custom Protocol"}
                         </Text>
                         <Badge variant={getStatusVariant(protocol.status)}>
                           {protocol.status}
                         </Badge>
                       </View>
-                      <Text className="text-gray-500 text-sm mt-1">
+                      <Text className="text-gray-400 text-sm mt-1">
                         {protocol.substances.length} substance
                         {protocol.substances.length !== 1 ? "s" : ""}
                       </Text>
                       {protocol.substances.slice(0, 2).map((ps) => (
                         <Text
                           key={ps.id}
-                          className="text-gray-600 text-sm mt-1"
+                          className="text-gray-400 text-sm mt-1"
                         >
                           • {ps.substance.name} — {ps.dose} {ps.doseUnit || ""}
                         </Text>
                       ))}
                       {protocol.substances.length > 2 && (
-                        <Text className="text-gray-400 text-sm mt-1">
+                        <Text className="text-gray-500 text-sm mt-1">
                           +{protocol.substances.length - 2} more
                         </Text>
                       )}
                     </View>
-                    <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                    <Ionicons name="chevron-forward" size={20} color="#6B7280" />
                   </View>
                 </Card>
               </TouchableOpacity>
@@ -250,24 +250,24 @@ export default function DashboardScreen() {
         {/* Today's Doses */}
         {todayDoses && todayDoses.length > 0 && (
           <View className="px-5 mt-6">
-            <Text className="text-lg font-semibold text-gray-900 mb-4">
+            <Text className="text-lg font-semibold text-gray-100 mb-4">
               Today's Doses
             </Text>
             {todayDoses.map((dose) => (
               <Card key={dose.id} className="mb-3">
                 <View className="flex-row items-center">
-                  <View className="w-10 h-10 rounded-full bg-green-100 items-center justify-center">
+                  <View className="w-10 h-10 rounded-full bg-green-900/40 items-center justify-center">
                     <Ionicons
                       name="checkmark"
                       size={20}
-                      color="#22C55E"
+                      color="#4ADE80"
                     />
                   </View>
                   <View className="ml-3 flex-1">
-                    <Text className="font-medium text-gray-900">
+                    <Text className="font-medium text-gray-100">
                       {dose.substance.name}
                     </Text>
-                    <Text className="text-gray-500 text-sm">
+                    <Text className="text-gray-400 text-sm">
                       {dose.dose} {dose.doseUnit || ""} •{" "}
                       {new Date(dose.loggedAt).toLocaleTimeString("en-US", {
                         hour: "numeric",

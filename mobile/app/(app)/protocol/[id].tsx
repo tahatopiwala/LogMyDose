@@ -100,10 +100,10 @@ export default function ProtocolDetailScreen() {
 
   if (isLoading) {
     return (
-      <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
+      <SafeAreaView className="flex-1 bg-surface-base" edges={["top"]}>
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator color="#BE3455" size="large" />
-          <Text className="text-gray-500 mt-4">Loading protocol...</Text>
+          <ActivityIndicator color="#39FF14" size="large" />
+          <Text className="text-gray-400 mt-4">Loading protocol...</Text>
         </View>
       </SafeAreaView>
     );
@@ -111,20 +111,20 @@ export default function ProtocolDetailScreen() {
 
   if (error || !protocol) {
     return (
-      <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
+      <SafeAreaView className="flex-1 bg-surface-base" edges={["top"]}>
         <View className="flex-1 items-center justify-center px-6">
-          <Ionicons name="alert-circle-outline" size={64} color="#EF4444" />
-          <Text className="text-gray-900 font-semibold text-lg mt-4">
+          <Ionicons name="alert-circle-outline" size={64} color="#F87171" />
+          <Text className="text-gray-100 font-semibold text-lg mt-4">
             Protocol not found
           </Text>
-          <Text className="text-gray-500 mt-2 text-center">
+          <Text className="text-gray-400 mt-2 text-center">
             {error?.message || "Unable to load protocol details."}
           </Text>
           <TouchableOpacity
             onPress={() => router.back()}
             className="mt-6 bg-primary-500 px-6 py-3 rounded-xl"
           >
-            <Text className="text-white font-semibold">Go Back</Text>
+            <Text className="text-surface-base font-semibold">Go Back</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -132,7 +132,7 @@ export default function ProtocolDetailScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-surface-base" edges={["top"]}>
       <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 24 }}>
         {/* Header */}
         <View className="px-5 pt-4 pb-2">
@@ -140,12 +140,12 @@ export default function ProtocolDetailScreen() {
             onPress={() => router.back()}
             className="flex-row items-center mb-4"
           >
-            <Ionicons name="chevron-back" size={24} color="#6B7280" />
-            <Text className="text-gray-600 ml-1">Back</Text>
+            <Ionicons name="chevron-back" size={24} color="#9CA3AF" />
+            <Text className="text-gray-400 ml-1">Back</Text>
           </TouchableOpacity>
 
           <View className="flex-row items-center gap-2">
-            <Text className="text-2xl font-bold text-gray-900 flex-1">
+            <Text className="text-2xl font-bold text-gray-100 flex-1">
               {protocol.template?.name || "Custom Protocol"}
             </Text>
             <Badge variant={getStatusVariant(protocol.status)}>
@@ -154,7 +154,7 @@ export default function ProtocolDetailScreen() {
           </View>
 
           {protocol.startDate && (
-            <Text className="text-gray-500 mt-2">
+            <Text className="text-gray-400 mt-2">
               Started {formatDate(protocol.startDate)}
               {protocol.endDate && ` • Ends ${formatDate(protocol.endDate)}`}
             </Text>
@@ -163,14 +163,14 @@ export default function ProtocolDetailScreen() {
 
         {/* Paused Banner */}
         {protocol.status === "paused" && (
-          <View className="mx-5 mt-4 bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+          <View className="mx-5 mt-4 bg-amber-900/30 border border-amber-800 rounded-xl p-4">
             <View className="flex-row items-center">
-              <Ionicons name="pause-circle" size={24} color="#CA8A04" />
+              <Ionicons name="pause-circle" size={24} color="#FBBF24" />
               <View className="ml-3 flex-1">
-                <Text className="font-semibold text-yellow-800">
+                <Text className="font-semibold text-amber-400">
                   Protocol Paused
                 </Text>
-                <Text className="text-yellow-700 text-sm mt-1">
+                <Text className="text-amber-300 text-sm mt-1">
                   This protocol won't appear in dose logging. Resume it to continue tracking.
                 </Text>
               </View>
@@ -180,41 +180,41 @@ export default function ProtocolDetailScreen() {
 
         {/* Substances */}
         <View className="px-5 mt-6">
-          <Text className="text-lg font-semibold text-gray-900 mb-4">
+          <Text className="text-lg font-semibold text-gray-100 mb-4">
             Substances
           </Text>
 
           {protocol.substances.map((ps) => (
             <Card key={ps.id} className="mb-3">
-              <Text className="font-semibold text-gray-900 text-lg">
+              <Text className="font-semibold text-gray-100 text-lg">
                 {ps.substance.name}
               </Text>
 
               <View className="flex-row flex-wrap mt-3 gap-x-6 gap-y-2">
                 <View>
-                  <Text className="text-gray-500 text-xs uppercase font-medium">
+                  <Text className="text-gray-400 text-xs uppercase font-medium">
                     Dose
                   </Text>
-                  <Text className="text-gray-900 mt-1">
+                  <Text className="text-gray-100 mt-1">
                     {ps.dose} {ps.doseUnit || ps.substance.doseUnit || ""}
                   </Text>
                 </View>
 
                 <View>
-                  <Text className="text-gray-500 text-xs uppercase font-medium">
+                  <Text className="text-gray-400 text-xs uppercase font-medium">
                     Frequency
                   </Text>
-                  <Text className="text-gray-900 mt-1">
+                  <Text className="text-gray-100 mt-1">
                     {ps.frequency?.replace(/_/g, " ") || "as needed"}
                   </Text>
                 </View>
 
                 {ps.cycleOnWeeks && (
                   <View>
-                    <Text className="text-gray-500 text-xs uppercase font-medium">
+                    <Text className="text-gray-400 text-xs uppercase font-medium">
                       Cycling
                     </Text>
-                    <Text className="text-gray-900 mt-1">
+                    <Text className="text-gray-100 mt-1">
                       {ps.cycleOnWeeks}w on / {ps.cycleOffWeeks || 0}w off
                     </Text>
                   </View>
@@ -222,10 +222,10 @@ export default function ProtocolDetailScreen() {
 
                 {ps.substance.administrationRoute && (
                   <View>
-                    <Text className="text-gray-500 text-xs uppercase font-medium">
+                    <Text className="text-gray-400 text-xs uppercase font-medium">
                       Route
                     </Text>
-                    <Text className="text-gray-900 mt-1">
+                    <Text className="text-gray-100 mt-1">
                       {ps.substance.administrationRoute}
                     </Text>
                   </View>
@@ -233,8 +233,8 @@ export default function ProtocolDetailScreen() {
               </View>
 
               {ps.notes && (
-                <View className="mt-3 bg-gray-50 rounded-lg p-3">
-                  <Text className="text-gray-700 text-sm">{ps.notes}</Text>
+                <View className="mt-3 bg-surface-elevated rounded-lg p-3">
+                  <Text className="text-gray-300 text-sm">{ps.notes}</Text>
                 </View>
               )}
             </Card>
@@ -244,11 +244,11 @@ export default function ProtocolDetailScreen() {
         {/* Protocol Notes */}
         {protocol.notes && (
           <View className="px-5 mt-6">
-            <Text className="text-lg font-semibold text-gray-900 mb-4">
+            <Text className="text-lg font-semibold text-gray-100 mb-4">
               Notes
             </Text>
             <Card>
-              <Text className="text-gray-700 leading-relaxed">
+              <Text className="text-gray-300 leading-relaxed">
                 {protocol.notes}
               </Text>
             </Card>
@@ -263,8 +263,8 @@ export default function ProtocolDetailScreen() {
                 onPress={() => router.push("/(app)/log")}
                 className="bg-primary-500 rounded-xl py-4 flex-row items-center justify-center"
               >
-                <Ionicons name="add-circle" size={24} color="white" />
-                <Text className="text-white font-semibold text-lg ml-2">
+                <Ionicons name="add-circle" size={24} color="#0D0D0D" />
+                <Text className="text-surface-base font-semibold text-lg ml-2">
                   Log a Dose
                 </Text>
               </TouchableOpacity>
@@ -272,11 +272,11 @@ export default function ProtocolDetailScreen() {
               <TouchableOpacity
                 onPress={handlePauseProtocol}
                 disabled={updateStatus.isPending}
-                className="border-2 border-yellow-400 rounded-xl py-4 flex-row items-center justify-center"
+                className="border-2 border-amber-500 rounded-xl py-4 flex-row items-center justify-center"
                 style={{ opacity: updateStatus.isPending ? 0.5 : 1 }}
               >
-                <Ionicons name="pause-circle-outline" size={24} color="#CA8A04" />
-                <Text className="text-yellow-700 font-semibold text-lg ml-2">
+                <Ionicons name="pause-circle-outline" size={24} color="#FBBF24" />
+                <Text className="text-amber-400 font-semibold text-lg ml-2">
                   {updateStatus.isPending ? "Pausing..." : "Pause Protocol"}
                 </Text>
               </TouchableOpacity>

@@ -65,13 +65,13 @@ const painPoints = [
 
 export function Problem() {
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-surface-raised">
       <div className="max-w-7xl mx-auto">
         <FadeIn className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-100">
             Sound familiar?
           </h2>
-          <p className="mt-4 text-xl text-gray-600">
+          <p className="mt-4 text-xl text-gray-400">
             Tracking your health protocol shouldn't be complicated. But right
             now, it probably is.
           </p>
@@ -80,14 +80,14 @@ export function Problem() {
         <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {painPoints.map((point) => (
             <StaggerItem key={point.question}>
-              <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 h-full">
-                <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center text-gray-500 mb-6">
+              <div className="bg-surface-card rounded-2xl p-8 border border-surface-border h-full">
+                <div className="w-12 h-12 bg-surface-elevated rounded-xl flex items-center justify-center text-gray-400 mb-6">
                   {point.icon}
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                <h3 className="text-lg font-semibold text-gray-100 mb-3">
                   "{point.question}"
                 </h3>
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-gray-400 leading-relaxed">
                   {point.description}
                 </p>
               </div>
@@ -96,9 +96,9 @@ export function Problem() {
         </StaggerContainer>
 
         <FadeIn delay={0.3} className="mt-12 text-center">
-          <p className="text-xl text-gray-700 font-medium">
+          <p className="text-xl text-gray-300 font-medium">
             You need a simple way to{" "}
-            <span className="text-primary-600">track, organize, and share</span>{" "}
+            <span className="text-primary-500">track, organize, and share</span>{" "}
             your data.
           </p>
         </FadeIn>

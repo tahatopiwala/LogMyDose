@@ -60,10 +60,10 @@ const importOptions = [
 
 export function Switcher() {
   return (
-    <section id="switcher" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+    <section id="switcher" className="py-20 px-4 sm:px-6 lg:px-8 bg-surface-raised">
       <div className="max-w-7xl mx-auto">
         <FadeIn>
-          <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-8 md:p-12 lg:p-16">
+          <div className="bg-gradient-to-br from-surface-elevated to-surface-card rounded-3xl p-8 md:p-12 lg:p-16 border border-surface-border">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left side - Copy */}
             <div>
@@ -114,7 +114,7 @@ export function Switcher() {
                   key={option.name}
                   className="bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-4 flex items-center gap-4 transition-colors cursor-pointer group"
                 >
-                  <div className="w-14 h-14 bg-white/10 rounded-xl flex items-center justify-center text-white group-hover:bg-primary-600/20 group-hover:text-primary-400 transition-colors">
+                  <div className="w-14 h-14 bg-surface-hover rounded-xl flex items-center justify-center text-gray-300 group-hover:bg-primary-500/20 group-hover:text-primary-400 transition-colors">
                     {option.icon}
                   </div>
                   <div className="flex-1">
@@ -139,7 +139,7 @@ export function Switcher() {
 
               <a
                 href={getAppUrl("/signup")}
-                className="mt-6 block w-full bg-primary-600 hover:bg-primary-700 text-white text-center py-4 rounded-xl font-semibold transition-colors"
+                className="mt-6 block w-full bg-primary-500 hover:bg-primary-400 text-surface-base text-center py-4 rounded-xl font-semibold transition-colors shadow-glow-sm shadow-primary-500/40"
               >
                 Get Started
               </a>

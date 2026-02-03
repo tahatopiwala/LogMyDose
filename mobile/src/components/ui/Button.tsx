@@ -32,14 +32,14 @@ export function Button({
 
   const variantClasses = {
     primary: "bg-primary-500",
-    secondary: "bg-gray-600",
+    secondary: "bg-surface-elevated",
     outline: "border-2 border-primary-500 bg-transparent",
     ghost: "bg-transparent",
   };
 
   const textColors = {
-    primary: "text-white",
-    secondary: "text-white",
+    primary: "text-surface-base",
+    secondary: "text-gray-100",
     outline: "text-primary-500",
     ghost: "text-primary-500",
   };
@@ -60,7 +60,7 @@ export function Button({
     >
       {loading ? (
         <ActivityIndicator
-          color={variant === "primary" || variant === "secondary" ? "#fff" : "#BE3455"}
+          color={variant === "primary" ? "#0D0D0D" : variant === "secondary" ? "#fff" : "#39FF14"}
         />
       ) : (
         <Text

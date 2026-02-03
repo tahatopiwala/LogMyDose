@@ -23,18 +23,18 @@ export function SubscriptionSection() {
   const getStatusDisplay = (status: string) => {
     switch (status.toLowerCase()) {
       case "active":
-        return { label: "Active", className: "bg-green-100 text-green-800" };
+        return { label: "Active", className: "bg-green-900/40 text-green-400" };
       case "trialing":
-        return { label: "Trial", className: "bg-blue-100 text-blue-800" };
+        return { label: "Trial", className: "bg-blue-900/40 text-blue-400" };
       case "past_due":
         return {
           label: "Past Due",
-          className: "bg-yellow-100 text-yellow-800",
+          className: "bg-amber-900/40 text-amber-400",
         };
       case "canceled":
-        return { label: "Canceled", className: "bg-gray-100 text-gray-800" };
+        return { label: "Canceled", className: "bg-surface-elevated text-gray-400" };
       default:
-        return { label: status, className: "bg-gray-100 text-gray-800" };
+        return { label: status, className: "bg-surface-elevated text-gray-400" };
     }
   };
 
@@ -42,20 +42,20 @@ export function SubscriptionSection() {
 
   return (
     <>
-      <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+      <div className="bg-surface-card rounded-xl p-5 border border-surface-border">
+        <h2 className="text-lg font-semibold text-gray-100 mb-4">
           Subscription
         </h2>
 
         <div className="space-y-4">
           {/* Current Plan */}
           <div>
-            <label className="block text-sm font-medium text-gray-500">
+            <label className="block text-sm font-medium text-gray-400">
               Current Plan
             </label>
             <div className="mt-1 flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <p className="text-gray-900 font-medium">
+                <p className="text-gray-100 font-medium">
                   {getTierDisplay(tier)}
                 </p>
                 <span
@@ -66,7 +66,7 @@ export function SubscriptionSection() {
               </div>
               <button
                 onClick={() => setIsManageOpen(true)}
-                className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+                className="text-sm text-primary-500 hover:text-primary-400 font-medium"
               >
                 Manage Subscription
               </button>
@@ -75,11 +75,11 @@ export function SubscriptionSection() {
 
           {/* Plan Features */}
           {tier.toLowerCase() === "free" && (
-            <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-sm text-gray-600 mb-2">
+            <div className="mt-4 p-4 bg-surface-elevated rounded-lg border border-surface-border">
+              <p className="text-sm text-gray-300 mb-2">
                 Upgrade to Pro for advanced features:
               </p>
-              <ul className="text-sm text-gray-600 space-y-1">
+              <ul className="text-sm text-gray-400 space-y-1">
                 <li className="flex items-center">
                   <svg
                     className="w-4 h-4 text-primary-500 mr-2"

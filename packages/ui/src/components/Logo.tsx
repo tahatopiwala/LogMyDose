@@ -21,17 +21,17 @@ export function Logo({ size = "md", showText = true, className }: LogoProps) {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <rect width="32" height="32" rx="8" className="fill-primary-600" />
-        <rect x="10" y="7" width="6" height="14" rx="1" fill="white" />
-        <rect x="11.5" y="4" width="3" height="4" rx="0.5" fill="white" />
-        <rect x="12" y="21" width="2" height="5" fill="white" />
-        <polygon points="13,26 11.5,28 14.5,28" fill="white" />
+        <rect width="32" height="32" rx="8" className="fill-primary-500" />
+        <rect x="10" y="7" width="6" height="14" rx="1" fill="#0D0D0D" />
+        <rect x="11.5" y="4" width="3" height="4" rx="0.5" fill="#0D0D0D" />
+        <rect x="12" y="21" width="2" height="5" fill="#0D0D0D" />
+        <polygon points="13,26 11.5,28 14.5,28" fill="#0D0D0D" />
         <line
           x1="10"
           y1="10"
           x2="12"
           y2="10"
-          className="stroke-primary-600"
+          className="stroke-primary-500"
           strokeWidth="0.75"
         />
         <line
@@ -39,7 +39,7 @@ export function Logo({ size = "md", showText = true, className }: LogoProps) {
           y1="13"
           x2="12"
           y2="13"
-          className="stroke-primary-600"
+          className="stroke-primary-500"
           strokeWidth="0.75"
         />
         <line
@@ -47,7 +47,7 @@ export function Logo({ size = "md", showText = true, className }: LogoProps) {
           y1="16"
           x2="12"
           y2="16"
-          className="stroke-primary-600"
+          className="stroke-primary-500"
           strokeWidth="0.75"
         />
         <path
@@ -56,7 +56,7 @@ export function Logo({ size = "md", showText = true, className }: LogoProps) {
         />
       </svg>
       {showText && (
-        <span className={cn("font-bold text-gray-900", sizes[size].text)}>
+        <span className={cn("font-bold text-gray-100", sizes[size].text)}>
           BioStak
         </span>
       )}

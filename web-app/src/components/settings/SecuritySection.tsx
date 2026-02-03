@@ -6,18 +6,18 @@ export function SecuritySection() {
 
   return (
     <>
-      <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Security</h2>
+      <div className="bg-surface-card rounded-xl p-5 border border-surface-border">
+        <h2 className="text-lg font-semibold text-gray-100 mb-4">Security</h2>
 
         <div>
-          <label className="block text-sm font-medium text-gray-500">
+          <label className="block text-sm font-medium text-gray-400">
             Password
           </label>
           <div className="mt-1 flex items-center justify-between">
-            <p className="text-gray-900">••••••••••••</p>
+            <p className="text-gray-100">••••••••••••</p>
             <button
               onClick={() => setIsChangePasswordOpen(true)}
-              className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+              className="text-sm text-primary-500 hover:text-primary-400 font-medium"
             >
               Change Password
             </button>

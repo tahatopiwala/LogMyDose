@@ -54,7 +54,7 @@ export function DeleteAccountModal({
     <Modal isOpen={isOpen} onClose={handleClose} title="Delete Account">
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Warning */}
-        <div className="p-4 rounded-lg bg-red-50 border border-red-200">
+        <div className="p-4 rounded-lg bg-red-900/30 border border-red-800">
           <div className="flex items-start">
             <svg
               className="w-5 h-5 text-red-500 mt-0.5"
@@ -70,10 +70,10 @@ export function DeleteAccountModal({
               />
             </svg>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">
+              <h3 className="text-sm font-medium text-red-400">
                 This action is irreversible
               </h3>
-              <div className="mt-2 text-sm text-red-700">
+              <div className="mt-2 text-sm text-red-400">
                 <p>Deleting your account will:</p>
                 <ul className="mt-1 list-disc list-inside space-y-1">
                   <li>Permanently delete all your data</li>
@@ -87,7 +87,7 @@ export function DeleteAccountModal({
         </div>
 
         {error && (
-          <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+          <div className="p-3 rounded-lg bg-red-900/30 border border-red-800 text-red-400 text-sm">
             {error}
           </div>
         )}
@@ -96,7 +96,7 @@ export function DeleteAccountModal({
         <div>
           <label
             htmlFor="deletePassword"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-medium text-gray-300"
           >
             Enter your password to confirm
           </label>
@@ -107,7 +107,7 @@ export function DeleteAccountModal({
             onChange={(e) => setPassword(e.target.value)}
             disabled={isSubmitting}
             required
-            className="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-red-500 focus:border-red-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+            className="mt-1 appearance-none block w-full px-3 py-2 border border-surface-border rounded-lg bg-surface-raised text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-red-500 focus:border-red-500 disabled:bg-surface-elevated disabled:cursor-not-allowed"
             placeholder="Enter your password"
           />
         </div>
@@ -121,11 +121,11 @@ export function DeleteAccountModal({
               checked={confirmChecked}
               onChange={(e) => setConfirmChecked(e.target.checked)}
               disabled={isSubmitting}
-              className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+              className="h-4 w-4 text-red-600 focus:ring-red-500 border-surface-border rounded"
             />
           </div>
           <div className="ml-3">
-            <label htmlFor="confirmDelete" className="text-sm text-gray-700">
+            <label htmlFor="confirmDelete" className="text-sm text-gray-300">
               I understand that this action cannot be undone and all my data
               will be permanently deleted.
             </label>
@@ -138,7 +138,7 @@ export function DeleteAccountModal({
             type="button"
             onClick={handleClose}
             disabled={isSubmitting}
-            className="flex-1 py-2 px-4 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 py-2 px-4 border border-surface-border rounded-lg text-sm font-medium text-gray-300 hover:bg-surface-elevated disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancel
           </button>

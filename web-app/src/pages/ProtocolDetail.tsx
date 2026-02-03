@@ -236,7 +236,7 @@ export function ProtocolDetail() {
   if (error || !protocol) {
     return (
       <div className="max-w-4xl mx-auto">
-        <div className="bg-red-50 border border-red-200 rounded-xl p-6">
+        <div className="bg-red-900/30 border border-red-800 rounded-xl p-6">
           <svg
             className="w-12 h-12 mx-auto text-red-400"
             fill="none"
@@ -253,11 +253,11 @@ export function ProtocolDetail() {
           <h3 className="mt-4 text-lg font-medium text-red-900 text-center">
             {error || "Protocol not found"}
           </h3>
-          <div className="mt-4 p-3 bg-white rounded border border-red-200">
-            <p className="text-sm text-gray-600">
+          <div className="mt-4 p-3 bg-surface-card rounded border border-red-800">
+            <p className="text-sm text-gray-400">
               <strong>Protocol ID:</strong> {id || "Not provided"}
             </p>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-sm text-gray-400 mt-1">
               <strong>Error:</strong> {error || "Protocol data is null"}
             </p>
           </div>
@@ -270,7 +270,7 @@ export function ProtocolDetail() {
             </Link>
             <button
               onClick={() => window.location.reload()}
-              className="inline-flex items-center px-4 py-2 border border-red-300 text-red-700 text-sm font-medium rounded-lg hover:bg-red-50 transition-colors"
+              className="inline-flex items-center px-4 py-2 border border-red-300 text-red-400 text-sm font-medium rounded-lg hover:bg-red-900/30 transition-colors"
             >
               Retry
             </button>
@@ -283,11 +283,11 @@ export function ProtocolDetail() {
   const stats = calculateProtocolStats(protocol, doses);
 
   const statusColors: Record<string, string> = {
-    active: "bg-green-100 text-green-700 border-green-200",
-    paused: "bg-yellow-100 text-yellow-700 border-yellow-200",
-    completed: "bg-gray-100 text-gray-700 border-gray-200",
-    draft: "bg-blue-100 text-blue-700 border-blue-200",
-    archived: "bg-slate-100 text-slate-600 border-slate-200",
+    active: "bg-green-900/40 text-green-400 border-green-800",
+    paused: "bg-amber-900/40 text-amber-400 border-amber-800",
+    completed: "bg-surface-elevated text-gray-300 border-surface-border",
+    draft: "bg-blue-900/40 text-blue-400 border-blue-800",
+    archived: "bg-slate-900/40 text-slate-400 border-slate-700",
   };
 
   return (
@@ -297,7 +297,7 @@ export function ProtocolDetail() {
         <div className="flex-1">
           <button
             onClick={() => navigate("/dashboard")}
-            className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-2 transition-colors"
+            className="inline-flex items-center text-sm text-gray-400 hover:text-gray-100 mb-2 transition-colors"
           >
             <svg
               className="w-4 h-4 mr-1"
@@ -315,7 +315,7 @@ export function ProtocolDetail() {
             Back to Dashboard
           </button>
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-3xl font-bold text-gray-100">
               {protocol.template?.name || "Custom Protocol"}
             </h1>
             <span
@@ -325,7 +325,7 @@ export function ProtocolDetail() {
             </span>
           </div>
           {protocol.startDate && (
-            <p className="mt-1 text-sm text-gray-600">
+            <p className="mt-1 text-sm text-gray-400">
               Started {formatDate(protocol.startDate)}
               {protocol.endDate && ` • Ends ${formatDate(protocol.endDate)}`}
             </p>
@@ -335,10 +335,10 @@ export function ProtocolDetail() {
 
       {/* Paused Protocol Banner */}
       {protocol.status === "paused" && (
-        <div className="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-4">
+        <div className="bg-amber-900/30 border border-amber-900/50 rounded-xl p-4">
           <div className="flex items-center gap-3">
             <svg
-              className="w-6 h-6 text-yellow-600 flex-shrink-0"
+              className="w-6 h-6 text-amber-400 flex-shrink-0"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -351,8 +351,8 @@ export function ProtocolDetail() {
               />
             </svg>
             <div>
-              <p className="font-medium text-yellow-800">Protocol Paused</p>
-              <p className="text-sm text-yellow-700">
+              <p className="font-medium text-amber-400">Protocol Paused</p>
+              <p className="text-sm text-amber-400">
                 This protocol is not active and won't appear in dose logging.
                 Resume it to continue tracking.
               </p>
@@ -363,10 +363,10 @@ export function ProtocolDetail() {
 
       {/* Archived Protocol Banner */}
       {protocol.status === "archived" && (
-        <div className="bg-slate-50 border-2 border-slate-200 rounded-xl p-4">
+        <div className="bg-slate-900/30 border border-slate-800/50 rounded-xl p-4">
           <div className="flex items-center gap-3">
             <svg
-              className="w-6 h-6 text-slate-500 flex-shrink-0"
+              className="w-6 h-6 text-slate-400 flex-shrink-0"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -379,8 +379,8 @@ export function ProtocolDetail() {
               />
             </svg>
             <div>
-              <p className="font-medium text-slate-700">Protocol Archived</p>
-              <p className="text-sm text-slate-600">
+              <p className="font-medium text-slate-300">Protocol Archived</p>
+              <p className="text-sm text-slate-400">
                 This protocol has been archived and won't appear in dose
                 logging. Your dose history has been preserved.
               </p>
@@ -392,10 +392,10 @@ export function ProtocolDetail() {
       {/* Glance View - Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Protocol Summary Card */}
-        <div className="bg-gradient-to-br from-indigo-50 to-indigo-100/50 rounded-xl p-5 border-2 border-indigo-200">
+        <div className="bg-indigo-900/30 rounded-xl p-5 border border-indigo-900/50">
           <div className="flex items-center gap-2 mb-3">
             <svg
-              className="w-5 h-5 text-indigo-600"
+              className="w-5 h-5 text-indigo-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -407,21 +407,21 @@ export function ProtocolDetail() {
                 d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
               />
             </svg>
-            <p className="text-sm font-semibold text-indigo-900">Summary</p>
+            <p className="text-sm font-semibold text-indigo-300">Summary</p>
           </div>
           <div className="space-y-2">
             {protocol.substances.map((ps, idx) => (
               <div key={ps.id} className="text-sm">
-                <p className="font-medium text-indigo-900">
+                <p className="font-medium text-indigo-200">
                   {ps.substance.name}
                 </p>
-                <p className="text-indigo-700">
+                <p className="text-indigo-400">
                   {ps.dose}
                   {ps.doseUnit || ps.substance.doseUnit || ""} •{" "}
                   {ps.frequency?.replace("_", " ") || "as needed"}
                 </p>
                 {idx < protocol.substances.length - 1 && (
-                  <div className="mt-2 border-t border-indigo-200"></div>
+                  <div className="mt-2 border-t border-indigo-700"></div>
                 )}
               </div>
             ))}
@@ -429,10 +429,10 @@ export function ProtocolDetail() {
         </div>
 
         {/* Consistency Card */}
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-xl p-5 border-2 border-blue-200">
+        <div className="bg-blue-900/30 rounded-xl p-5 border border-blue-900/50">
           <div className="flex items-center gap-2 mb-3">
             <svg
-              className="w-5 h-5 text-blue-600"
+              className="w-5 h-5 text-blue-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -444,36 +444,36 @@ export function ProtocolDetail() {
                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
               />
             </svg>
-            <p className="text-sm font-semibold text-blue-900">Consistency</p>
+            <p className="text-sm font-semibold text-blue-300">Consistency</p>
           </div>
           <div className="flex items-baseline gap-2">
-            <p className="text-4xl font-bold text-blue-900">
+            <p className="text-4xl font-bold text-blue-200">
               {stats.adherenceRate}%
             </p>
           </div>
           {stats.totalDoses > 0 && (
             <div className="mt-3">
-              <p className="text-sm text-blue-700 mb-2">
+              <p className="text-sm text-blue-400 mb-2">
                 {stats.takenDoses} of {stats.totalDoses} doses logged
               </p>
-              <div className="w-full bg-blue-200 rounded-full h-2">
+              <div className="w-full bg-blue-900 rounded-full h-2">
                 <div
-                  className="bg-blue-600 h-2 rounded-full transition-all"
+                  className="bg-blue-500 h-2 rounded-full transition-all"
                   style={{ width: `${stats.adherenceRate}%` }}
                 ></div>
               </div>
             </div>
           )}
           {stats.totalDoses === 0 && (
-            <p className="mt-2 text-sm text-blue-600">No doses logged yet</p>
+            <p className="mt-2 text-sm text-blue-400">No doses logged yet</p>
           )}
         </div>
 
         {/* Next Dose Card */}
-        <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-xl p-5 border-2 border-purple-200">
+        <div className="bg-purple-900/30 rounded-xl p-5 border border-purple-900/50">
           <div className="flex items-center gap-2 mb-3">
             <svg
-              className="w-5 h-5 text-purple-600"
+              className="w-5 h-5 text-purple-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -485,27 +485,27 @@ export function ProtocolDetail() {
                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <p className="text-sm font-semibold text-purple-900">Next Dose</p>
+            <p className="text-sm font-semibold text-purple-300">Next Dose</p>
           </div>
           {stats.nextDoseTime ? (
             <>
               <div className="flex items-baseline gap-2">
-                <p className="text-4xl font-bold text-purple-900">
+                <p className="text-4xl font-bold text-purple-200">
                   {stats.nextDoseTime}
                 </p>
               </div>
               {stats.nextDoseSubstance && (
-                <p className="mt-2 text-sm text-purple-700">
+                <p className="mt-2 text-sm text-purple-400">
                   {stats.nextDoseSubstance}
                 </p>
               )}
             </>
           ) : (
             <div className="mt-2">
-              <p className="text-lg font-semibold text-purple-400">
+              <p className="text-lg font-semibold text-purple-300">
                 Not scheduled
               </p>
-              <p className="mt-1 text-sm text-purple-600">
+              <p className="mt-1 text-sm text-purple-400">
                 Log a dose to track your schedule
               </p>
             </div>
@@ -514,18 +514,18 @@ export function ProtocolDetail() {
       </div>
 
       {/* Substances Detail */}
-      <div className="bg-white rounded-xl border-2 border-gray-200 overflow-hidden">
-        <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">
+      <div className="bg-surface-card rounded-xl border border-surface-border overflow-hidden">
+        <div className="bg-surface-elevated px-6 py-4 border-b border-surface-border">
+          <h2 className="text-lg font-semibold text-gray-100">
             Protocol Substances
           </h2>
         </div>
-        <div className="divide-y divide-gray-200">
+        <div className="divide-y divide-surface-border">
           {protocol.substances.map((ps) => (
             <div key={ps.id} className="p-6">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h3 className="text-lg font-medium text-gray-900">
+                  <h3 className="text-lg font-medium text-gray-100">
                     {ps.substance.name}
                   </h3>
                   <div className="mt-3 grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -533,7 +533,7 @@ export function ProtocolDetail() {
                       <p className="text-xs font-medium text-gray-500 uppercase">
                         Dose
                       </p>
-                      <p className="mt-1 text-sm text-gray-900">
+                      <p className="mt-1 text-sm text-gray-100">
                         {ps.dose} {ps.doseUnit || ps.substance.doseUnit || ""}
                       </p>
                     </div>
@@ -541,7 +541,7 @@ export function ProtocolDetail() {
                       <p className="text-xs font-medium text-gray-500 uppercase">
                         Frequency
                       </p>
-                      <p className="mt-1 text-sm text-gray-900">
+                      <p className="mt-1 text-sm text-gray-100">
                         {ps.frequency?.replace("_", " ") || "as needed"}
                       </p>
                     </div>
@@ -550,7 +550,7 @@ export function ProtocolDetail() {
                         <p className="text-xs font-medium text-gray-500 uppercase">
                           Cycling
                         </p>
-                        <p className="mt-1 text-sm text-gray-900">
+                        <p className="mt-1 text-sm text-gray-100">
                           {ps.cycleOnWeeks}w on / {ps.cycleOffWeeks || 0}w off
                         </p>
                       </div>
@@ -560,15 +560,15 @@ export function ProtocolDetail() {
                         <p className="text-xs font-medium text-gray-500 uppercase">
                           Route
                         </p>
-                        <p className="mt-1 text-sm text-gray-900">
+                        <p className="mt-1 text-sm text-gray-100">
                           {ps.substance.administrationRoute}
                         </p>
                       </div>
                     )}
                   </div>
                   {ps.notes && (
-                    <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                      <p className="text-sm text-gray-700">{ps.notes}</p>
+                    <div className="mt-4 p-3 bg-surface-elevated rounded-lg">
+                      <p className="text-sm text-gray-300">{ps.notes}</p>
                     </div>
                   )}
                 </div>
@@ -590,9 +590,9 @@ export function ProtocolDetail() {
           );
 
         const statusStyles = {
-          taken: "bg-green-100 text-green-700",
-          missed: "bg-red-100 text-red-700",
-          skipped: "bg-gray-100 text-gray-600",
+          taken: "bg-green-900/40 text-green-400",
+          missed: "bg-red-900/40 text-red-400",
+          skipped: "bg-surface-elevated text-gray-400",
         };
 
         const formatDoseDate = (dateStr: string) => {
@@ -618,9 +618,9 @@ export function ProtocolDetail() {
         };
 
         return (
-          <div className="bg-white rounded-xl border-2 border-gray-200 overflow-hidden">
-            <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">
+          <div className="bg-surface-card rounded-xl border border-surface-border overflow-hidden">
+            <div className="bg-surface-elevated px-6 py-4 border-b border-surface-border">
+              <h2 className="text-lg font-semibold text-gray-100">
                 Dose History
               </h2>
               <p className="text-sm text-gray-500 mt-1">
@@ -629,16 +629,16 @@ export function ProtocolDetail() {
               </p>
             </div>
             {protocolDoses.length > 0 ? (
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-surface-border">
                 {protocolDoses.map((dose) => (
                   <div
                     key={dose.id}
-                    className="px-6 py-4 hover:bg-gray-50 transition-colors"
+                    className="px-6 py-4 hover:bg-surface-elevated transition-colors"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3">
-                          <h4 className="text-sm font-medium text-gray-900 truncate">
+                          <h4 className="text-sm font-medium text-gray-100 truncate">
                             {dose.substance.name}
                           </h4>
                           <span
@@ -677,7 +677,7 @@ export function ProtocolDetail() {
                           )}
                         </div>
                         {dose.notes && (
-                          <p className="mt-2 text-sm text-gray-600 italic">
+                          <p className="mt-2 text-sm text-gray-400 italic">
                             "{dose.notes}"
                           </p>
                         )}
@@ -706,7 +706,7 @@ export function ProtocolDetail() {
                     d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
                   />
                 </svg>
-                <p className="mt-4 text-sm font-medium text-gray-900">
+                <p className="mt-4 text-sm font-medium text-gray-100">
                   No doses logged yet
                 </p>
                 <p className="mt-1 text-sm text-gray-500">
@@ -715,7 +715,7 @@ export function ProtocolDetail() {
                 {protocol.status === "active" && (
                   <Link
                     to="/log"
-                    className="mt-4 inline-flex items-center px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors"
+                    className="mt-4 inline-flex items-center px-4 py-2 bg-primary-500 text-white text-sm font-medium rounded-lg hover:bg-primary-400 transition-colors"
                   >
                     Log Your First Dose
                   </Link>
@@ -728,25 +728,25 @@ export function ProtocolDetail() {
 
       {/* Protocol Notes */}
       {protocol.notes && (
-        <div className="bg-white rounded-xl border-2 border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-3">
+        <div className="bg-surface-card rounded-xl border border-surface-border p-6">
+          <h2 className="text-lg font-semibold text-gray-100 mb-3">
             Protocol Notes
           </h2>
-          <p className="text-sm text-gray-700 leading-relaxed">
+          <p className="text-sm text-gray-300 leading-relaxed">
             {protocol.notes}
           </p>
         </div>
       )}
 
       {/* Action Buttons */}
-      <div className="flex gap-3">
+      <div className="flex gap-2">
         {protocol.status === "active" && (
           <Link
             to="/log"
-            className="flex-1 inline-flex items-center justify-center px-6 py-3 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 transition-colors shadow-sm"
+            className="inline-flex items-center justify-center px-4 py-2 text-sm bg-primary-500 text-surface-base font-medium rounded-lg hover:bg-primary-400 transition-colors shadow-sm"
           >
             <svg
-              className="w-5 h-5 mr-2"
+              className="w-4 h-4 mr-1.5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -765,24 +765,24 @@ export function ProtocolDetail() {
           <button
             onClick={handlePauseProtocol}
             disabled={updateProtocol.isPending}
-            className="px-6 py-3 border-2 border-yellow-400 text-yellow-700 font-medium rounded-xl hover:bg-yellow-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 text-sm border border-amber-700 text-amber-400 font-medium rounded-lg hover:bg-amber-900/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {updateProtocol.isPending ? "Pausing..." : "Pause Protocol"}
+            {updateProtocol.isPending ? "Pausing..." : "Pause"}
           </button>
         )}
         {protocol.status === "paused" && (
           <button
             onClick={handleResumeProtocol}
             disabled={updateProtocol.isPending}
-            className="flex-1 px-6 py-3 bg-green-600 text-white font-medium rounded-xl hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 text-sm bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {updateProtocol.isPending ? "Resuming..." : "Resume Protocol"}
+            {updateProtocol.isPending ? "Resuming..." : "Resume"}
           </button>
         )}
         {(protocol.status === "active" || protocol.status === "paused") && (
           <button
             onClick={() => setShowArchiveModal(true)}
-            className="px-6 py-3 border-2 border-slate-300 text-slate-600 font-medium rounded-xl hover:bg-slate-50 transition-colors"
+            className="px-4 py-2 text-sm border border-slate-600 text-slate-400 font-medium rounded-lg hover:bg-slate-900/30 transition-colors"
           >
             Archive
           </button>

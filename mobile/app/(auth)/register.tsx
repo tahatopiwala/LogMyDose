@@ -67,7 +67,7 @@ export default function RegisterScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-surface-base">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
@@ -90,18 +90,18 @@ export default function RegisterScreen() {
 
             {/* Welcome Text */}
             <View className="mb-6">
-              <Text className="text-2xl font-bold text-gray-900">
+              <Text className="text-2xl font-bold text-gray-100">
                 Create your account
               </Text>
-              <Text className="text-gray-600 mt-1">
+              <Text className="text-gray-400 mt-1">
                 Start tracking your peptide therapy journey
               </Text>
             </View>
 
             {/* Error Message */}
             {error ? (
-              <View className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                <Text className="text-red-800 text-sm">{error}</Text>
+              <View className="bg-red-900/30 border border-red-800 rounded-lg p-4 mb-6">
+                <Text className="text-red-400 text-sm">{error}</Text>
               </View>
             ) : null}
 
@@ -159,7 +159,7 @@ export default function RegisterScreen() {
                 textContentType="newPassword"
               />
 
-              <Text className="text-gray-500 text-xs mb-4">
+              <Text className="text-gray-400 text-xs mb-4">
                 Password must be at least 12 characters with 1 uppercase letter
                 and 1 special character.
               </Text>
@@ -171,7 +171,7 @@ export default function RegisterScreen() {
 
             {/* Login Link */}
             <View className="flex-row justify-center mt-8">
-              <Text className="text-gray-600">Already have an account? </Text>
+              <Text className="text-gray-400">Already have an account? </Text>
               <Link href="/(auth)/login" asChild>
                 <TouchableOpacity>
                   <Text className="text-primary-500 font-semibold">Sign in</Text>

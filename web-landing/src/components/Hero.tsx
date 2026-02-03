@@ -13,36 +13,36 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-50 text-primary-700 text-sm font-medium mb-6">
-              <span className="w-2 h-2 bg-primary-500 rounded-full animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-500/20 text-primary-400 border border-primary-500/30 text-sm font-medium mb-6">
+              <span className="w-2 h-2 bg-primary-500 rounded-full animate-pulse shadow-glow-sm shadow-primary-500/50" />
               The Biohacker's Health Tracking Tool
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-100 leading-tight">
               Take control of your{" "}
-              <span className="text-primary-600">health protocol</span>
+              <span className="text-primary-500">health protocol</span>
             </h1>
-            <p className="mt-6 text-xl text-gray-600">
+            <p className="mt-6 text-xl text-gray-400">
               Track your doses, see your patterns, and stay organized. Whether
               it's GLP-1s, peptides, HRT, or supplements—your data in one place,
               ready to share with your doctor.
             </p>
 
             {/* What we are */}
-            <div className="mt-6 flex flex-wrap gap-3 text-sm text-gray-500">
+            <div className="mt-6 flex flex-wrap gap-3 text-sm text-gray-400">
               <span className="flex items-center gap-1.5">
-                <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Simple tracking
               </span>
               <span className="flex items-center gap-1.5">
-                <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Your data, organized
               </span>
               <span className="flex items-center gap-1.5">
-                <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Share with your provider
@@ -52,13 +52,13 @@ export function Hero() {
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
               <a
                 href={getAppUrl("/signup")}
-                className="bg-primary-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-primary-700 transition-colors shadow-lg shadow-primary-600/25 text-center"
+                className="bg-primary-500 text-surface-base px-8 py-4 rounded-xl text-lg font-semibold hover:bg-primary-400 transition-colors shadow-glow shadow-primary-500/40 text-center"
               >
                 Get Started Free
               </a>
               <a
                 href="/#how-it-works"
-                className="bg-white text-gray-900 px-8 py-4 rounded-xl text-lg font-semibold border border-gray-200 hover:border-gray-300 transition-colors text-center"
+                className="bg-surface-card text-gray-100 px-8 py-4 rounded-xl text-lg font-semibold border border-surface-border hover:bg-surface-hover transition-colors text-center"
               >
                 See How It Works
               </a>
@@ -90,7 +90,7 @@ export function Hero() {
               </a>
             </div>
 
-            <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-gray-500">
+            <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-gray-400">
               <span className="flex items-center gap-1.5">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -115,44 +115,44 @@ export function Hero() {
           >
             {/* Background decorations */}
             <div
-              className="absolute inset-0 opacity-[0.08]"
+              className="absolute inset-0 opacity-[0.15]"
               style={{
                 backgroundImage:
-                  "radial-gradient(circle, #BE3455 1px, transparent 1px)",
+                  "radial-gradient(circle, #39FF14 1px, transparent 1px)",
                 backgroundSize: "24px 24px",
               }}
             />
-            <div className="absolute w-[400px] h-[400px] bg-gradient-to-br from-primary-200/40 to-primary-100/30 rounded-full blur-3xl -top-10 -right-10" />
-            <div className="absolute w-[300px] h-[300px] bg-gradient-to-tr from-emerald-200/40 to-teal-100/30 rounded-full blur-3xl bottom-10 right-20" />
+            <div className="absolute w-[400px] h-[400px] bg-gradient-to-br from-primary-500/10 to-primary-400/5 rounded-full blur-3xl -top-10 -right-10" />
+            <div className="absolute w-[300px] h-[300px] bg-gradient-to-tr from-primary-500/10 to-emerald-500/5 rounded-full blur-3xl bottom-10 right-20" />
 
             {/* Phone Mockup */}
             <div className="relative z-10 transform lg:rotate-2">
-              <div className="relative bg-gray-900 rounded-[3rem] p-3 shadow-2xl shadow-gray-400/30">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-7 bg-gray-900 rounded-b-2xl z-10" />
-                <div className="bg-gray-50 rounded-[2.25rem] w-72 sm:w-80 h-[620px] overflow-hidden">
+              <div className="relative bg-surface-elevated rounded-[3rem] p-3 shadow-2xl shadow-black/50 border border-surface-border">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-7 bg-surface-elevated rounded-b-2xl z-10" />
+                <div className="bg-surface-card rounded-[2.25rem] w-72 sm:w-80 h-[620px] overflow-hidden">
                   {/* Status Bar */}
-                  <div className="bg-white px-6 pt-8 pb-2 flex justify-between items-center text-xs text-gray-600">
+                  <div className="bg-surface-raised px-6 pt-8 pb-2 flex justify-between items-center text-xs text-gray-400">
                     <span className="font-medium">9:41</span>
                     <div className="flex items-center gap-1">
-                      <div className="w-4 h-2.5 rounded-sm border border-gray-400 relative">
-                        <div className="absolute inset-0.5 right-1 bg-gray-400 rounded-sm" />
+                      <div className="w-4 h-2.5 rounded-sm border border-gray-500 relative">
+                        <div className="absolute inset-0.5 right-1 bg-primary-500 rounded-sm" />
                       </div>
                     </div>
                   </div>
 
                   {/* App Header */}
-                  <div className="bg-white px-5 pb-4 border-b border-gray-100">
+                  <div className="bg-surface-raised px-5 pb-4 border-b border-surface-border">
                     <div className="flex items-center justify-between">
                       <div>
-                        <h2 className="text-lg font-bold text-gray-900">
+                        <h2 className="text-lg font-bold text-gray-100">
                           Your Journal
                         </h2>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-400">
                           Week 4 on Semaglutide
                         </p>
                       </div>
-                      <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
-                        <span className="text-sm font-semibold text-primary-600">
+                      <div className="w-10 h-10 rounded-full bg-primary-500/20 flex items-center justify-center">
+                        <span className="text-sm font-semibold text-primary-400">
                           JM
                         </span>
                       </div>
@@ -162,21 +162,21 @@ export function Hero() {
                   {/* Cards */}
                   <div className="px-4 py-4 space-y-3">
                     {/* Pattern Card */}
-                    <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                    <div className="bg-surface-elevated rounded-2xl p-4 border border-surface-border">
                       <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                          <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="w-10 h-10 rounded-xl bg-emerald-900/40 flex items-center justify-center flex-shrink-0">
+                          <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                           </svg>
                         </div>
                         <div>
-                          <div className="text-xs font-medium text-emerald-600 uppercase tracking-wide">
+                          <div className="text-xs font-medium text-emerald-400 uppercase tracking-wide">
                             Your Pattern
                           </div>
-                          <p className="text-sm text-gray-900 mt-1 font-medium">
+                          <p className="text-sm text-gray-100 mt-1 font-medium">
                             You logged less nausea on days with evening doses
                           </p>
-                          <p className="text-xs text-gray-500 mt-1">
+                          <p className="text-xs text-gray-400 mt-1">
                             Based on your last 14 entries
                           </p>
                         </div>
@@ -184,21 +184,21 @@ export function Hero() {
                     </div>
 
                     {/* Note Card */}
-                    <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-4 border border-amber-100">
+                    <div className="bg-gradient-to-r from-amber-900/20 to-orange-900/20 rounded-2xl p-4 border border-amber-800/30">
                       <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
-                          <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="w-10 h-10 rounded-xl bg-amber-900/40 flex items-center justify-center flex-shrink-0">
+                          <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                           </svg>
                         </div>
                         <div>
-                          <div className="text-xs font-medium text-amber-700 uppercase tracking-wide">
+                          <div className="text-xs font-medium text-amber-400 uppercase tracking-wide">
                             Your Note
                           </div>
-                          <p className="text-sm text-gray-900 mt-1 font-medium">
+                          <p className="text-sm text-gray-100 mt-1 font-medium">
                             You've logged fatigue 3 times this week
                           </p>
-                          <p className="text-xs text-gray-600 mt-1">
+                          <p className="text-xs text-gray-400 mt-1">
                             Something to share at your next appointment
                           </p>
                         </div>
@@ -206,21 +206,21 @@ export function Hero() {
                     </div>
 
                     {/* Progress Card */}
-                    <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                    <div className="bg-surface-elevated rounded-2xl p-4 border border-surface-border">
                       <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-primary-100 flex items-center justify-center flex-shrink-0">
-                          <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="w-10 h-10 rounded-xl bg-primary-500/20 flex items-center justify-center flex-shrink-0">
+                          <svg className="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                         </div>
                         <div>
-                          <div className="text-xs font-medium text-primary-600 uppercase tracking-wide">
+                          <div className="text-xs font-medium text-primary-400 uppercase tracking-wide">
                             Your Progress
                           </div>
-                          <p className="text-sm text-gray-900 mt-1 font-medium">
+                          <p className="text-sm text-gray-100 mt-1 font-medium">
                             Week 4 complete. 12 doses logged this month.
                           </p>
-                          <p className="text-xs text-gray-500 mt-1">
+                          <p className="text-xs text-gray-400 mt-1">
                             Great consistency!
                           </p>
                         </div>
@@ -228,7 +228,7 @@ export function Hero() {
                     </div>
 
                     {/* Quick Log Button */}
-                    <button className="w-full bg-primary-600 text-white rounded-2xl py-3.5 font-semibold text-sm shadow-lg shadow-primary-600/25 flex items-center justify-center gap-2">
+                    <button className="w-full bg-primary-500 text-surface-base rounded-2xl py-3.5 font-semibold text-sm shadow-glow shadow-primary-500/40 flex items-center justify-center gap-2">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                       </svg>

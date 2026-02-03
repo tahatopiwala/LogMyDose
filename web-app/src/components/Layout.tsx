@@ -31,9 +31,9 @@ export function Layout({ children }: LayoutProps) {
   };
 
   return (
-    <div className="bg-gray-50">
+    <div className="bg-surface-base">
       {/* Header with horizontal navigation */}
-      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100">
+      <header className="sticky top-0 z-40 bg-surface-card/90 backdrop-blur-md border-b border-surface-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
@@ -48,25 +48,25 @@ export function Layout({ children }: LayoutProps) {
                   width="32"
                   height="32"
                   rx="8"
-                  className="fill-primary-600"
+                  className="fill-primary-500"
                 />
-                <rect x="10" y="7" width="6" height="14" rx="1" fill="white" />
+                <rect x="10" y="7" width="6" height="14" rx="1" fill="#0D0D0D" />
                 <rect
                   x="11.5"
                   y="4"
                   width="3"
                   height="4"
                   rx="0.5"
-                  fill="white"
+                  fill="#0D0D0D"
                 />
-                <rect x="12" y="21" width="2" height="5" fill="white" />
-                <polygon points="13,26 11.5,28 14.5,28" fill="white" />
+                <rect x="12" y="21" width="2" height="5" fill="#0D0D0D" />
+                <polygon points="13,26 11.5,28 14.5,28" fill="#0D0D0D" />
                 <line
                   x1="10"
                   y1="10"
                   x2="12"
                   y2="10"
-                  className="stroke-primary-600"
+                  className="stroke-primary-500"
                   strokeWidth="0.75"
                 />
                 <line
@@ -74,7 +74,7 @@ export function Layout({ children }: LayoutProps) {
                   y1="13"
                   x2="12"
                   y2="13"
-                  className="stroke-primary-600"
+                  className="stroke-primary-500"
                   strokeWidth="0.75"
                 />
                 <line
@@ -82,15 +82,15 @@ export function Layout({ children }: LayoutProps) {
                   y1="16"
                   x2="12"
                   y2="16"
-                  className="stroke-primary-600"
+                  className="stroke-primary-500"
                   strokeWidth="0.75"
                 />
                 <path
                   d="M22 14 C22 14 19 18 19 20.5 C19 22.5 20.3 24 22 24 C23.7 24 25 22.5 25 20.5 C25 18 22 14 22 14 Z"
-                  fill="white"
+                  fill="#0D0D0D"
                 />
               </svg>
-              <span className="text-xl font-bold text-gray-900 hidden sm:block">
+              <span className="text-xl font-bold text-gray-100 hidden sm:block">
                 BioStak
               </span>
             </Link>
@@ -103,8 +103,8 @@ export function Layout({ children }: LayoutProps) {
                   to={item.href}
                   className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                     location.pathname === item.href
-                      ? "bg-primary-50 text-primary-700"
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                      ? "bg-primary-500/20 text-primary-400"
+                      : "text-gray-400 hover:text-gray-100 hover:bg-surface-hover"
                   }`}
                 >
                   {item.name}
@@ -115,7 +115,7 @@ export function Layout({ children }: LayoutProps) {
             {/* Right side actions */}
             <div className="flex items-center space-x-3">
               {/* Notification button */}
-              <button className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg">
+              <button className="p-2 text-gray-400 hover:text-gray-200 hover:bg-surface-hover rounded-lg">
                 <svg
                   className="w-5 h-5"
                   fill="none"
@@ -133,14 +133,14 @@ export function Layout({ children }: LayoutProps) {
 
               {/* User avatar with dropdown */}
               <div className="hidden md:flex items-center space-x-3">
-                <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
-                  <span className="text-primary-700 font-medium text-sm">
+                <div className="w-8 h-8 bg-primary-500/20 rounded-full flex items-center justify-center">
+                  <span className="text-primary-400 font-medium text-sm">
                     {initials}
                   </span>
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="text-sm text-gray-600 hover:text-gray-900"
+                  className="text-sm text-gray-400 hover:text-gray-100"
                 >
                   Sign Out
                 </button>
@@ -148,7 +148,7 @@ export function Layout({ children }: LayoutProps) {
 
               {/* Mobile menu button */}
               <button
-                className="p-2 md:hidden text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg"
+                className="p-2 md:hidden text-gray-400 hover:text-gray-200 hover:bg-surface-hover rounded-lg"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               >
                 {mobileMenuOpen ? (
@@ -187,7 +187,7 @@ export function Layout({ children }: LayoutProps) {
 
         {/* Mobile navigation menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-100 bg-white/80 backdrop-blur-md">
+          <div className="md:hidden border-t border-surface-border bg-surface-card/90 backdrop-blur-md">
             <nav className="px-4 py-3 space-y-1">
               {navigation.map((item) => (
                 <Link
@@ -196,27 +196,27 @@ export function Layout({ children }: LayoutProps) {
                   onClick={() => setMobileMenuOpen(false)}
                   className={`block px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                     location.pathname === item.href
-                      ? "bg-primary-50 text-primary-700"
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                      ? "bg-primary-500/20 text-primary-400"
+                      : "text-gray-400 hover:text-gray-100 hover:bg-surface-hover"
                   }`}
                 >
                   {item.name}
                 </Link>
               ))}
-              <div className="pt-3 mt-3 border-t border-gray-200">
+              <div className="pt-3 mt-3 border-t border-surface-border">
                 <div className="flex items-center px-3 py-2">
-                  <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
-                    <span className="text-primary-700 font-medium text-sm">
+                  <div className="w-8 h-8 bg-primary-500/20 rounded-full flex items-center justify-center">
+                    <span className="text-primary-400 font-medium text-sm">
                       {initials}
                     </span>
                   </div>
-                  <span className="ml-3 text-sm text-gray-700">
+                  <span className="ml-3 text-sm text-gray-300">
                     {patient?.email}
                   </span>
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
+                  className="w-full text-left px-3 py-2 text-sm text-gray-400 hover:text-gray-100 hover:bg-surface-hover rounded-lg"
                 >
                   Sign Out
                 </button>

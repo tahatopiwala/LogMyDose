@@ -144,7 +144,7 @@ export function Dashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-pulse text-gray-500">Loading...</div>
+        <div className="animate-pulse text-gray-400">Loading...</div>
       </div>
     );
   }
@@ -152,18 +152,18 @@ export function Dashboard() {
   return (
     <div className="space-y-8">
       {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl p-6 text-white">
-        <h1 className="text-2xl font-bold">
+      <div className="bg-gradient-to-r from-primary-500/20 to-primary-400/10 border border-primary-500/30 rounded-2xl p-6">
+        <h1 className="text-2xl font-bold text-gray-100">
           {getGreeting()}, {firstName}!
         </h1>
-        <p className="mt-1 text-primary-100">{upbeatMessage}</p>
+        <p className="mt-1 text-primary-400">{upbeatMessage}</p>
       </div>
 
       {/* Quick Actions */}
       <div className="flex flex-wrap gap-3">
         <Link
           to="/log"
-          className="inline-flex items-center px-4 py-2.5 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 transition-colors shadow-sm"
+          className="inline-flex items-center px-4 py-2.5 bg-primary-500 text-surface-base font-medium rounded-xl hover:bg-primary-400 transition-colors shadow-glow-sm shadow-primary-500/25"
         >
           <svg
             className="w-5 h-5 mr-2"
@@ -182,7 +182,7 @@ export function Dashboard() {
         </Link>
         <Link
           to="/protocols/new"
-          className="inline-flex items-center px-4 py-2.5 bg-white text-primary-600 font-medium rounded-xl hover:bg-primary-50 transition-colors shadow-sm border border-gray-200"
+          className="inline-flex items-center px-4 py-2.5 bg-surface-card text-primary-500 font-medium rounded-xl hover:bg-surface-hover transition-colors shadow-sm border border-surface-border"
         >
           <svg
             className="w-5 h-5 mr-2"
@@ -204,28 +204,28 @@ export function Dashboard() {
       {/* Quick Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Next Dose Card */}
-        <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+        <div className="bg-surface-card rounded-xl p-5 border border-surface-border shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-500">Next Dose</p>
+              <p className="text-sm font-medium text-gray-400">Next Dose</p>
               {nextDose ? (
                 <>
-                  <p className="text-xl font-bold text-gray-900 mt-1">
+                  <p className="text-xl font-bold text-gray-100 mt-1">
                     {nextDose.substance.name}
                   </p>
-                  <p className="text-sm text-primary-600 mt-0.5">
+                  <p className="text-sm text-primary-500 mt-0.5">
                     {nextDoseTime}
                   </p>
                 </>
               ) : (
-                <p className="text-lg font-semibold text-gray-400 mt-1">
+                <p className="text-lg font-semibold text-gray-500 mt-1">
                   No doses scheduled
                 </p>
               )}
             </div>
-            <div className="p-3 bg-primary-50 rounded-lg">
+            <div className="p-3 bg-primary-500/20 rounded-lg">
               <svg
-                className="w-6 h-6 text-primary-600"
+                className="w-6 h-6 text-primary-500"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -242,20 +242,20 @@ export function Dashboard() {
         </div>
 
         {/* Today's Progress Card */}
-        <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+        <div className="bg-surface-card rounded-xl p-5 border border-surface-border shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-500">Today</p>
-              <p className="text-xl font-bold text-gray-900 mt-1">
+              <p className="text-sm font-medium text-gray-400">Today</p>
+              <p className="text-xl font-bold text-gray-100 mt-1">
                 {totalDosesToday > 0
                   ? `${dosesCompletedToday}/${totalDosesToday}`
                   : "0"}
-                <span className="text-base font-normal text-gray-500 ml-1">
+                <span className="text-base font-normal text-gray-400 ml-1">
                   doses
                 </span>
               </p>
               {totalDosesToday > 0 && (
-                <div className="w-full bg-gray-200 rounded-full h-1.5 mt-2">
+                <div className="w-full bg-surface-elevated rounded-full h-1.5 mt-2">
                   <div
                     className="bg-green-500 h-1.5 rounded-full transition-all"
                     style={{
@@ -265,9 +265,9 @@ export function Dashboard() {
                 </div>
               )}
             </div>
-            <div className="p-3 bg-green-50 rounded-lg">
+            <div className="p-3 bg-green-900/30 rounded-lg">
               <svg
-                className="w-6 h-6 text-green-600"
+                className="w-6 h-6 text-green-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -284,25 +284,25 @@ export function Dashboard() {
         </div>
 
         {/* Weekly Progress Card */}
-        <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+        <div className="bg-surface-card rounded-xl p-5 border border-surface-border shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-500">This Week</p>
-              <p className="text-xl font-bold text-gray-900 mt-1">
+              <p className="text-sm font-medium text-gray-400">This Week</p>
+              <p className="text-xl font-bold text-gray-100 mt-1">
                 {weekStats ? `${Math.round(weekStats.adherenceRate)}%` : "-%"}
-                <span className="text-base font-normal text-gray-500 ml-1">
+                <span className="text-base font-normal text-gray-400 ml-1">
                   adherence
                 </span>
               </p>
               {weekStats && (
-                <p className="text-sm text-gray-500 mt-0.5">
+                <p className="text-sm text-gray-400 mt-0.5">
                   {weekStats.takenDoses} of {weekStats.totalDoses} doses
                 </p>
               )}
             </div>
-            <div className="p-3 bg-blue-50 rounded-lg">
+            <div className="p-3 bg-blue-900/30 rounded-lg">
               <svg
-                className="w-6 h-6 text-blue-600"
+                className="w-6 h-6 text-blue-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -321,7 +321,7 @@ export function Dashboard() {
 
       {/* Active Protocols */}
       <div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+        <h2 className="text-lg font-semibold text-gray-100 mb-4">
           Active Protocols
         </h2>
 
@@ -344,9 +344,9 @@ export function Dashboard() {
                 ))}
               </div>
             ) : (
-              <div className="bg-gray-50 rounded-xl p-8 text-center border border-dashed border-gray-300">
+              <div className="bg-surface-raised rounded-xl p-8 text-center border border-dashed border-surface-border">
                 <svg
-                  className="w-12 h-12 mx-auto text-gray-400"
+                  className="w-12 h-12 mx-auto text-gray-500"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -358,15 +358,15 @@ export function Dashboard() {
                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                   />
                 </svg>
-                <h3 className="mt-4 text-base font-medium text-gray-900">
+                <h3 className="mt-4 text-base font-medium text-gray-100">
                   No protocols found
                 </h3>
-                <p className="mt-1 text-sm text-gray-500">
+                <p className="mt-1 text-sm text-gray-400">
                   Try adjusting your search terms
                 </p>
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="mt-4 inline-flex items-center px-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-700 hover:bg-primary-50 rounded-lg transition-colors"
+                  className="mt-4 inline-flex items-center px-4 py-2 text-sm font-medium text-primary-500 hover:text-primary-400 hover:bg-primary-500/20 rounded-lg transition-colors"
                 >
                   Clear search
                 </button>
@@ -374,9 +374,9 @@ export function Dashboard() {
             )}
           </>
         ) : (
-          <div className="bg-gray-50 rounded-xl p-8 text-center border border-dashed border-gray-300">
+          <div className="bg-surface-raised rounded-xl p-8 text-center border border-dashed border-surface-border">
             <svg
-              className="w-12 h-12 mx-auto text-gray-400"
+              className="w-12 h-12 mx-auto text-gray-500"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -388,15 +388,15 @@ export function Dashboard() {
                 d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
               />
             </svg>
-            <h3 className="mt-4 text-base font-medium text-gray-900">
+            <h3 className="mt-4 text-base font-medium text-gray-100">
               No active protocols
             </h3>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-gray-400">
               Start your journey by adding a protocol from our template library.
             </p>
             <Link
               to="/protocols/new"
-              className="mt-4 inline-flex items-center px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors"
+              className="mt-4 inline-flex items-center px-4 py-2 bg-primary-500 text-surface-base text-sm font-medium rounded-lg hover:bg-primary-400 transition-colors"
             >
               Browse Templates
             </Link>
@@ -407,7 +407,7 @@ export function Dashboard() {
       {/* Inactive Protocols */}
       {inactiveProtocols.length > 0 && (
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <h2 className="text-lg font-semibold text-gray-100 mb-4">
             Past Protocols
           </h2>
           {filteredInactiveProtocols.length > 0 ? (
@@ -422,8 +422,8 @@ export function Dashboard() {
               ))}
             </div>
           ) : searchQuery ? (
-            <div className="bg-gray-50 rounded-xl p-6 text-center border border-dashed border-gray-300">
-              <p className="text-sm text-gray-500">
+            <div className="bg-surface-raised rounded-xl p-6 text-center border border-dashed border-surface-border">
+              <p className="text-sm text-gray-400">
                 No past protocols match your search
               </p>
             </div>

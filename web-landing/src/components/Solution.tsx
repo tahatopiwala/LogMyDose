@@ -68,19 +68,19 @@ const capabilities = [
 
 const colorClasses = {
   emerald: {
-    bg: "bg-emerald-100",
-    text: "text-emerald-600",
-    border: "border-emerald-100",
+    bg: "bg-emerald-900/40",
+    text: "text-emerald-400",
+    border: "border-emerald-800/30",
   },
   amber: {
-    bg: "bg-amber-100",
-    text: "text-amber-600",
-    border: "border-amber-100",
+    bg: "bg-amber-900/40",
+    text: "text-amber-400",
+    border: "border-amber-800/30",
   },
   primary: {
-    bg: "bg-primary-100",
-    text: "text-primary-600",
-    border: "border-primary-100",
+    bg: "bg-primary-500/20",
+    text: "text-primary-400",
+    border: "border-primary-500/30",
   },
 };
 
@@ -89,10 +89,10 @@ export function Solution() {
     <section className="py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <FadeIn className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-100">
             Your data, organized and ready to share
           </h2>
-          <p className="mt-4 text-xl text-gray-600">
+          <p className="mt-4 text-xl text-gray-400">
             BioStak helps you track any health protocol—GLP-1s, peptides, HRT,
             supplements, and more—so you can have better conversations with your
             healthcare provider.
@@ -105,17 +105,17 @@ export function Solution() {
             return (
               <StaggerItem key={item.title}>
                 <div
-                  className={`bg-white rounded-2xl p-6 shadow-sm border ${colors.border} h-full`}
+                  className={`bg-surface-card rounded-2xl p-6 border ${colors.border} h-full`}
                 >
                   <div
                     className={`w-12 h-12 ${colors.bg} rounded-xl flex items-center justify-center ${colors.text} mb-4`}
                   >
                     {item.icon}
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  <h3 className="text-lg font-semibold text-gray-100 mb-2">
                     {item.title}
                   </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed italic">
+                  <p className="text-gray-400 text-sm leading-relaxed italic">
                     "{item.description}"
                   </p>
                 </div>
@@ -126,9 +126,9 @@ export function Solution() {
 
         {/* What we are callout */}
         <FadeIn delay={0.2}>
-          <div className="bg-gray-900 rounded-2xl p-8 md:p-12 text-center">
+          <div className="bg-surface-elevated rounded-2xl p-8 md:p-12 text-center border border-primary-500/20">
             <div className="max-w-2xl mx-auto">
-              <h3 className="text-2xl font-bold text-white mb-4">
+              <h3 className="text-2xl font-bold text-gray-100 mb-4">
                 A tracking tool—not a medical device
               </h3>
               <p className="text-gray-300 text-lg">

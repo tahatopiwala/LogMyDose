@@ -116,14 +116,14 @@ export function ManageSubscriptionModal({
     >
       <div className="space-y-4">
         {error && (
-          <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+          <div className="p-3 rounded-lg bg-red-900/30 border border-red-800 text-red-400 text-sm">
             {error}
           </div>
         )}
 
         {/* Current Plan Info */}
-        <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-          <p className="text-sm text-gray-600">
+        <div className="p-4 bg-surface-elevated rounded-lg border border-surface-border">
+          <p className="text-sm text-gray-400">
             <span className="font-medium">Current plan:</span>{" "}
             {isPro ? "Pro" : "Free"}
           </p>
@@ -146,21 +146,21 @@ export function ManageSubscriptionModal({
                 key={plan.id}
                 className={`p-4 rounded-lg border ${
                   isCurrentPlan
-                    ? "border-primary-300 bg-primary-50"
-                    : "border-gray-200 bg-white"
+                    ? "border-primary-300 bg-primary-500/20"
+                    : "border-surface-border bg-surface-card"
                 }`}
               >
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center">
-                      <h3 className="font-medium text-gray-900">{plan.name}</h3>
+                      <h3 className="font-medium text-gray-100">{plan.name}</h3>
                       {isCurrentPlan && (
-                        <span className="ml-2 px-2 py-0.5 text-xs font-medium rounded-full bg-primary-100 text-primary-700">
+                        <span className="ml-2 px-2 py-0.5 text-xs font-medium rounded-full bg-primary-500/20 text-primary-400">
                           Current
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-gray-600 mt-1">
+                    <p className="text-sm text-gray-400 mt-1">
                       {plan.price === 0 ? (
                         "Free forever"
                       ) : (
@@ -196,7 +196,7 @@ export function ManageSubscriptionModal({
                       <button
                         onClick={() => handleUpgrade(plan.priceId)}
                         disabled={isLoading}
-                        className="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-4 py-2 text-sm font-medium text-white bg-primary-500 rounded-lg hover:bg-primary-400 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {isLoading ? "Loading..." : "Upgrade"}
                       </button>
@@ -210,11 +210,11 @@ export function ManageSubscriptionModal({
 
         {/* Manage Billing Button (for existing subscribers) */}
         {isPro && (
-          <div className="pt-2 border-t border-gray-200">
+          <div className="pt-2 border-t border-surface-border">
             <button
               onClick={handleManageBilling}
               disabled={isLoading}
-              className="w-full py-2 px-4 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-2 px-4 text-sm font-medium text-gray-300 bg-surface-card border border-surface-border rounded-lg hover:bg-surface-elevated disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? "Loading..." : "Manage Billing & Invoices"}
             </button>
@@ -228,7 +228,7 @@ export function ManageSubscriptionModal({
         <div className="pt-2">
           <button
             onClick={onClose}
-            className="w-full py-2 px-4 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+            className="w-full py-2 px-4 text-sm font-medium text-gray-300 bg-surface-card border border-surface-border rounded-lg hover:bg-surface-elevated"
           >
             Close
           </button>

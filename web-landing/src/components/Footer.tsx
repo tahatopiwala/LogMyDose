@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export function Footer() {
   return (
-    <footer className="bg-gray-900 text-white py-16 px-4 sm:px-6 lg:px-8">
+    <footer className="bg-surface-base border-t border-surface-border text-white py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           <div className="col-span-1 md:col-span-2">
@@ -17,25 +17,25 @@ export function Footer() {
                   width="32"
                   height="32"
                   rx="8"
-                  className="fill-primary-600"
+                  className="fill-primary-500"
                 />
-                <rect x="10" y="7" width="6" height="14" rx="1" fill="white" />
+                <rect x="10" y="7" width="6" height="14" rx="1" fill="#0D0D0D" />
                 <rect
                   x="11.5"
                   y="4"
                   width="3"
                   height="4"
                   rx="0.5"
-                  fill="white"
+                  fill="#0D0D0D"
                 />
-                <rect x="12" y="21" width="2" height="5" fill="white" />
-                <polygon points="13,26 11.5,28 14.5,28" fill="white" />
+                <rect x="12" y="21" width="2" height="5" fill="#0D0D0D" />
+                <polygon points="13,26 11.5,28 14.5,28" fill="#0D0D0D" />
                 <line
                   x1="10"
                   y1="10"
                   x2="12"
                   y2="10"
-                  className="stroke-primary-600"
+                  className="stroke-primary-500"
                   strokeWidth="0.75"
                 />
                 <line
@@ -43,7 +43,7 @@ export function Footer() {
                   y1="13"
                   x2="12"
                   y2="13"
-                  className="stroke-primary-600"
+                  className="stroke-primary-500"
                   strokeWidth="0.75"
                 />
                 <line
@@ -51,12 +51,12 @@ export function Footer() {
                   y1="16"
                   x2="12"
                   y2="16"
-                  className="stroke-primary-600"
+                  className="stroke-primary-500"
                   strokeWidth="0.75"
                 />
                 <path
                   d="M22 14 C22 14 19 18 19 20.5 C19 22.5 20.3 24 22 24 C23.7 24 25 22.5 25 20.5 C25 18 22 14 22 14 Z"
-                  fill="white"
+                  fill="#0D0D0D"
                 />
               </svg>
               <span className="text-xl font-bold">BioStak</span>
@@ -137,7 +137,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-gray-800">
+        <div className="mt-12 pt-8 border-t border-surface-border">
           <div className="text-center text-gray-400 text-sm">
             <p>
               &copy; {new Date().getFullYear()} BioStak. All rights reserved.

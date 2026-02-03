@@ -69,24 +69,24 @@ export default function ProfileScreen() {
       : patient?.firstName?.[0] || patient?.email?.[0]?.toUpperCase() || "U";
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-surface-base" edges={["top"]}>
       <ScrollView className="flex-1" contentContainerStyle={{ padding: 20 }}>
         {/* Profile Header */}
         <Card className="mb-6">
           <View className="items-center py-4">
-            <View className="w-20 h-20 rounded-full bg-primary-100 items-center justify-center">
+            <View className="w-20 h-20 rounded-full bg-primary-500/20 items-center justify-center">
               <Text className="text-2xl font-bold text-primary-500">
                 {initials}
               </Text>
             </View>
-            <Text className="text-xl font-bold text-gray-900 mt-4">
+            <Text className="text-xl font-bold text-gray-100 mt-4">
               {displayName}
             </Text>
-            <Text className="text-gray-500 mt-1">{patient?.email}</Text>
+            <Text className="text-gray-400 mt-1">{patient?.email}</Text>
 
             {/* Account Type Badge */}
-            <View className="mt-4 bg-primary-100 px-4 py-1 rounded-full">
-              <Text className="text-primary-700 font-medium text-sm capitalize">
+            <View className="mt-4 bg-primary-500/20 px-4 py-1 rounded-full">
+              <Text className="text-primary-400 font-medium text-sm capitalize">
                 {patient?.accountType || "Free"} Account
               </Text>
             </View>
@@ -101,17 +101,17 @@ export default function ProfileScreen() {
               onPress={item.onPress}
               className={`flex-row items-center py-4 ${
                 index !== menuItems.length - 1
-                  ? "border-b border-gray-100"
+                  ? "border-b border-surface-border"
                   : ""
               }`}
             >
-              <View className="w-10 h-10 rounded-full bg-gray-100 items-center justify-center">
-                <Ionicons name={item.icon} size={20} color="#6B7280" />
+              <View className="w-10 h-10 rounded-full bg-surface-elevated items-center justify-center">
+                <Ionicons name={item.icon} size={20} color="#9CA3AF" />
               </View>
-              <Text className="flex-1 ml-3 text-gray-900 font-medium">
+              <Text className="flex-1 ml-3 text-gray-100 font-medium">
                 {item.label}
               </Text>
-              <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+              <Ionicons name="chevron-forward" size={20} color="#6B7280" />
             </TouchableOpacity>
           ))}
         </Card>
@@ -119,14 +119,14 @@ export default function ProfileScreen() {
         {/* Sign Out Button */}
         <TouchableOpacity
           onPress={handleLogout}
-          className="bg-red-50 rounded-xl py-4 flex-row items-center justify-center"
+          className="bg-red-900/30 rounded-xl py-4 flex-row items-center justify-center border border-red-800"
         >
-          <Ionicons name="log-out-outline" size={20} color="#EF4444" />
-          <Text className="text-red-600 font-semibold ml-2">Sign Out</Text>
+          <Ionicons name="log-out-outline" size={20} color="#F87171" />
+          <Text className="text-red-400 font-semibold ml-2">Sign Out</Text>
         </TouchableOpacity>
 
         {/* App Version */}
-        <Text className="text-center text-gray-400 text-sm mt-8">
+        <Text className="text-center text-gray-500 text-sm mt-8">
           BioStak v1.0.0
         </Text>
       </ScrollView>

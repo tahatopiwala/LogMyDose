@@ -5,7 +5,7 @@ export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-surface-card/90 backdrop-blur-md border-b border-surface-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
@@ -20,25 +20,25 @@ export function Navbar() {
                   width="32"
                   height="32"
                   rx="8"
-                  className="fill-primary-600"
+                  className="fill-primary-500"
                 />
-                <rect x="10" y="7" width="6" height="14" rx="1" fill="white" />
+                <rect x="10" y="7" width="6" height="14" rx="1" fill="#0D0D0D" />
                 <rect
                   x="11.5"
                   y="4"
                   width="3"
                   height="4"
                   rx="0.5"
-                  fill="white"
+                  fill="#0D0D0D"
                 />
-                <rect x="12" y="21" width="2" height="5" fill="white" />
-                <polygon points="13,26 11.5,28 14.5,28" fill="white" />
+                <rect x="12" y="21" width="2" height="5" fill="#0D0D0D" />
+                <polygon points="13,26 11.5,28 14.5,28" fill="#0D0D0D" />
                 <line
                   x1="10"
                   y1="10"
                   x2="12"
                   y2="10"
-                  className="stroke-primary-600"
+                  className="stroke-primary-500"
                   strokeWidth="0.75"
                 />
                 <line
@@ -46,7 +46,7 @@ export function Navbar() {
                   y1="13"
                   x2="12"
                   y2="13"
-                  className="stroke-primary-600"
+                  className="stroke-primary-500"
                   strokeWidth="0.75"
                 />
                 <line
@@ -54,40 +54,40 @@ export function Navbar() {
                   y1="16"
                   x2="12"
                   y2="16"
-                  className="stroke-primary-600"
+                  className="stroke-primary-500"
                   strokeWidth="0.75"
                 />
                 <path
                   d="M22 14 C22 14 19 18 19 20.5 C19 22.5 20.3 24 22 24 C23.7 24 25 22.5 25 20.5 C25 18 22 14 22 14 Z"
-                  fill="white"
+                  fill="#0D0D0D"
                 />
               </svg>
-              <span className="text-xl font-bold text-gray-900">BioStak</span>
+              <span className="text-xl font-bold text-gray-100">BioStak</span>
             </a>
           </div>
 
           <div className="hidden md:flex items-center space-x-8">
             <a
               href="/#features"
-              className="text-gray-600 hover:text-gray-900 transition-colors"
+              className="text-gray-400 hover:text-primary-400 transition-colors"
             >
               Features
             </a>
             <a
               href="/#how-it-works"
-              className="text-gray-600 hover:text-gray-900 transition-colors"
+              className="text-gray-400 hover:text-primary-400 transition-colors"
             >
               How It Works
             </a>
             <a
               href="/#pricing"
-              className="text-gray-600 hover:text-gray-900 transition-colors"
+              className="text-gray-400 hover:text-primary-400 transition-colors"
             >
               Pricing
             </a>
             <a
               href="/#faq"
-              className="text-gray-600 hover:text-gray-900 transition-colors"
+              className="text-gray-400 hover:text-primary-400 transition-colors"
             >
               FAQ
             </a>
@@ -96,7 +96,7 @@ export function Navbar() {
           <div className="hidden md:flex items-center">
             <a
               href={getAppUrl("/signup")}
-              className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors"
+              className="bg-primary-500 text-surface-base px-4 py-2 rounded-lg hover:bg-primary-400 transition-colors shadow-glow-sm shadow-primary-500/25"
             >
               Get Started
             </a>
@@ -132,27 +132,27 @@ export function Navbar() {
         </div>
 
         {mobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-100">
+          <div className="md:hidden py-4 border-t border-surface-border">
             <div className="flex flex-col space-y-4">
-              <a href="/#features" className="text-gray-600 hover:text-gray-900">
+              <a href="/#features" className="text-gray-400 hover:text-gray-100">
                 Features
               </a>
               <a
                 href="/#how-it-works"
-                className="text-gray-600 hover:text-gray-900"
+                className="text-gray-400 hover:text-gray-100"
               >
                 How It Works
               </a>
-              <a href="/#pricing" className="text-gray-600 hover:text-gray-900">
+              <a href="/#pricing" className="text-gray-400 hover:text-gray-100">
                 Pricing
               </a>
-              <a href="/#faq" className="text-gray-600 hover:text-gray-900">
+              <a href="/#faq" className="text-gray-400 hover:text-gray-100">
                 FAQ
               </a>
-              <hr className="border-gray-100" />
+              <hr className="border-surface-border" />
               <a
                 href={getAppUrl("/signup")}
-                className="bg-primary-600 text-white px-4 py-2 rounded-lg text-center hover:bg-primary-700"
+                className="bg-primary-500 text-surface-base px-4 py-2 rounded-lg text-center hover:bg-primary-400"
               >
                 Get Started
               </a>

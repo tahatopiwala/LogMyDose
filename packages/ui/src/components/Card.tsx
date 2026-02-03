@@ -9,11 +9,11 @@ export function Card({ className, variant = "default", ...props }: CardProps) {
   return (
     <div
       className={cn(
-        "rounded-xl bg-white",
+        "rounded-xl bg-surface-card",
         {
           "": variant === "default",
-          "border border-gray-200": variant === "bordered",
-          "shadow-lg": variant === "elevated",
+          "border border-surface-border": variant === "bordered",
+          "shadow-lg shadow-black/30": variant === "elevated",
         },
         className,
       )}

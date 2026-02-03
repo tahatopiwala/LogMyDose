@@ -16,8 +16,8 @@ export function Signup() {
   // Show loading while checking auth status
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
+      <div className="min-h-screen bg-surface-base flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500" />
       </div>
     );
   }
@@ -77,7 +77,7 @@ export function Signup() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-surface-base flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
           <svg
@@ -86,17 +86,17 @@ export function Signup() {
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <rect width="32" height="32" rx="8" className="fill-primary-600" />
-            <rect x="10" y="7" width="6" height="14" rx="1" fill="white" />
-            <rect x="11.5" y="4" width="3" height="4" rx="0.5" fill="white" />
-            <rect x="12" y="21" width="2" height="5" fill="white" />
-            <polygon points="13,26 11.5,28 14.5,28" fill="white" />
+            <rect width="32" height="32" rx="8" className="fill-primary-500" />
+            <rect x="10" y="7" width="6" height="14" rx="1" fill="#0D0D0D" />
+            <rect x="11.5" y="4" width="3" height="4" rx="0.5" fill="#0D0D0D" />
+            <rect x="12" y="21" width="2" height="5" fill="#0D0D0D" />
+            <polygon points="13,26 11.5,28 14.5,28" fill="#0D0D0D" />
             <line
               x1="10"
               y1="10"
               x2="12"
               y2="10"
-              className="stroke-primary-600"
+              className="stroke-primary-500"
               strokeWidth="0.75"
             />
             <line
@@ -104,7 +104,7 @@ export function Signup() {
               y1="13"
               x2="12"
               y2="13"
-              className="stroke-primary-600"
+              className="stroke-primary-500"
               strokeWidth="0.75"
             />
             <line
@@ -112,23 +112,23 @@ export function Signup() {
               y1="16"
               x2="12"
               y2="16"
-              className="stroke-primary-600"
+              className="stroke-primary-500"
               strokeWidth="0.75"
             />
             <path
               d="M22 14 C22 14 19 18 19 20.5 C19 22.5 20.3 24 22 24 C23.7 24 25 22.5 25 20.5 C25 18 22 14 22 14 Z"
-              fill="white"
+              fill="#0D0D0D"
             />
           </svg>
         </div>
-        <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
+        <h2 className="mt-6 text-center text-3xl font-bold text-gray-100">
           Create your account
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
+        <p className="mt-2 text-center text-sm text-gray-400">
           Already have an account?{" "}
           <Link
             to="/login"
-            className="font-medium text-primary-600 hover:text-primary-500"
+            className="font-medium text-primary-500 hover:text-primary-400"
           >
             Sign in
           </Link>
@@ -136,9 +136,9 @@ export function Signup() {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow-sm rounded-xl sm:px-10">
+        <div className="bg-surface-card py-8 px-4 shadow-xl shadow-black/30 rounded-xl sm:px-10 border border-surface-border">
           {error && (
-            <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+            <div className="mb-4 p-3 rounded-lg bg-red-900/30 border border-red-800 text-red-400 text-sm">
               {error}
             </div>
           )}
@@ -148,7 +148,7 @@ export function Signup() {
               <div>
                 <label
                   htmlFor="firstName"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-medium text-gray-200"
                 >
                   First name
                 </label>
@@ -161,7 +161,7 @@ export function Signup() {
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     disabled={isSubmitting}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    className="appearance-none block w-full px-3 py-2 border border-surface-border bg-surface-raised text-gray-100 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-primary-500/50 focus:border-primary-500 disabled:bg-surface-elevated disabled:cursor-not-allowed"
                   />
                 </div>
               </div>
@@ -169,7 +169,7 @@ export function Signup() {
               <div>
                 <label
                   htmlFor="lastName"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-medium text-gray-200"
                 >
                   Last name
                 </label>
@@ -182,7 +182,7 @@ export function Signup() {
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     disabled={isSubmitting}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    className="appearance-none block w-full px-3 py-2 border border-surface-border bg-surface-raised text-gray-100 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-primary-500/50 focus:border-primary-500 disabled:bg-surface-elevated disabled:cursor-not-allowed"
                   />
                 </div>
               </div>
@@ -191,7 +191,7 @@ export function Signup() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-200"
               >
                 Email address
               </label>
@@ -205,18 +205,18 @@ export function Signup() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isSubmitting}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  className="appearance-none block w-full px-3 py-2 border border-surface-border bg-surface-raised text-gray-100 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-primary-500/50 focus:border-primary-500 disabled:bg-surface-elevated disabled:cursor-not-allowed"
                 />
               </div>
               {fieldErrors.email && (
-                <p className="mt-1 text-sm text-red-600">{fieldErrors.email}</p>
+                <p className="mt-1 text-sm text-red-400">{fieldErrors.email}</p>
               )}
             </div>
 
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-200"
               >
                 Password
               </label>
@@ -230,8 +230,8 @@ export function Signup() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={isSubmitting}
-                  className={`appearance-none block w-full px-3 py-2 border rounded-lg placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-100 disabled:cursor-not-allowed ${
-                    fieldErrors.password ? "border-red-300" : "border-gray-300"
+                  className={`appearance-none block w-full px-3 py-2 border rounded-lg bg-surface-raised text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-primary-500/50 focus:border-primary-500 disabled:bg-surface-elevated disabled:cursor-not-allowed ${
+                    fieldErrors.password ? "border-red-500" : "border-surface-border"
                   }`}
                 />
               </div>
@@ -240,12 +240,12 @@ export function Signup() {
                   <div className="flex items-center gap-2">
                     <div
                       className={`flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center ${
-                        hasMinLength ? "bg-green-100" : "bg-gray-100"
+                        hasMinLength ? "bg-green-900/40" : "bg-surface-elevated"
                       }`}
                     >
                       {hasMinLength ? (
                         <svg
-                          className="w-3 h-3 text-green-600"
+                          className="w-3 h-3 text-green-400"
                           fill="currentColor"
                           viewBox="0 0 20 20"
                         >
@@ -256,11 +256,11 @@ export function Signup() {
                           />
                         </svg>
                       ) : (
-                        <div className="w-1.5 h-1.5 rounded-full bg-gray-400" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-surface-elevated0" />
                       )}
                     </div>
                     <span
-                      className={`text-sm ${hasMinLength ? "text-green-600" : "text-gray-500"}`}
+                      className={`text-sm ${hasMinLength ? "text-green-400" : "text-gray-500"}`}
                     >
                       At least 12 characters ({password.length}/12)
                     </span>
@@ -268,12 +268,12 @@ export function Signup() {
                   <div className="flex items-center gap-2">
                     <div
                       className={`flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center ${
-                        hasUppercase ? "bg-green-100" : "bg-gray-100"
+                        hasUppercase ? "bg-green-900/40" : "bg-surface-elevated"
                       }`}
                     >
                       {hasUppercase ? (
                         <svg
-                          className="w-3 h-3 text-green-600"
+                          className="w-3 h-3 text-green-400"
                           fill="currentColor"
                           viewBox="0 0 20 20"
                         >
@@ -284,11 +284,11 @@ export function Signup() {
                           />
                         </svg>
                       ) : (
-                        <div className="w-1.5 h-1.5 rounded-full bg-gray-400" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-surface-elevated0" />
                       )}
                     </div>
                     <span
-                      className={`text-sm ${hasUppercase ? "text-green-600" : "text-gray-500"}`}
+                      className={`text-sm ${hasUppercase ? "text-green-400" : "text-gray-500"}`}
                     >
                       At least 1 uppercase letter
                     </span>
@@ -296,12 +296,12 @@ export function Signup() {
                   <div className="flex items-center gap-2">
                     <div
                       className={`flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center ${
-                        hasSpecialChar ? "bg-green-100" : "bg-gray-100"
+                        hasSpecialChar ? "bg-green-900/40" : "bg-surface-elevated"
                       }`}
                     >
                       {hasSpecialChar ? (
                         <svg
-                          className="w-3 h-3 text-green-600"
+                          className="w-3 h-3 text-green-400"
                           fill="currentColor"
                           viewBox="0 0 20 20"
                         >
@@ -312,11 +312,11 @@ export function Signup() {
                           />
                         </svg>
                       ) : (
-                        <div className="w-1.5 h-1.5 rounded-full bg-gray-400" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-surface-elevated0" />
                       )}
                     </div>
                     <span
-                      className={`text-sm ${hasSpecialChar ? "text-green-600" : "text-gray-500"}`}
+                      className={`text-sm ${hasSpecialChar ? "text-green-400" : "text-gray-500"}`}
                     >
                       At least 1 special character
                     </span>
@@ -324,13 +324,13 @@ export function Signup() {
                 </div>
               )}
               {password.length === 0 && (
-                <p className="mt-1 text-sm text-gray-500">
+                <p className="mt-1 text-sm text-gray-400">
                   Must be at least 12 characters, 1 uppercase, 1 special
                   character
                 </p>
               )}
               {fieldErrors.password && (
-                <p className="mt-1 text-sm text-red-600">
+                <p className="mt-1 text-sm text-red-400">
                   {fieldErrors.password}
                 </p>
               )}
@@ -340,25 +340,25 @@ export function Signup() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-glow-sm shadow-primary-500/25 text-sm font-medium text-surface-base bg-primary-500 hover:bg-primary-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface-base focus:ring-primary-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? "Creating account..." : "Create account"}
               </button>
             </div>
           </form>
 
-          <p className="mt-6 text-center text-xs text-gray-500">
+          <p className="mt-6 text-center text-xs text-gray-400">
             By creating an account, you agree to our{" "}
             <a
               href="https://biostak.me/terms"
-              className="text-primary-600 hover:text-primary-500"
+              className="text-primary-500 hover:text-primary-400"
             >
               Terms of Service
             </a>{" "}
             and{" "}
             <a
               href="https://biostak.me/privacy"
-              className="text-primary-600 hover:text-primary-500"
+              className="text-primary-500 hover:text-primary-400"
             >
               Privacy Policy
             </a>

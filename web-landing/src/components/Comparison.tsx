@@ -44,13 +44,13 @@ const programComparison = [
 
 export function Comparison() {
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-surface-raised">
       <div className="max-w-7xl mx-auto">
         <FadeIn className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-100">
             A better way to track
           </h2>
-          <p className="mt-4 text-xl text-gray-600">
+          <p className="mt-4 text-xl text-gray-400">
             See how BioStak compares to what you might be using today.
           </p>
         </FadeIn>
@@ -58,8 +58,8 @@ export function Comparison() {
         <StaggerContainer className="grid grid-cols-1 lg:grid-cols-2 gap-8" staggerDelay={0.15}>
           {/* vs Spreadsheets/Notes */}
           <StaggerItem>
-            <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 h-full">
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">
+            <div className="bg-surface-card rounded-2xl p-6 md:p-8 border border-surface-border h-full">
+            <h3 className="text-lg font-semibold text-gray-100 mb-6">
               vs. Notes & Spreadsheets
             </h3>
 
@@ -67,11 +67,11 @@ export function Comparison() {
               {trackingComparison.map((row, index) => (
                 <div
                   key={index}
-                  className="grid grid-cols-2 gap-4 py-3 border-b border-gray-100 last:border-0"
+                  className="grid grid-cols-2 gap-4 py-3 border-b border-surface-border last:border-0"
                 >
                   <div className="flex items-start gap-2">
                     <svg
-                      className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5"
+                      className="w-5 h-5 text-gray-500 flex-shrink-0 mt-0.5"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -87,7 +87,7 @@ export function Comparison() {
                   </div>
                   <div className="flex items-start gap-2">
                     <svg
-                      className="w-5 h-5 text-primary-600 flex-shrink-0 mt-0.5"
+                      className="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -99,7 +99,7 @@ export function Comparison() {
                         d="M5 13l4 4L19 7"
                       />
                     </svg>
-                    <span className="text-sm text-gray-900 font-medium">
+                    <span className="text-sm text-gray-100 font-medium">
                       {row.us}
                     </span>
                   </div>
@@ -111,8 +111,8 @@ export function Comparison() {
 
           {/* vs Telehealth Programs */}
           <StaggerItem>
-            <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 h-full">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6">
+            <div className="bg-surface-card rounded-2xl p-6 md:p-8 border border-surface-border h-full">
+              <h3 className="text-lg font-semibold text-gray-100 mb-6">
                 vs. Expensive Telehealth Programs
               </h3>
 
@@ -120,11 +120,11 @@ export function Comparison() {
                 {programComparison.map((row, index) => (
                   <div
                     key={index}
-                    className="grid grid-cols-2 gap-4 py-3 border-b border-gray-100 last:border-0"
+                    className="grid grid-cols-2 gap-4 py-3 border-b border-surface-border last:border-0"
                   >
                     <div className="flex items-start gap-2">
                       <svg
-                        className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5"
+                        className="w-5 h-5 text-gray-500 flex-shrink-0 mt-0.5"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -140,7 +140,7 @@ export function Comparison() {
                     </div>
                     <div className="flex items-start gap-2">
                       <svg
-                        className="w-5 h-5 text-primary-600 flex-shrink-0 mt-0.5"
+                        className="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -152,7 +152,7 @@ export function Comparison() {
                           d="M5 13l4 4L19 7"
                         />
                       </svg>
-                      <span className="text-sm text-gray-900 font-medium">
+                      <span className="text-sm text-gray-100 font-medium">
                         {row.us}
                       </span>
                     </div>

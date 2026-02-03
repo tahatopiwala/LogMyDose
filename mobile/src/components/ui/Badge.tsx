@@ -15,17 +15,17 @@ export function Badge({
   className = "",
 }: BadgeProps) {
   const variantClasses: Record<BadgeVariant, string> = {
-    active: "bg-green-100",
-    paused: "bg-yellow-100",
-    completed: "bg-gray-100",
-    default: "bg-gray-100",
+    active: "bg-green-900/40",
+    paused: "bg-amber-900/40",
+    completed: "bg-surface-elevated",
+    default: "bg-surface-elevated",
   };
 
   const textClasses: Record<BadgeVariant, string> = {
-    active: "text-green-800",
-    paused: "text-yellow-800",
-    completed: "text-gray-800",
-    default: "text-gray-800",
+    active: "text-green-400",
+    paused: "text-amber-400",
+    completed: "text-gray-400",
+    default: "text-gray-400",
   };
 
   return (

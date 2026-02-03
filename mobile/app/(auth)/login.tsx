@@ -43,7 +43,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-surface-base">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
@@ -66,18 +66,18 @@ export default function LoginScreen() {
 
             {/* Welcome Text */}
             <View className="mb-8">
-              <Text className="text-2xl font-bold text-gray-900">
+              <Text className="text-2xl font-bold text-gray-100">
                 Welcome back
               </Text>
-              <Text className="text-gray-600 mt-1">
+              <Text className="text-gray-400 mt-1">
                 Sign in to continue tracking your doses
               </Text>
             </View>
 
             {/* Error Message */}
             {error ? (
-              <View className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                <Text className="text-red-800 text-sm">{error}</Text>
+              <View className="bg-red-900/30 border border-red-800 rounded-lg p-4 mb-6">
+                <Text className="text-red-400 text-sm">{error}</Text>
               </View>
             ) : null}
 
@@ -110,7 +110,7 @@ export default function LoginScreen() {
 
             {/* Register Link */}
             <View className="flex-row justify-center mt-8">
-              <Text className="text-gray-600">Don't have an account? </Text>
+              <Text className="text-gray-400">Don't have an account? </Text>
               <Link href="/(auth)/register" asChild>
                 <TouchableOpacity>
                   <Text className="text-primary-500 font-semibold">

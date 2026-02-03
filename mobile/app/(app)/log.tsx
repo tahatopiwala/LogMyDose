@@ -171,21 +171,21 @@ export default function LogDoseScreen() {
   const stepLabels = ["Choose type", "Select substance", "Enter details"];
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-surface-base" edges={["top"]}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
       >
         {/* Header */}
-        <View className="bg-white border-b border-gray-200">
+        <View className="bg-surface-card border-b border-surface-border">
           <View className="flex-row items-center px-5 py-4">
             <TouchableOpacity onPress={handleBack} className="mr-4">
-              <Ionicons name="arrow-back" size={24} color="#374151" />
+              <Ionicons name="arrow-back" size={24} color="#9CA3AF" />
             </TouchableOpacity>
             <View className="flex-1">
-              <Text className="text-xl font-bold text-gray-900">Log a Dose</Text>
+              <Text className="text-xl font-bold text-gray-100">Log a Dose</Text>
             </View>
-            <Text className="text-sm text-gray-500">
+            <Text className="text-sm text-gray-400">
               Step {currentStep} of 3
             </Text>
           </View>
@@ -197,12 +197,12 @@ export default function LogDoseScreen() {
                 <View
                   key={step}
                   className={`flex-1 h-1.5 rounded-full ${
-                    step <= currentStep ? "bg-primary-600" : "bg-gray-200"
+                    step <= currentStep ? "bg-primary-500" : "bg-surface-border"
                   }`}
                 />
               ))}
             </View>
-            <Text className="text-gray-600 text-sm">
+            <Text className="text-gray-400 text-sm">
               {stepLabels[currentStep - 1]}
             </Text>
           </View>
@@ -211,8 +211,8 @@ export default function LogDoseScreen() {
         {/* Content */}
         {isLoading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#BE3455" />
-            <Text className="text-gray-500 mt-4">Loading...</Text>
+            <ActivityIndicator size="large" color="#39FF14" />
+            <Text className="text-gray-400 mt-4">Loading...</Text>
           </View>
         ) : (
           <ScrollView
@@ -229,33 +229,33 @@ export default function LogDoseScreen() {
                   disabled={protocolGroups.length === 0}
                   className={`p-5 rounded-xl border-2 ${
                     protocolGroups.length === 0
-                      ? "border-gray-100 bg-gray-50"
-                      : "border-gray-200 bg-white"
+                      ? "border-surface-border bg-surface-raised"
+                      : "border-surface-border bg-surface-card"
                   }`}
                 >
                   <View className="flex-row items-start">
                     <View
                       className={`w-12 h-12 rounded-xl items-center justify-center ${
-                        protocolGroups.length === 0 ? "bg-gray-100" : "bg-primary-100"
+                        protocolGroups.length === 0 ? "bg-surface-elevated" : "bg-primary-500/20"
                       }`}
                     >
                       <Ionicons
                         name="clipboard-outline"
                         size={24}
-                        color={protocolGroups.length === 0 ? "#9CA3AF" : "#BE3455"}
+                        color={protocolGroups.length === 0 ? "#6B7280" : "#39FF14"}
                       />
                     </View>
                     <View className="ml-4 flex-1">
                       <Text
                         className={`font-semibold text-lg ${
-                          protocolGroups.length === 0 ? "text-gray-400" : "text-gray-900"
+                          protocolGroups.length === 0 ? "text-gray-500" : "text-gray-100"
                         }`}
                       >
                         Log from Protocol
                       </Text>
                       <Text
                         className={`text-sm mt-1 ${
-                          protocolGroups.length === 0 ? "text-gray-400" : "text-gray-500"
+                          protocolGroups.length === 0 ? "text-gray-500" : "text-gray-400"
                         }`}
                       >
                         {protocolGroups.length === 0
@@ -264,7 +264,7 @@ export default function LogDoseScreen() {
                       </Text>
                     </View>
                     {protocolGroups.length > 0 && (
-                      <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                      <Ionicons name="chevron-forward" size={20} color="#6B7280" />
                     )}
                   </View>
                 </TouchableOpacity>
@@ -272,42 +272,42 @@ export default function LogDoseScreen() {
                 {/* Ad-hoc Option */}
                 <TouchableOpacity
                   onPress={() => setLogType("adhoc")}
-                  className="p-5 rounded-xl border-2 border-gray-200 bg-white"
+                  className="p-5 rounded-xl border-2 border-surface-border bg-surface-card"
                 >
                   <View className="flex-row items-start">
-                    <View className="w-12 h-12 rounded-xl bg-blue-100 items-center justify-center">
-                      <Ionicons name="flash-outline" size={24} color="#2563EB" />
+                    <View className="w-12 h-12 rounded-xl bg-blue-900/40 items-center justify-center">
+                      <Ionicons name="flash-outline" size={24} color="#60A5FA" />
                     </View>
                     <View className="ml-4 flex-1">
-                      <Text className="font-semibold text-lg text-gray-900">
+                      <Text className="font-semibold text-lg text-gray-100">
                         Quick Log
                       </Text>
-                      <Text className="text-sm text-gray-500 mt-1">
+                      <Text className="text-sm text-gray-400 mt-1">
                         Log a one-time dose without tracking
                       </Text>
                     </View>
-                    <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                    <Ionicons name="chevron-forward" size={20} color="#6B7280" />
                   </View>
                 </TouchableOpacity>
 
                 {/* Create Protocol Option */}
                 <TouchableOpacity
                   onPress={() => router.push("/protocols/new")}
-                  className="p-5 rounded-xl border-2 border-dashed border-gray-300 bg-white"
+                  className="p-5 rounded-xl border-2 border-dashed border-surface-border bg-surface-card"
                 >
                   <View className="flex-row items-start">
-                    <View className="w-12 h-12 rounded-xl bg-gray-100 items-center justify-center">
-                      <Ionicons name="add" size={24} color="#6B7280" />
+                    <View className="w-12 h-12 rounded-xl bg-surface-elevated items-center justify-center">
+                      <Ionicons name="add" size={24} color="#9CA3AF" />
                     </View>
                     <View className="ml-4 flex-1">
-                      <Text className="font-semibold text-lg text-gray-900">
+                      <Text className="font-semibold text-lg text-gray-100">
                         Create Custom Protocol
                       </Text>
-                      <Text className="text-sm text-gray-500 mt-1">
+                      <Text className="text-sm text-gray-400 mt-1">
                         Set up a new protocol with tracking
                       </Text>
                     </View>
-                    <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                    <Ionicons name="chevron-forward" size={20} color="#6B7280" />
                   </View>
                 </TouchableOpacity>
 
@@ -316,7 +316,7 @@ export default function LogDoseScreen() {
                   onPress={() => router.back()}
                   className="py-3 items-center"
                 >
-                  <Text className="text-gray-600 font-medium">Cancel</Text>
+                  <Text className="text-gray-400 font-medium">Cancel</Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -326,8 +326,8 @@ export default function LogDoseScreen() {
               <View className="gap-4">
                 {protocolGroups.map((group) => (
                   <Card key={group.protocol.id}>
-                    <View className="bg-gray-50 -mx-4 -mt-4 px-4 py-3 mb-3 border-b border-gray-100 rounded-t-xl">
-                      <Text className="font-medium text-gray-900">
+                    <View className="bg-surface-elevated -mx-4 -mt-4 px-4 py-3 mb-3 border-b border-surface-border rounded-t-xl">
+                      <Text className="font-medium text-gray-100">
                         {group.protocol.name || "Unnamed Protocol"}
                       </Text>
                     </View>
@@ -337,23 +337,23 @@ export default function LogDoseScreen() {
                         onPress={() => handleSelectProtocolSubstance(ps)}
                         className={`flex-row items-center py-3 ${
                           index < group.substances.length - 1
-                            ? "border-b border-gray-100"
+                            ? "border-b border-surface-border"
                             : ""
                         }`}
                       >
-                        <View className="w-10 h-10 rounded-full bg-primary-100 items-center justify-center">
-                          <Ionicons name="flask" size={20} color="#BE3455" />
+                        <View className="w-10 h-10 rounded-full bg-primary-500/20 items-center justify-center">
+                          <Ionicons name="flask" size={20} color="#39FF14" />
                         </View>
                         <View className="ml-3 flex-1">
-                          <Text className="font-medium text-gray-900">
+                          <Text className="font-medium text-gray-100">
                             {ps.substance.name}
                           </Text>
-                          <Text className="text-gray-500 text-sm">
+                          <Text className="text-gray-400 text-sm">
                             {ps.dose} {ps.doseUnit || ps.substance.doseUnit} •{" "}
                             {ps.frequency?.replace("_", " ") || "as needed"}
                           </Text>
                         </View>
-                        <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                        <Ionicons name="chevron-forward" size={20} color="#6B7280" />
                       </TouchableOpacity>
                     ))}
                   </Card>
@@ -361,9 +361,9 @@ export default function LogDoseScreen() {
 
                 <TouchableOpacity
                   onPress={handleBack}
-                  className="py-3 px-4 border border-gray-300 rounded-lg items-center"
+                  className="py-3 px-4 border border-surface-border rounded-lg items-center"
                 >
-                  <Text className="text-gray-700 font-medium">Back</Text>
+                  <Text className="text-gray-300 font-medium">Back</Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -375,8 +375,8 @@ export default function LogDoseScreen() {
                   placeholder="Search substances..."
                   value={adHocSearch}
                   onChangeText={setAdHocSearch}
-                  className="border border-gray-300 rounded-lg px-4 py-3 bg-white"
-                  placeholderTextColor="#9CA3AF"
+                  className="border border-surface-border rounded-lg px-4 py-3 bg-surface-raised text-gray-100"
+                  placeholderTextColor="#6B7280"
                   autoFocus
                 />
 
@@ -385,13 +385,13 @@ export default function LogDoseScreen() {
                     <TouchableOpacity
                       key={substance.id}
                       onPress={() => handleSelectAdHocSubstance(substance)}
-                      className="px-4 py-2.5 border border-gray-300 rounded-lg bg-white"
+                      className="px-4 py-2.5 border border-surface-border rounded-lg bg-surface-card"
                     >
-                      <Text className="text-gray-700 text-sm">{substance.name}</Text>
+                      <Text className="text-gray-300 text-sm">{substance.name}</Text>
                     </TouchableOpacity>
                   ))}
                   {filteredSubstances.length === 0 && adHocSearch && (
-                    <Text className="text-gray-500 text-sm py-4">
+                    <Text className="text-gray-400 text-sm py-4">
                       No substances found matching "{adHocSearch}"
                     </Text>
                   )}
@@ -399,9 +399,9 @@ export default function LogDoseScreen() {
 
                 <TouchableOpacity
                   onPress={handleBack}
-                  className="py-3 px-4 border border-gray-300 rounded-lg items-center"
+                  className="py-3 px-4 border border-surface-border rounded-lg items-center"
                 >
-                  <Text className="text-gray-700 font-medium">Back</Text>
+                  <Text className="text-gray-300 font-medium">Back</Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -410,18 +410,18 @@ export default function LogDoseScreen() {
             {currentStep === 3 && (
               <View className="gap-4">
                 {/* Selected item header */}
-                <Card className="bg-primary-50 border-primary-200">
+                <Card className="bg-primary-500/10 border-primary-500/30">
                   <View>
-                    <Text className="text-primary-600 text-sm font-medium">
+                    <Text className="text-primary-400 text-sm font-medium">
                       {logType === "protocol" ? "Protocol Dose" : "Quick Log"}
                     </Text>
-                    <Text className="font-semibold text-gray-900 text-lg">
+                    <Text className="font-semibold text-gray-100 text-lg">
                       {logType === "protocol" && selectedProtocolSubstance
                         ? selectedProtocolSubstance.substance.name
                         : selectedSubstance?.name}
                     </Text>
                     {logType === "protocol" && selectedProtocolSubstance && (
-                      <Text className="text-gray-500 text-sm">
+                      <Text className="text-gray-400 text-sm">
                         from {selectedProtocolSubstance.protocol.name || "Unnamed Protocol"}
                       </Text>
                     )}
@@ -437,14 +437,14 @@ export default function LogDoseScreen() {
                 />
 
                 <View>
-                  <Text className="text-gray-700 mb-2 font-medium text-sm">Unit</Text>
-                  <View className="border border-gray-300 rounded-lg px-4 py-3 bg-gray-100">
-                    <Text className="text-gray-600">{currentDoseUnit}</Text>
+                  <Text className="text-gray-300 mb-2 font-medium text-sm">Unit</Text>
+                  <View className="border border-surface-border rounded-lg px-4 py-3 bg-surface-elevated">
+                    <Text className="text-gray-400">{currentDoseUnit}</Text>
                   </View>
                 </View>
 
                 {logType === "protocol" && selectedProtocolSubstance && (
-                  <Text className="text-gray-500 text-xs -mt-2">
+                  <Text className="text-gray-400 text-xs -mt-2">
                     Protocol dose: {selectedProtocolSubstance.dose}{" "}
                     {selectedProtocolSubstance.doseUnit || selectedProtocolSubstance.substance.doseUnit}
                   </Text>
@@ -463,9 +463,9 @@ export default function LogDoseScreen() {
                 <View className="flex-row gap-3 pt-2">
                   <TouchableOpacity
                     onPress={handleBack}
-                    className="flex-1 py-3 px-4 border border-gray-300 rounded-lg items-center"
+                    className="flex-1 py-3 px-4 border border-surface-border rounded-lg items-center"
                   >
-                    <Text className="text-gray-700 font-medium">Back</Text>
+                    <Text className="text-gray-300 font-medium">Back</Text>
                   </TouchableOpacity>
                   <Button
                     onPress={handleLogDose}
