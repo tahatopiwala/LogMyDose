@@ -29,7 +29,7 @@ const createTenantSchema = z.object({
       appName: z.string().optional(),
     })
     .optional(),
-  settings: z.record(z.unknown()).optional(),
+  settings: z.record(z.string(), z.unknown()).optional(),
 });
 
 const updateTenantSchema = z.object({
@@ -42,7 +42,7 @@ const updateTenantSchema = z.object({
       appName: z.string().optional(),
     })
     .optional(),
-  settings: z.record(z.unknown()).optional(),
+  settings: z.record(z.string(), z.unknown()).optional(),
 });
 
 const createInvitationSchema = z.object({

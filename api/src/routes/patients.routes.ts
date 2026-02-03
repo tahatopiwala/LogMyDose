@@ -14,7 +14,7 @@ const updatePatientSchema = z.object({
   lastName: z.string().min(1).max(100).optional(),
   dateOfBirth: z.string().optional(),
   phone: z.string().max(20).optional(),
-  settings: z.record(z.unknown()).optional(),
+  settings: z.record(z.string(), z.unknown()).optional(),
 });
 
 const linkClinicSchema = z.object({

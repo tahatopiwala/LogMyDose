@@ -28,8 +28,8 @@ const createProtocolSchema = z.object({
         dose: z.number().positive(),
         doseUnit: z.string().max(20).optional(),
         frequency: z.string().max(50).optional(),
-        schedule: z.record(z.unknown()).optional(),
-        titrationPlan: z.record(z.unknown()).optional(),
+        schedule: z.record(z.string(), z.unknown()).optional(),
+        titrationPlan: z.record(z.string(), z.unknown()).optional(),
         cycleOnWeeks: z.number().int().positive().optional(),
         cycleOffWeeks: z.number().int().positive().optional(),
         notes: z.string().optional(),
@@ -55,7 +55,7 @@ const createTemplateSchema = z.object({
   defaultDose: z.number().positive().optional(),
   doseUnit: z.string().max(20).optional(),
   frequency: z.string().max(50).optional(),
-  titrationPlan: z.record(z.unknown()).optional(),
+  titrationPlan: z.record(z.string(), z.unknown()).optional(),
   cycleOnWeeks: z.number().int().positive().optional(),
   cycleOffWeeks: z.number().int().positive().optional(),
   difficultyLevel: z.enum(["beginner", "intermediate", "advanced"]).optional(),
@@ -71,12 +71,23 @@ const updateTemplateSchema = z.object({
   defaultDose: z.number().positive().optional(),
   doseUnit: z.string().max(20).optional(),
   frequency: z.string().max(50).optional(),
-  titrationPlan: z.record(z.unknown()).optional(),
+  titrationPlan: z.record(z.string(), z.unknown()).optional(),
   cycleOnWeeks: z.number().int().positive().optional(),
   cycleOffWeeks: z.number().int().positive().optional(),
   difficultyLevel: z.enum(["beginner", "intermediate", "advanced"]).optional(),
   tags: z.array(z.string()).optional(),
   isPublic: z.boolean().optional(),
+});
+
+// GET /api/v1/protocols (list patient's protocols)
+router.get("/", authenticate, requirePatient, async (req, res, next) => {
+  try {
+    const patientService = getContainer().patientService;
+    const protocols = await patientService.getProtocols(req.user!.id);
+    res.json(protocols);
+  } catch (error) {
+    next(error);
+  }
 });
 
 // GET /api/v1/protocols/templates

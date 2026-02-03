@@ -49,12 +49,12 @@
     "db:studio": "prisma studio"
   },
   "dependencies": {
-    "@prisma/client": "^7.2.0",
-    "zod": "^3.24.1"
+    "@prisma/client": "^7.3.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@prisma/adapter-pg": "^7.2.0",
-    "prisma": "^7.2.0",
+    "@prisma/adapter-pg": "^7.3.0",
+    "prisma": "^7.3.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3"
   }

@@ -40,3 +40,4 @@ api/prisma/*.db-journal
 .cache/
 
 *.tsbuildinfo
+.claude/

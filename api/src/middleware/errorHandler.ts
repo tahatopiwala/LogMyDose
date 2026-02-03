@@ -22,7 +22,10 @@ export function errorHandler(
 ) {
   // Log error in development
   if (env.NODE_ENV === "development") {
-    console.error("Error:", err);
+    console.error("Error:", err.message);
+    if (err.stack) {
+      console.error(err.stack);
+    }
   }
 
   // Zod validation errors
@@ -30,7 +33,7 @@ export function errorHandler(
     return res.status(400).json({
       error: "Validation failed",
       code: "VALIDATION_ERROR",
-      details: err.errors.map((e) => ({
+      details: err.issues.map((e) => ({
         path: e.path.join("."),
         message: e.message,
       })),
