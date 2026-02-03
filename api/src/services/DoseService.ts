@@ -1,4 +1,4 @@
-import { Dose } from "@logmydose/shared/prisma";
+import { Dose } from "@biostak/shared/prisma";
 import {
   IDoseService,
   LogDoseInput,

@@ -4,7 +4,7 @@ import {
   EMAIL_JOB_TYPES,
   welcomeEmailPayloadSchema,
   verifyEmailPayloadSchema,
-} from "@logmydose/shared/queues";
+} from "@biostak/shared/queues";
 import { redis } from "../lib/redis.js";
 import { env } from "../config/env.js";
 import { ResendEmailService } from "../services/EmailService.js";

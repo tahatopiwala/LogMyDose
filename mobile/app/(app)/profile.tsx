@@ -127,7 +127,7 @@ export default function ProfileScreen() {
 
         {/* App Version */}
         <Text className="text-center text-gray-400 text-sm mt-8">
-          LogMyDose v1.0.0
+          BioStak v1.0.0
         </Text>
       </ScrollView>
     </SafeAreaView>

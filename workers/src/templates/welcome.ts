@@ -1,4 +1,4 @@
-import type { WelcomeEmailPayload } from "@logmydose/shared/queues";
+import type { WelcomeEmailPayload } from "@biostak/shared/queues";
 
 export interface EmailContent {
   subject: string;
@@ -10,14 +10,14 @@ export function renderWelcomeEmail(payload: WelcomeEmailPayload): EmailContent {
   const name = payload.firstName || "there";
 
   return {
-    subject: "Welcome to LogMyDose!",
+    subject: "Welcome to BioStak!",
     html: `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Welcome to LogMyDose</title>
+  <title>Welcome to BioStak</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f4f4f5;">
   <table role="presentation" style="width: 100%; border-collapse: collapse;">
@@ -27,7 +27,7 @@ export function renderWelcomeEmail(payload: WelcomeEmailPayload): EmailContent {
           <!-- Header -->
           <tr>
             <td style="padding: 40px 40px 20px; text-align: center; background: linear-gradient(135deg, #9b2341 0%, #BE3455 100%);">
-              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">LogMyDose</h1>
+              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">BioStak</h1>
             </td>
           </tr>
 
@@ -37,7 +37,7 @@ export function renderWelcomeEmail(payload: WelcomeEmailPayload): EmailContent {
               <h2 style="margin: 0 0 20px; color: #18181b; font-size: 24px; font-weight: 600;">Welcome, ${name}!</h2>
 
               <p style="margin: 0 0 20px; color: #3f3f46; font-size: 16px; line-height: 1.6;">
-                We're excited to have you on board. LogMyDose helps you track your peptide therapy with ease, giving you insights into your health journey.
+                We're excited to have you on board. BioStak helps you track your health protocols with ease, giving you insights into your health journey.
               </p>
 
               <p style="margin: 0 0 20px; color: #3f3f46; font-size: 16px; line-height: 1.6;">
@@ -56,7 +56,7 @@ export function renderWelcomeEmail(payload: WelcomeEmailPayload): EmailContent {
 
               <p style="margin: 0; color: #3f3f46; font-size: 16px; line-height: 1.6;">
                 Best,<br>
-                <strong>The LogMyDose Team</strong>
+                <strong>The BioStak Team</strong>
               </p>
             </td>
           </tr>
@@ -65,7 +65,7 @@ export function renderWelcomeEmail(payload: WelcomeEmailPayload): EmailContent {
           <tr>
             <td style="padding: 20px 40px; background-color: #f4f4f5; text-align: center;">
               <p style="margin: 0; color: #71717a; font-size: 14px;">
-                &copy; ${new Date().getFullYear()} LogMyDose. All rights reserved.
+                &copy; ${new Date().getFullYear()} BioStak. All rights reserved.
               </p>
             </td>
           </tr>
@@ -76,9 +76,9 @@ export function renderWelcomeEmail(payload: WelcomeEmailPayload): EmailContent {
 </body>
 </html>
     `.trim(),
-    text: `Welcome to LogMyDose, ${name}!
+    text: `Welcome to BioStak, ${name}!
 
-We're excited to have you on board. LogMyDose helps you track your peptide therapy with ease, giving you insights into your health journey.
+We're excited to have you on board. BioStak helps you track your health protocols with ease, giving you insights into your health journey.
 
 Get started by:
 - Setting up your first protocol
@@ -88,6 +88,6 @@ Get started by:
 If you have any questions, our support team is here to help.
 
 Best,
-The LogMyDose Team`,
+The BioStak Team`,
   };
 }

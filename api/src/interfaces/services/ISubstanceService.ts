@@ -1,4 +1,4 @@
-import { Substance, SubstanceCategory } from "@logmydose/shared/prisma";
+import { Substance, SubstanceCategory } from "@biostak/shared/prisma";
 import {
   SubstanceWithCategory,
   CreateSubstanceInput,

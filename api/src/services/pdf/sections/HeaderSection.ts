@@ -7,7 +7,7 @@ export function renderHeader(
   dateRange: DateRange,
 ): void {
   // Title
-  doc.fontSize(20).text("Medical Report - LogMyDose", { align: "center" });
+  doc.fontSize(20).text("Medical Report - BioStak", { align: "center" });
   doc.moveDown(0.5);
 
   // Subtitle

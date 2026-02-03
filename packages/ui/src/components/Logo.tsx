@@ -57,7 +57,7 @@ export function Logo({ size = "md", showText = true, className }: LogoProps) {
       </svg>
       {showText && (
         <span className={cn("font-bold text-gray-900", sizes[size].text)}>
-          LogMyDose
+          BioStak
         </span>
       )}
     </div>

@@ -3,7 +3,7 @@ import type {
   WelcomeEmailPayload,
   VerifyEmailPayload,
   PdfExportPatientReportPayload,
-} from "@logmydose/shared/queues";
+} from "@biostak/shared/queues";
 
 export interface JobOptions {
   delay?: number;

@@ -62,7 +62,7 @@ export function Navbar() {
                   fill="white"
                 />
               </svg>
-              <span className="text-xl font-bold text-gray-900">LogMyDose</span>
+              <span className="text-xl font-bold text-gray-900">BioStak</span>
             </a>
           </div>
 

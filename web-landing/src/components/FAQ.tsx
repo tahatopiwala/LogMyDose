@@ -4,19 +4,19 @@ import { FadeIn, StaggerContainer, StaggerItem } from "./animations/FadeIn";
 
 const faqs = [
   {
-    question: "What can I track with LogMyDose?",
+    question: "What can I track with BioStak?",
     answer:
-      "LogMyDose works with any health protocol you're following. Popular uses include GLP-1 medications (Ozempic, Wegovy, Mounjaro, Zepbound), peptides (BPC-157, etc.), HRT/TRT, supplements, and more. You can create custom protocols for anything you need to track.",
+      "BioStak works with any health protocol you're following. Popular uses include GLP-1 medications (Ozempic, Wegovy, Mounjaro, Zepbound), peptides (BPC-157, etc.), HRT/TRT, supplements, and more. You can create custom protocols for anything you need to track.",
   },
   {
-    question: "Is LogMyDose a medical device?",
+    question: "Is BioStak a medical device?",
     answer:
-      "No. LogMyDose is a personal tracking tool—like a digital journal for your health notes. We help you organize your data so you can share it with your healthcare provider. We don't diagnose, treat, or provide medical advice.",
+      "No. BioStak is a personal tracking tool—like a digital journal for your health notes. We help you organize your data so you can share it with your healthcare provider. We don't diagnose, treat, or provide medical advice.",
   },
   {
     question: "How is this different from a spreadsheet?",
     answer:
-      "LogMyDose is purpose-built for medication tracking. You get one-tap logging, organized history, pattern visualization, and exportable reports—all designed to help you have better conversations with your doctor.",
+      "BioStak is purpose-built for medication tracking. You get one-tap logging, organized history, pattern visualization, and exportable reports—all designed to help you have better conversations with your doctor.",
   },
   {
     question: "Can I import my existing data?",
@@ -31,12 +31,12 @@ const faqs = [
   {
     question: "Do I need to get my medication through you?",
     answer:
-      "No. LogMyDose works with medications and supplements from any source—telehealth providers, your local pharmacy, clinics, compounding pharmacies, or online retailers. We're just here to help you track.",
+      "No. BioStak works with medications and supplements from any source—telehealth providers, your local pharmacy, clinics, compounding pharmacies, or online retailers. We're just here to help you track.",
   },
   {
     question: "Should I use this instead of talking to my doctor?",
     answer:
-      "No—LogMyDose is meant to help you prepare for those conversations, not replace them. Think of it as a way to bring organized notes to your appointments. Always work with your healthcare provider for medical decisions.",
+      "No—BioStak is meant to help you prepare for those conversations, not replace them. Think of it as a way to bring organized notes to your appointments. Always work with your healthcare provider for medical decisions.",
   },
   {
     question: "What if I want to cancel?",
@@ -108,7 +108,7 @@ export function FAQ() {
         <FadeIn delay={0.3} className="mt-12">
           <div className="p-6 bg-gray-50 rounded-xl border border-gray-200">
             <p className="text-sm text-gray-600 text-center">
-              <strong>Medical Disclaimer:</strong> LogMyDose is a personal
+              <strong>Medical Disclaimer:</strong> BioStak is a personal
               tracking tool, not a medical device. It does not diagnose, treat, or
               provide medical advice. Always consult your healthcare provider for
               medical decisions.

@@ -1,11 +1,11 @@
-import type { VerifyEmailPayload } from "@logmydose/shared/queues";
+import type { VerifyEmailPayload } from "@biostak/shared/queues";
 import type { EmailContent } from "./welcome.js";
 
 export function renderVerifyEmail(payload: VerifyEmailPayload): EmailContent {
   const name = payload.firstName || "there";
 
   return {
-    subject: "Verify your LogMyDose email",
+    subject: "Verify your BioStak email",
     html: `
 <!DOCTYPE html>
 <html>
@@ -22,7 +22,7 @@ export function renderVerifyEmail(payload: VerifyEmailPayload): EmailContent {
           <!-- Header -->
           <tr>
             <td style="padding: 40px 40px 20px; text-align: center; background: linear-gradient(135deg, #9b2341 0%, #BE3455 100%);">
-              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">LogMyDose</h1>
+              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">BioStak</h1>
             </td>
           </tr>
 
@@ -63,7 +63,7 @@ export function renderVerifyEmail(payload: VerifyEmailPayload): EmailContent {
               </p>
 
               <p style="margin: 0; color: #71717a; font-size: 14px; line-height: 1.6;">
-                If you didn't create an account with LogMyDose, you can safely ignore this email.
+                If you didn't create an account with BioStak, you can safely ignore this email.
               </p>
             </td>
           </tr>
@@ -72,7 +72,7 @@ export function renderVerifyEmail(payload: VerifyEmailPayload): EmailContent {
           <tr>
             <td style="padding: 20px 40px; background-color: #f4f4f5; text-align: center;">
               <p style="margin: 0; color: #71717a; font-size: 14px;">
-                &copy; ${new Date().getFullYear()} LogMyDose. All rights reserved.
+                &copy; ${new Date().getFullYear()} BioStak. All rights reserved.
               </p>
             </td>
           </tr>
@@ -93,8 +93,8 @@ ${payload.verificationUrl}
 
 This link expires in 24 hours.
 
-If you didn't create an account with LogMyDose, you can safely ignore this email.
+If you didn't create an account with BioStak, you can safely ignore this email.
 
-- The LogMyDose Team`,
+- The BioStak Team`,
   };
 }

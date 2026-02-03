@@ -2,7 +2,7 @@ import {
   PrismaClient,
   Patient,
   EmailVerificationToken,
-} from "@logmydose/shared/prisma";
+} from "@biostak/shared/prisma";
 import {
   IPatientRepository,
   CreatePatientInput,

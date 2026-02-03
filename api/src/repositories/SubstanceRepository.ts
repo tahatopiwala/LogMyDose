@@ -2,7 +2,7 @@ import {
   PrismaClient,
   Substance,
   SubstanceCategory,
-} from "@logmydose/shared/prisma";
+} from "@biostak/shared/prisma";
 import {
   ISubstanceRepository,
   CreateSubstanceInput,

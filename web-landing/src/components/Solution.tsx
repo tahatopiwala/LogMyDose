@@ -93,7 +93,7 @@ export function Solution() {
             Your data, organized and ready to share
           </h2>
           <p className="mt-4 text-xl text-gray-600">
-            LogMyDose helps you track any health protocol—GLP-1s, peptides, HRT,
+            BioStak helps you track any health protocol—GLP-1s, peptides, HRT,
             supplements, and more—so you can have better conversations with your
             healthcare provider.
           </p>
@@ -132,7 +132,7 @@ export function Solution() {
                 A tracking tool—not a medical device
               </h3>
               <p className="text-gray-300 text-lg">
-                LogMyDose helps you organize your personal health notes. We don't
+                BioStak helps you organize your personal health notes. We don't
                 diagnose, treat, or provide medical advice. Always work with your
                 healthcare provider for medical decisions.
               </p>

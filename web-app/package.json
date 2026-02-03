@@ -1,5 +1,5 @@
 {
-  "name": "@logmydose/web-app",
+  "name": "@biostak/web-app",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@logmydose/ui": "*",
+    "@biostak/ui": "*",
     "@tanstack/react-query": "^5.90.20",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",

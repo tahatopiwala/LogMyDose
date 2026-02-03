@@ -35,7 +35,7 @@ const createProtocolSchema = z.object({
 });
 
 const updateProtocolSchema = z.object({
-  status: z.enum(["draft", "active", "paused", "completed"]).optional(),
+  status: z.enum(["draft", "active", "paused", "completed", "archived"]).optional(),
   name: z.string().max(255).optional(),
   description: z.string().optional(),
   startDate: z.string().optional(),
@@ -172,6 +172,27 @@ router.put("/:id", authenticate, async (req, res, next) => {
       tableName: "protocols",
       recordId: protocol.id,
       newValues: data as Record<string, unknown>,
+    });
+
+    res.json({ protocol });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// DELETE /api/v1/protocols/:id (archives the protocol)
+router.delete("/:id", authenticate, requirePatient, async (req, res, next) => {
+  try {
+    const id = req.params.id as string;
+    const protocolService = getContainer().protocolService;
+
+    const protocol = await protocolService.archiveProtocol(id, req.user!.id);
+
+    await createAuditLog(req, {
+      action: "protocol.archive",
+      tableName: "protocols",
+      recordId: protocol.id,
+      newValues: { status: "archived" },
     });
 
     res.json({ protocol });

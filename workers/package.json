@@ -1,7 +1,7 @@
 {
-  "name": "@logmydose/workers",
+  "name": "@biostak/workers",
   "version": "1.0.0",
-  "description": "Background job workers for LogMyDose platform",
+  "description": "Background job workers for BioStak platform",
   "private": true,
   "type": "module",
   "main": "dist/index.js",
@@ -15,7 +15,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.981.0",
     "@aws-sdk/s3-request-presigner": "^3.981.0",
-    "@logmydose/shared": "*",
+    "@biostak/shared": "*",
     "bullmq": "^5.67.2",
     "dotenv": "^17.2.3",
     "ioredis": "^5.9.2",

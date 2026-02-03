@@ -1,4 +1,4 @@
-import { Product, Prisma } from "@logmydose/shared/prisma";
+import { Product, Prisma } from "@biostak/shared/prisma";
 import { IBaseRepository, FindManyOptions } from "./IBaseRepository.js";
 import { PaginatedResponse } from "../../types/index.js";
 

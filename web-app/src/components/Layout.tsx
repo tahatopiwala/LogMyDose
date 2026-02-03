@@ -91,7 +91,7 @@ export function Layout({ children }: LayoutProps) {
                 />
               </svg>
               <span className="text-xl font-bold text-gray-900 hidden sm:block">
-                LogMyDose
+                BioStak
               </span>
             </Link>
 

@@ -86,7 +86,7 @@ export function Login() {
           </svg>
         </div>
         <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
-          Sign in to LogMyDose
+          Sign in to BioStak
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
           Or{" "}

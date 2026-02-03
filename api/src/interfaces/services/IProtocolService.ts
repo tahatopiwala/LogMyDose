@@ -1,4 +1,4 @@
-import { Protocol } from "@logmydose/shared/prisma";
+import { Protocol } from "@biostak/shared/prisma";
 import {
   ProtocolWithDetails,
   TemplateWithRelations,
@@ -113,6 +113,7 @@ export interface IProtocolService {
     data: UpdateProtocolInput,
     patientId: string,
   ): Promise<Protocol>;
+  archiveProtocol(id: string, patientId: string): Promise<Protocol>;
   getProtocolSchedule(
     id: string,
     patientId: string,

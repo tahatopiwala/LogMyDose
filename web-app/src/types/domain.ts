@@ -32,7 +32,7 @@ export interface Protocol {
   description: string | null;
   source: string;
   templateId: string | null;
-  status: "draft" | "active" | "paused" | "completed";
+  status: "draft" | "active" | "paused" | "completed" | "archived";
   startDate: string | null;
   endDate: string | null;
   notes: string | null;

@@ -1,4 +1,4 @@
-import { Product } from "@logmydose/shared/prisma";
+import { Product } from "@biostak/shared/prisma";
 import {
   ProductWithSubstance,
   CreateProductInput,

@@ -1,8 +1,8 @@
 {
-  "name": "@logmydose/shared",
+  "name": "@biostak/shared",
   "version": "1.0.0",
   "private": true,
-  "description": "Shared types, interfaces, DTOs, and Prisma client for LogMyDose platform",
+  "description": "Shared types, interfaces, DTOs, and Prisma client for BioStak platform",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",

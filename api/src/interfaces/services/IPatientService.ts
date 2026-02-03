@@ -1,4 +1,4 @@
-import { Patient, Dose, Alert } from "@logmydose/shared/prisma";
+import { Patient, Dose, Alert } from "@biostak/shared/prisma";
 import {
   UpdatePatientInput,
   PatientExportData,

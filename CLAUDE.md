@@ -4,9 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-LogMyDose is a D2C (Direct-to-Consumer) peptide therapy tracking platform. The platform provides AI-powered ambient intelligence that proactively surfaces insights without requiring user prompts. Users can register, create protocols with substances, log doses, and track their progress.
+BioStak is a D2C (Direct-to-Consumer) biohacker's health tracking platform. The platform provides AI-powered ambient intelligence that proactively surfaces insights without requiring user prompts. Users can register, create protocols with substances, log doses, and track their progress.
 
-**Current Status**: Active development - see `vision.md` for product vision and `logmydose-plan.md` for detailed implementation plan.
+**Current Status**: Active development - see `vision.md` for product vision and `biostak-plan.md` for detailed implementation plan.
 
 ## Tech Stack
 
@@ -21,7 +21,7 @@ LogMyDose is a D2C (Direct-to-Consumer) peptide therapy tracking platform. The p
 - React 18+ with Vite
 - TailwindCSS
 - React Query for data fetching
-- Shared UI components from `@logmydose/ui`
+- Shared UI components from `@biostak/ui`
 
 ### Mobile App (`/mobile`)
 - React Native with TypeScript

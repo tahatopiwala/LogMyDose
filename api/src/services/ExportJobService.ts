@@ -1,4 +1,4 @@
-import { ExportJob } from "@logmydose/shared/prisma";
+import { ExportJob } from "@biostak/shared/prisma";
 import { IExportJobService } from "../interfaces/services/index.js";
 import { IExportJobRepository } from "../interfaces/repositories/index.js";
 import { IStorageService } from "../interfaces/services/IStorageService.js";

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { z } from "zod";
-import { Prisma } from "@logmydose/shared/prisma";
+import { Prisma } from "@biostak/shared/prisma";
 import { getContainer } from "../container/index.js";
 import { authenticate, requirePatient } from "../middleware/auth.js";
 import { AppError } from "../middleware/errorHandler.js";

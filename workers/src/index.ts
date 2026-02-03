@@ -2,7 +2,7 @@ import "dotenv/config";
 import { createEmailWorker, createPdfExportWorker } from "./processors/index.js";
 import { redis } from "./lib/redis.js";
 
-console.log("Starting LogMyDose workers...");
+console.log("Starting BioStak workers...");
 
 const workers = [
   createEmailWorker(),

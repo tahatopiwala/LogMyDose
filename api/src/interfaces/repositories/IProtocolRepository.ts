@@ -3,7 +3,7 @@ import {
   ProtocolTemplate,
   ProtocolSubstance,
   Prisma,
-} from "@logmydose/shared/prisma";
+} from "@biostak/shared/prisma";
 import { IBaseRepository, FindManyOptions } from "./IBaseRepository.js";
 import { PaginatedResponse } from "../../types/index.js";
 

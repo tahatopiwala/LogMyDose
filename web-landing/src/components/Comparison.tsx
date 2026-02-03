@@ -51,7 +51,7 @@ export function Comparison() {
             A better way to track
           </h2>
           <p className="mt-4 text-xl text-gray-600">
-            See how LogMyDose compares to what you might be using today.
+            See how BioStak compares to what you might be using today.
           </p>
         </FadeIn>
 

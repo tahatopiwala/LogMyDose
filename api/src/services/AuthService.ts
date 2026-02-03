@@ -16,7 +16,7 @@ import {
   TokenPayload,
 } from "../lib/jwt.js";
 import { AppError } from "../middleware/errorHandler.js";
-import { Patient } from "@logmydose/shared/prisma";
+import { Patient } from "@biostak/shared/prisma";
 import { env } from "../lib/env.js";
 
 export class AuthService implements IAuthService {

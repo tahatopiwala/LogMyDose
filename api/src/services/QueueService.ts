@@ -7,7 +7,7 @@ import {
   type WelcomeEmailPayload,
   type VerifyEmailPayload,
   type PdfExportPatientReportPayload,
-} from "@logmydose/shared/queues";
+} from "@biostak/shared/queues";
 import type {
   IQueueService,
   JobOptions,

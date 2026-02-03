@@ -7,7 +7,7 @@
       "@/*": [
         "./src/*"
       ],
-      "@logmydose/shared": [
+      "@biostak/shared": [
         "../packages/shared/src"
       ]
     }

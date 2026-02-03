@@ -1,4 +1,4 @@
-import { Protocol, Prisma } from "@logmydose/shared/prisma";
+import { Protocol, Prisma } from "@biostak/shared/prisma";
 import {
   IProtocolService,
   GetTemplatesQuery,
@@ -247,6 +247,26 @@ export class ProtocolService implements IProtocolService {
     }
 
     return this.protocolRepository.update(id, data);
+  }
+
+  async archiveProtocol(id: string, patientId: string): Promise<Protocol> {
+    const existingProtocol = await this.protocolRepository.findById(id);
+
+    if (!existingProtocol) {
+      throw new AppError(404, "Protocol not found", "NOT_FOUND");
+    }
+
+    // Verify the patient owns this protocol
+    if (existingProtocol.patientId !== patientId) {
+      throw new AppError(403, "Access denied", "FORBIDDEN");
+    }
+
+    // Don't archive if already archived
+    if (existingProtocol.status === "archived") {
+      throw new AppError(400, "Protocol is already archived", "ALREADY_ARCHIVED");
+    }
+
+    return this.protocolRepository.update(id, { status: "archived" });
   }
 
   async getProtocolSchedule(

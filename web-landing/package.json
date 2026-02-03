@@ -1,5 +1,5 @@
 {
-  "name": "@logmydose/web-landing",
+  "name": "@biostak/web-landing",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@logmydose/ui": "*",
+    "@biostak/ui": "*",
     "framer-motion": "^12.30.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",

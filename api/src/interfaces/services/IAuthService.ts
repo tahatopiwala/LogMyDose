@@ -1,4 +1,4 @@
-import { Patient } from "@logmydose/shared/prisma";
+import { Patient } from "@biostak/shared/prisma";
 
 export interface RegisterPatientInput {
   email: string;

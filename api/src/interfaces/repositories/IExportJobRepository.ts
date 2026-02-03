@@ -1,4 +1,4 @@
-import { ExportJob } from "@logmydose/shared/prisma";
+import { ExportJob } from "@biostak/shared/prisma";
 import { IBaseRepository } from "./IBaseRepository.js";
 
 export interface CreateExportJobInput {

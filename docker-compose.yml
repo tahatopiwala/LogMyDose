@@ -1,25 +1,25 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: logmydose-db
+    container_name: biostak-db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: logmydose
-      POSTGRES_PASSWORD: logmydose_dev
-      POSTGRES_DB: logmydose
+      POSTGRES_USER: biostak
+      POSTGRES_PASSWORD: biostak_dev
+      POSTGRES_DB: biostak
     ports:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U logmydose -d logmydose"]
+      test: ["CMD-SHELL", "pg_isready -U biostak -d biostak"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   redis:
     image: redis:7-alpine
-    container_name: logmydose-redis
+    container_name: biostak-redis
     restart: unless-stopped
     ports:
       - "6379:6379"
@@ -35,7 +35,7 @@ services:
   # Optional: Redis Commander for queue management
   redis-commander:
     image: rediscommander/redis-commander:latest
-    container_name: logmydose-redis-commander
+    container_name: biostak-redis-commander
     restart: unless-stopped
     environment:
       REDIS_HOSTS: local:redis:6379
@@ -49,10 +49,10 @@ services:
   # Optional: pgAdmin for database management
   pgadmin:
     image: dpage/pgadmin4:latest
-    container_name: logmydose-pgadmin
+    container_name: biostak-pgadmin
     restart: unless-stopped
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@logmydose.com
+      PGADMIN_DEFAULT_EMAIL: admin@biostak.com
       PGADMIN_DEFAULT_PASSWORD: admin
       PGADMIN_CONFIG_SERVER_MODE: "False"
     ports:

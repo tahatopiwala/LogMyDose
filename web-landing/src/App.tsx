@@ -45,7 +45,7 @@ function PrivacyPage() {
         <p className="text-gray-600">
           Your privacy is important to us. This privacy policy explains how we
           collect, use, and protect your personal information when you use
-          LogMyDose.
+          BioStak.
         </p>
         <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">
           Information We Collect
@@ -99,14 +99,14 @@ function TermsPage() {
       </h1>
       <div className="prose prose-gray max-w-none">
         <p className="text-gray-600">
-          By using LogMyDose, you agree to these terms of service. Please read
+          By using BioStak, you agree to these terms of service. Please read
           them carefully.
         </p>
         <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">
           Medical Disclaimer
         </h2>
         <p className="text-gray-600">
-          LogMyDose is a tracking tool and does not provide medical advice.
+          BioStak is a tracking tool and does not provide medical advice.
           Always consult with your healthcare provider about your treatment.
           AI-generated insights are for informational purposes only and should
           not replace professional medical guidance.

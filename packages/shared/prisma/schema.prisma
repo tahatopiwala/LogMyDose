@@ -1,5 +1,5 @@
-// Prisma Schema for LogMyDose
-// D2C Peptide therapy tracking platform
+// Prisma Schema for BioStak
+// The biohacker's health tracking tool
 
 generator client {
   provider = "prisma-client-js"
@@ -236,7 +236,7 @@ model Protocol {
   source          String    @db.VarChar(50) // template, custom
   templateId      String?   @map("template_id") @db.Uuid
 
-  status          String    @default("active") @db.VarChar(50) // draft, active, paused, completed
+  status          String    @default("active") @db.VarChar(50) // draft, active, paused, completed, archived
   startDate       DateTime? @map("start_date") @db.Date
   endDate         DateTime? @map("end_date") @db.Date
   notes           String?   @db.Text

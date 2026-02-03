@@ -59,7 +59,7 @@ export function Footer() {
                   fill="white"
                 />
               </svg>
-              <span className="text-xl font-bold">LogMyDose</span>
+              <span className="text-xl font-bold">BioStak</span>
             </Link>
             <p className="mt-4 text-gray-400 max-w-md">
               The biohacker's health tracking tool. GLP-1s, peptides, HRT,
@@ -127,7 +127,7 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="mailto:support@logmydose.com"
+                  href="mailto:support@biostak.me"
                   className="hover:text-white transition-colors"
                 >
                   Contact
@@ -140,10 +140,10 @@ export function Footer() {
         <div className="mt-12 pt-8 border-t border-gray-800">
           <div className="text-center text-gray-400 text-sm">
             <p>
-              &copy; {new Date().getFullYear()} LogMyDose. All rights reserved.
+              &copy; {new Date().getFullYear()} BioStak. All rights reserved.
             </p>
             <p className="mt-4 text-gray-500 max-w-2xl mx-auto">
-              <strong>Medical Disclaimer:</strong> LogMyDose is a personal
+              <strong>Medical Disclaimer:</strong> BioStak is a personal
               tracking tool, not a medical device. It does not diagnose, treat,
               or provide medical advice. Always consult your healthcare provider
               for medical decisions.

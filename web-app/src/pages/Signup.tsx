@@ -350,14 +350,14 @@ export function Signup() {
           <p className="mt-6 text-center text-xs text-gray-500">
             By creating an account, you agree to our{" "}
             <a
-              href="https://logmydose.com/terms"
+              href="https://biostak.me/terms"
               className="text-primary-600 hover:text-primary-500"
             >
               Terms of Service
             </a>{" "}
             and{" "}
             <a
-              href="https://logmydose.com/privacy"
+              href="https://biostak.me/privacy"
               className="text-primary-600 hover:text-primary-500"
             >
               Privacy Policy

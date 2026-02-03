@@ -89,7 +89,7 @@ export function Dashboard() {
   const firstName = patient?.firstName || "there";
   const activeProtocols = protocols.filter((p) => p.status === "active");
   const inactiveProtocols = protocols.filter(
-    (p) => p.status === "completed" || p.status === "paused",
+    (p) => p.status === "completed" || p.status === "paused" || p.status === "archived",
   );
 
   // Filter protocols based on search query

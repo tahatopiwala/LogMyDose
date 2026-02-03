@@ -25,8 +25,8 @@ export class PdfExportService implements IPdfExportService {
             right: 50,
           },
           info: {
-            Title: "Medical Report - LogMyDose",
-            Author: "LogMyDose",
+            Title: "Medical Report - BioStak",
+            Author: "BioStak",
             Subject: "Patient Health Data Export",
           },
         });

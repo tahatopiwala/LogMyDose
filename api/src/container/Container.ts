@@ -1,4 +1,4 @@
-import { PrismaClient } from "@logmydose/shared/prisma";
+import { PrismaClient } from "@biostak/shared/prisma";
 
 // Repository interfaces
 import {

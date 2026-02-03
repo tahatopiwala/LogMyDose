@@ -1,4 +1,4 @@
-import { ExportJob } from "@logmydose/shared/prisma";
+import { ExportJob } from "@biostak/shared/prisma";
 
 export interface CreateExportJobInput {
   patientId: string;

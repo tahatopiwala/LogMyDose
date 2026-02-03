@@ -59,7 +59,7 @@ export function Footer() {
                   fill="white"
                 />
               </svg>
-              <span className="text-xl font-bold">LogMyDose</span>
+              <span className="text-xl font-bold">BioStak</span>
             </Link>
             <p className="mt-4 text-gray-400 max-w-md">
               Smart peptide therapy tracking with AI-powered insights. Track
@@ -102,7 +102,7 @@ export function Footer() {
             <ul className="space-y-3 text-gray-400">
               <li>
                 <a
-                  href="https://logmydose.com/privacy"
+                  href="https://biostak.me/privacy"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-white transition-colors"
@@ -112,7 +112,7 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="https://logmydose.com/terms"
+                  href="https://biostak.me/terms"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-white transition-colors"
@@ -122,7 +122,7 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="mailto:support@logmydose.com"
+                  href="mailto:support@biostak.me"
                   className="hover:text-white transition-colors"
                 >
                   Contact
@@ -134,7 +134,7 @@ export function Footer() {
 
         <div className="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400 text-sm">
           <p>
-            &copy; {new Date().getFullYear()} LogMyDose. All rights reserved.
+            &copy; {new Date().getFullYear()} BioStak. All rights reserved.
           </p>
           <p className="mt-2">
             Not medical advice. Always consult with your healthcare provider

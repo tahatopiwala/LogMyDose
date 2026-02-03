@@ -1,4 +1,4 @@
-import { PrismaClient, ExportJob } from "@logmydose/shared/prisma";
+import { PrismaClient, ExportJob } from "@biostak/shared/prisma";
 import {
   IExportJobRepository,
   CreateExportJobInput,

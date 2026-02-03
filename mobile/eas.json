@@ -19,7 +19,7 @@
     },
     "production": {
       "ios": {
-        "bundleIdentifier": "com.logmydose.app"
+        "bundleIdentifier": "me.biostak.app"
       },
       "android": {
         "buildType": "apk"

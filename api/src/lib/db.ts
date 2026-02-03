@@ -1,4 +1,4 @@
-import { PrismaClient } from "@logmydose/shared/prisma";
+import { PrismaClient } from "@biostak/shared/prisma";
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { env } from "./env.js";

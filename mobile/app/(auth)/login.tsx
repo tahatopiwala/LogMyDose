@@ -57,10 +57,10 @@ export default function LoginScreen() {
             {/* Logo/Branding */}
             <View className="items-center mb-10">
               <Text className="text-3xl font-bold text-primary-500">
-                LogMyDose
+                BioStak
               </Text>
               <Text className="text-gray-500 mt-2">
-                Track your peptide therapy
+                The biohacker's health tracking tool
               </Text>
             </View>
 

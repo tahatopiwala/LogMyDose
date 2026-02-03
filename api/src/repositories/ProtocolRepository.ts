@@ -2,7 +2,7 @@ import {
   PrismaClient,
   Protocol,
   ProtocolSubstance,
-} from "@logmydose/shared/prisma";
+} from "@biostak/shared/prisma";
 import {
   IProtocolRepository,
   CreateProtocolInput,

@@ -2,7 +2,7 @@ import {
   Patient,
   Prisma,
   EmailVerificationToken,
-} from "@logmydose/shared/prisma";
+} from "@biostak/shared/prisma";
 import { IBaseRepository } from "./IBaseRepository.js";
 
 export interface CreateVerificationTokenInput {

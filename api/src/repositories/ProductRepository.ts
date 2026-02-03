@@ -1,4 +1,4 @@
-import { PrismaClient, Product } from "@logmydose/shared/prisma";
+import { PrismaClient, Product } from "@biostak/shared/prisma";
 import {
   IProductRepository,
   CreateProductInput,

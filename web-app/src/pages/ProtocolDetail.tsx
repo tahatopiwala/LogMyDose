@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { apiClient } from "@/lib/api-client";
 import { Protocol, Dose } from "@/types/domain";
-import { useUpdateProtocol } from "@/hooks/useProtocols";
+import { useUpdateProtocol, useArchiveProtocol } from "@/hooks/useProtocols";
+import { ArchiveProtocolModal } from "@/components/protocols/ArchiveProtocolModal";
 
 interface ProtocolStats {
   adherenceRate: number;
@@ -131,8 +132,10 @@ export function ProtocolDetail() {
   const [doses, setDoses] = useState<Dose[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showArchiveModal, setShowArchiveModal] = useState(false);
 
   const updateProtocol = useUpdateProtocol();
+  const archiveProtocol = useArchiveProtocol();
 
   console.log("ProtocolDetail component mounted with ID:", id);
 
@@ -207,6 +210,17 @@ export function ProtocolDetail() {
     }
   };
 
+  const handleArchiveProtocol = () => {
+    if (!id) return;
+
+    archiveProtocol.mutate(id, {
+      onSuccess: () => {
+        setShowArchiveModal(false);
+        navigate("/dashboard");
+      },
+    });
+  };
+
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto">
@@ -268,11 +282,12 @@ export function ProtocolDetail() {
 
   const stats = calculateProtocolStats(protocol, doses);
 
-  const statusColors = {
+  const statusColors: Record<string, string> = {
     active: "bg-green-100 text-green-700 border-green-200",
     paused: "bg-yellow-100 text-yellow-700 border-yellow-200",
     completed: "bg-gray-100 text-gray-700 border-gray-200",
     draft: "bg-blue-100 text-blue-700 border-blue-200",
+    archived: "bg-slate-100 text-slate-600 border-slate-200",
   };
 
   return (
@@ -340,6 +355,34 @@ export function ProtocolDetail() {
               <p className="text-sm text-yellow-700">
                 This protocol is not active and won't appear in dose logging.
                 Resume it to continue tracking.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Archived Protocol Banner */}
+      {protocol.status === "archived" && (
+        <div className="bg-slate-50 border-2 border-slate-200 rounded-xl p-4">
+          <div className="flex items-center gap-3">
+            <svg
+              className="w-6 h-6 text-slate-500 flex-shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+              />
+            </svg>
+            <div>
+              <p className="font-medium text-slate-700">Protocol Archived</p>
+              <p className="text-sm text-slate-600">
+                This protocol has been archived and won't appear in dose
+                logging. Your dose history has been preserved.
               </p>
             </div>
           </div>
@@ -736,7 +779,24 @@ export function ProtocolDetail() {
             {updateProtocol.isPending ? "Resuming..." : "Resume Protocol"}
           </button>
         )}
+        {(protocol.status === "active" || protocol.status === "paused") && (
+          <button
+            onClick={() => setShowArchiveModal(true)}
+            className="px-6 py-3 border-2 border-slate-300 text-slate-600 font-medium rounded-xl hover:bg-slate-50 transition-colors"
+          >
+            Archive
+          </button>
+        )}
       </div>
+
+      {/* Archive Protocol Modal */}
+      <ArchiveProtocolModal
+        isOpen={showArchiveModal}
+        onClose={() => setShowArchiveModal(false)}
+        onConfirm={handleArchiveProtocol}
+        protocolName={protocol.template?.name || "Custom Protocol"}
+        isArchiving={archiveProtocol.isPending}
+      />
     </div>
   );
 }
