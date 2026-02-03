@@ -58,6 +58,7 @@ export function Dashboard() {
   const [weekStats, setWeekStats] = useState<DoseStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const upbeatMessage = useMemo(() => getUpbeatMessage(), []);
 
   useEffect(() => {
     async function fetchDashboardData() {
@@ -155,7 +156,7 @@ export function Dashboard() {
         <h1 className="text-2xl font-bold">
           {getGreeting()}, {firstName}!
         </h1>
-        <p className="mt-1 text-primary-100">{getUpbeatMessage()}</p>
+        <p className="mt-1 text-primary-100">{upbeatMessage}</p>
       </div>
 
       {/* Quick Stats */}
