@@ -13,7 +13,6 @@ import patientsRoutes from "./routes/patients.routes.js";
 import substancesRoutes from "./routes/substances.routes.js";
 import protocolsRoutes from "./routes/protocols.routes.js";
 import dosesRoutes from "./routes/doses.routes.js";
-import tenantsRoutes from "./routes/tenants.routes.js";
 import healthRoutes from "./routes/health.routes.js";
 import settingsRoutes from "./routes/settings.routes.js";
 import subscriptionRoutes, {
@@ -86,7 +85,6 @@ app.use("/api/v1/patients", patientsRoutes);
 app.use("/api/v1/substances", substancesRoutes);
 app.use("/api/v1/protocols", protocolsRoutes);
 app.use("/api/v1/doses", dosesRoutes);
-app.use("/api/v1/tenants", tenantsRoutes);
 app.use("/api/v1/settings", settingsRoutes);
 app.use("/api/v1/subscription", subscriptionRoutes);
 app.use("/api/v1/products", productsRoutes);

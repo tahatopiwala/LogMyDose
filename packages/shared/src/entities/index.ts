@@ -1,14 +1,5 @@
-// Tenant entities
-export { Tenant, TenantWithCounts, TenantWithUsers } from "./tenant.js";
-
-// User entities
-export { User, SafeUser } from "./user.js";
-
 // Patient entities
-export { Patient, SafePatient, PatientWithClinic } from "./patient.js";
-
-// Invitation entities
-export { ClinicInvitation, InvitationWithClinic } from "./invitation.js";
+export { Patient, SafePatient } from "./patient.js";
 
 // Substance entities
 export {

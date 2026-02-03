@@ -14,9 +14,7 @@ export async function createAuditLog(req: Request, data: AuditLogData) {
   try {
     await prisma.auditLog.create({
       data: {
-        userId: req.user?.id,
-        patientId: req.user?.role === "patient" ? req.user.id : undefined,
-        tenantId: req.user?.tenantId,
+        patientId: req.user?.id,
         action: data.action,
         tableName: data.tableName,
         recordId: data.recordId,

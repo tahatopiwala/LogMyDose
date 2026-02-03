@@ -6,8 +6,6 @@ import { JsonValue } from "../types/database.js";
  */
 export interface AuditLog {
   id: string;
-  tenantId: string | null;
-  userId: string | null;
   patientId: string | null;
   action: string;
   tableName: string | null;

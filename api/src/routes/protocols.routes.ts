@@ -1,11 +1,7 @@
 import { Router } from "express";
 import { z } from "zod";
 import { getContainer } from "../container/index.js";
-import {
-  authenticate,
-  requirePatient,
-  requireSuperAdmin,
-} from "../middleware/auth.js";
+import { authenticate, requirePatient } from "../middleware/auth.js";
 import { createAuditLog } from "../middleware/auditLog.js";
 import { paginationSchema } from "../types/index.js";
 
@@ -45,38 +41,6 @@ const updateProtocolSchema = z.object({
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   notes: z.string().optional(),
-});
-
-const createTemplateSchema = z.object({
-  name: z.string().min(1).max(255),
-  description: z.string().optional(),
-  categoryId: z.string().uuid().optional(),
-  substanceId: z.string().uuid().optional(),
-  defaultDose: z.number().positive().optional(),
-  doseUnit: z.string().max(20).optional(),
-  frequency: z.string().max(50).optional(),
-  titrationPlan: z.record(z.string(), z.unknown()).optional(),
-  cycleOnWeeks: z.number().int().positive().optional(),
-  cycleOffWeeks: z.number().int().positive().optional(),
-  difficultyLevel: z.enum(["beginner", "intermediate", "advanced"]).optional(),
-  tags: z.array(z.string()).optional(),
-  isPublic: z.boolean().optional(),
-});
-
-const updateTemplateSchema = z.object({
-  name: z.string().min(1).max(255).optional(),
-  description: z.string().optional(),
-  categoryId: z.string().uuid().optional(),
-  substanceId: z.string().uuid().optional(),
-  defaultDose: z.number().positive().optional(),
-  doseUnit: z.string().max(20).optional(),
-  frequency: z.string().max(50).optional(),
-  titrationPlan: z.record(z.string(), z.unknown()).optional(),
-  cycleOnWeeks: z.number().int().positive().optional(),
-  cycleOffWeeks: z.number().int().positive().optional(),
-  difficultyLevel: z.enum(["beginner", "intermediate", "advanced"]).optional(),
-  tags: z.array(z.string()).optional(),
-  isPublic: z.boolean().optional(),
 });
 
 // GET /api/v1/protocols (list patient's protocols)
@@ -129,84 +93,6 @@ router.get("/templates/:id", async (req, res, next) => {
   }
 });
 
-// POST /api/v1/protocols/templates (super admin only)
-router.post(
-  "/templates",
-  authenticate,
-  requireSuperAdmin,
-  async (req, res, next) => {
-    try {
-      const data = createTemplateSchema.parse(req.body);
-      const protocolService = getContainer().protocolService;
-
-      const template = await protocolService.createTemplate(data);
-
-      await createAuditLog(req, {
-        action: "protocol_template.create",
-        tableName: "protocol_templates",
-        recordId: template.id,
-        newValues: { name: data.name },
-      });
-
-      res.status(201).json({ template });
-    } catch (error) {
-      next(error);
-    }
-  },
-);
-
-// PUT /api/v1/protocols/templates/:id (super admin only)
-router.put(
-  "/templates/:id",
-  authenticate,
-  requireSuperAdmin,
-  async (req, res, next) => {
-    try {
-      const id = req.params.id as string;
-      const data = updateTemplateSchema.parse(req.body);
-      const protocolService = getContainer().protocolService;
-
-      const template = await protocolService.updateTemplate(id, data);
-
-      await createAuditLog(req, {
-        action: "protocol_template.update",
-        tableName: "protocol_templates",
-        recordId: template.id,
-        newValues: data as Record<string, unknown>,
-      });
-
-      res.json({ template });
-    } catch (error) {
-      next(error);
-    }
-  },
-);
-
-// DELETE /api/v1/protocols/templates/:id (super admin only)
-router.delete(
-  "/templates/:id",
-  authenticate,
-  requireSuperAdmin,
-  async (req, res, next) => {
-    try {
-      const id = req.params.id as string;
-      const protocolService = getContainer().protocolService;
-
-      await protocolService.deleteTemplate(id);
-
-      await createAuditLog(req, {
-        action: "protocol_template.delete",
-        tableName: "protocol_templates",
-        recordId: id,
-      });
-
-      res.status(204).send();
-    } catch (error) {
-      next(error);
-    }
-  },
-);
-
 // GET /api/v1/protocols/my-substances (patient's active protocol substances for dose logging)
 router.get(
   "/my-substances",
@@ -253,12 +139,7 @@ router.get("/:id", authenticate, async (req, res, next) => {
     const id = req.params.id as string;
     const protocolService = getContainer().protocolService;
 
-    const protocol = await protocolService.getProtocolById(id, {
-      id: req.user!.id,
-      email: req.user!.email,
-      role: req.user!.role,
-      tenantId: req.user!.tenantId,
-    });
+    const protocol = await protocolService.getProtocolById(id, req.user!.id);
 
     res.json({ protocol });
   } catch (error) {
@@ -283,12 +164,7 @@ router.put("/:id", authenticate, async (req, res, next) => {
         endDate: data.endDate ? new Date(data.endDate) : undefined,
         notes: data.notes,
       },
-      {
-        id: req.user!.id,
-        email: req.user!.email,
-        role: req.user!.role,
-        tenantId: req.user!.tenantId,
-      },
+      req.user!.id,
     );
 
     await createAuditLog(req, {
@@ -313,12 +189,7 @@ router.get("/:id/schedule", authenticate, async (req, res, next) => {
     const protocolService = getContainer().protocolService;
     const result = await protocolService.getProtocolSchedule(
       id,
-      {
-        id: req.user!.id,
-        email: req.user!.email,
-        role: req.user!.role,
-        tenantId: req.user!.tenantId,
-      },
+      req.user!.id,
       startDate as string,
       endDate as string,
     );

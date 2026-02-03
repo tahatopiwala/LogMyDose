@@ -7,7 +7,6 @@ import {
   CreateTemplateInput,
   UpdateTemplateInput,
 } from "../interfaces/services/IProtocolService.js";
-import { CurrentUser } from "../interfaces/services/IAuthService.js";
 import {
   IProtocolRepository,
   ProtocolWithDetails,
@@ -215,7 +214,7 @@ export class ProtocolService implements IProtocolService {
 
   async getProtocolById(
     id: string,
-    currentUser: CurrentUser,
+    patientId: string,
   ): Promise<ProtocolWithDetails | null> {
     const protocol = await this.protocolRepository.findByIdWithDetails(id);
 
@@ -223,19 +222,9 @@ export class ProtocolService implements IProtocolService {
       throw new AppError(404, "Protocol not found", "NOT_FOUND");
     }
 
-    // Verify access
-    if (
-      currentUser.role === "patient" &&
-      protocol.patientId !== currentUser.id
-    ) {
+    // Verify the patient owns this protocol
+    if (protocol.patientId !== patientId) {
       throw new AppError(403, "Access denied", "FORBIDDEN");
-    }
-
-    // For providers, check tenant access
-    if (["provider", "clinic_admin"].includes(currentUser.role)) {
-      if (protocol.clinicId !== currentUser.tenantId) {
-        throw new AppError(403, "Access denied", "FORBIDDEN");
-      }
     }
 
     return protocol;
@@ -244,7 +233,7 @@ export class ProtocolService implements IProtocolService {
   async updateProtocol(
     id: string,
     data: UpdateProtocolInput,
-    currentUser: CurrentUser,
+    patientId: string,
   ): Promise<Protocol> {
     const existingProtocol = await this.protocolRepository.findById(id);
 
@@ -252,11 +241,8 @@ export class ProtocolService implements IProtocolService {
       throw new AppError(404, "Protocol not found", "NOT_FOUND");
     }
 
-    // Verify access
-    if (
-      currentUser.role === "patient" &&
-      existingProtocol.patientId !== currentUser.id
-    ) {
+    // Verify the patient owns this protocol
+    if (existingProtocol.patientId !== patientId) {
       throw new AppError(403, "Access denied", "FORBIDDEN");
     }
 
@@ -265,7 +251,7 @@ export class ProtocolService implements IProtocolService {
 
   async getProtocolSchedule(
     id: string,
-    currentUser: CurrentUser,
+    patientId: string,
     startDate?: string,
     endDate?: string,
   ): Promise<ProtocolSchedule> {
@@ -275,11 +261,8 @@ export class ProtocolService implements IProtocolService {
       throw new AppError(404, "Protocol not found", "NOT_FOUND");
     }
 
-    // Verify access
-    if (
-      currentUser.role === "patient" &&
-      protocol.patientId !== currentUser.id
-    ) {
+    // Verify the patient owns this protocol
+    if (protocol.patientId !== patientId) {
       throw new AppError(403, "Access denied", "FORBIDDEN");
     }
 

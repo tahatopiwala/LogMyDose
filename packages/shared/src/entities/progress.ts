@@ -11,6 +11,5 @@ export interface ProgressEntry {
   data: JsonValue | null;
   fileUrls: string[];
   notes: string | null;
-  sharedWithClinic: boolean;
   recordedAt: Date;
 }

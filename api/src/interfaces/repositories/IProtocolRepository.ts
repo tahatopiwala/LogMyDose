@@ -26,8 +26,6 @@ export interface CreateProtocolInput {
   templateId?: string;
   name?: string;
   description?: string;
-  clinicId?: string;
-  providerId?: string;
   startDate?: Date;
   endDate?: Date;
   notes?: string;
@@ -52,12 +50,6 @@ export interface ProtocolWithDetails extends Protocol {
     lastName: string | null;
     email: string;
   };
-  provider?: {
-    id: string;
-    firstName: string | null;
-    lastName: string | null;
-    credentials: string | null;
-  } | null;
   substances: Array<
     ProtocolSubstance & {
       substance: {
@@ -92,7 +84,6 @@ export interface CreateTemplateInput {
   difficultyLevel?: string;
   tags?: string[];
   isPublic?: boolean;
-  createdByClinicId?: string;
 }
 
 export interface UpdateTemplateInput {

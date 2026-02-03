@@ -20,7 +20,6 @@ export interface ProtocolTemplate {
   tags: string[];
   useCount: number;
   isPublic: boolean;
-  createdByClinicId: string | null;
   createdAt: Date;
 }
 
@@ -31,17 +30,14 @@ export interface ProtocolTemplate {
 export interface Protocol {
   id: string;
   patientId: string;
+  name: string | null;
+  description: string | null;
   source: string;
   templateId: string | null;
-  clinicId: string | null;
-  providerId: string | null;
-  clinicCanModify: boolean;
   status: string;
   startDate: Date | null;
   endDate: Date | null;
   notes: string | null;
-  approvedAt: Date | null;
-  approvedById: string | null;
   createdAt: Date;
 }
 
@@ -53,6 +49,7 @@ export interface ProtocolSubstance {
   id: string;
   protocolId: string;
   substanceId: string;
+  productId: string | null;
   dose: Decimal;
   doseUnit: string | null;
   frequency: string | null;
@@ -77,12 +74,6 @@ export interface ProtocolWithDetails extends Protocol {
     lastName: string | null;
     email: string;
   };
-  provider: {
-    id: string;
-    firstName: string | null;
-    lastName: string | null;
-    credentials: string | null;
-  } | null;
   substances: Array<
     ProtocolSubstance & {
       substance: {
@@ -91,6 +82,10 @@ export interface ProtocolWithDetails extends Protocol {
         doseUnit: string | null;
         administrationRoute: string | null;
       };
+      product?: {
+        id: string;
+        name: string;
+      } | null;
     }
   >;
 }

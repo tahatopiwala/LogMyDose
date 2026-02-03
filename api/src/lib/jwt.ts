@@ -4,8 +4,7 @@ import { env } from "./env.js";
 export interface TokenPayload {
   id: string;
   email: string;
-  role: "patient" | "provider" | "clinic_admin" | "super_admin";
-  tenantId?: string;
+  role: "patient";
 }
 
 export interface RefreshTokenPayload {

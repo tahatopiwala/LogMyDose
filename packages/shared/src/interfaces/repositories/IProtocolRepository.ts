@@ -25,10 +25,10 @@ export interface CreateProtocolSubstanceInput {
 
 export interface CreateProtocolInput {
   patientId: string;
+  name?: string;
+  description?: string;
   source: string;
   templateId?: string;
-  clinicId?: string;
-  providerId?: string;
   startDate?: Date;
   endDate?: Date;
   notes?: string;

@@ -17,10 +17,6 @@ const updatePatientSchema = z.object({
   settings: z.record(z.string(), z.unknown()).optional(),
 });
 
-const linkClinicSchema = z.object({
-  inviteCode: z.string().min(1),
-});
-
 // GET /api/v1/patients/me
 router.get("/me", authenticate, requirePatient, async (req, res, next) => {
   try {
@@ -63,61 +59,6 @@ router.put("/me", authenticate, requirePatient, async (req, res, next) => {
     next(error);
   }
 });
-
-// POST /api/v1/patients/link-clinic
-router.post(
-  "/link-clinic",
-  authenticate,
-  requirePatient,
-  async (req, res, next) => {
-    try {
-      const data = linkClinicSchema.parse(req.body);
-      const patientService = getContainer().patientService;
-
-      const patient = await patientService.linkToClinic(
-        req.user!.id,
-        data.inviteCode,
-      );
-
-      await createAuditLog(req, {
-        action: "patient.link_clinic",
-        tableName: "patients",
-        recordId: patient.id,
-        newValues: { clinicId: patient.clinicId },
-      });
-
-      res.json({ patient });
-    } catch (error) {
-      next(error);
-    }
-  },
-);
-
-// POST /api/v1/patients/unlink-clinic
-router.post(
-  "/unlink-clinic",
-  authenticate,
-  requirePatient,
-  async (req, res, next) => {
-    try {
-      const patientService = getContainer().patientService;
-
-      const currentPatient = await patientService.getProfile(req.user!.id);
-      const patient = await patientService.unlinkFromClinic(req.user!.id);
-
-      await createAuditLog(req, {
-        action: "patient.unlink_clinic",
-        tableName: "patients",
-        recordId: patient.id,
-        oldValues: { clinicId: currentPatient?.clinicId },
-      });
-
-      res.json({ patient });
-    } catch (error) {
-      next(error);
-    }
-  },
-);
 
 // GET /api/v1/patients/protocols
 router.get(

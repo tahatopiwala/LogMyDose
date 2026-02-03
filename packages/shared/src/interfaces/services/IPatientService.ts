@@ -1,6 +1,5 @@
 import {
   Patient,
-  PatientWithClinic,
   Alert,
   Dose,
   ProtocolWithDetails,
@@ -16,13 +15,8 @@ export interface PatientDosesQuery {
 }
 
 export interface IPatientService {
-  getProfile(patientId: string): Promise<PatientWithClinic | null>;
+  getProfile(patientId: string): Promise<Patient | null>;
   updateProfile(patientId: string, data: UpdatePatientInput): Promise<Patient>;
-  linkToClinic(
-    patientId: string,
-    inviteCode: string,
-  ): Promise<PatientWithClinic>;
-  unlinkFromClinic(patientId: string): Promise<Patient>;
   getProtocols(patientId: string): Promise<ProtocolWithDetails[]>;
   getDoses(
     patientId: string,

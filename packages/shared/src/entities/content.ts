@@ -13,8 +13,6 @@ export interface Content {
   tags: string[];
   categoryIds: string[];
   substanceIds: string[];
-  isGlobal: boolean;
-  tenantIds: string[];
   isPublished: boolean;
   createdAt: Date;
 }

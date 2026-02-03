@@ -6,7 +6,6 @@ import {
   ActiveProtocolSubstance,
 } from "../repositories/IProtocolRepository.js";
 import { PaginatedResponse } from "../../types/index.js";
-import { CurrentUser } from "./IAuthService.js";
 
 export interface GetTemplatesQuery {
   page?: number;
@@ -107,16 +106,16 @@ export interface IProtocolService {
   ): Promise<ProtocolWithDetails>;
   getProtocolById(
     id: string,
-    currentUser: CurrentUser,
+    patientId: string,
   ): Promise<ProtocolWithDetails | null>;
   updateProtocol(
     id: string,
     data: UpdateProtocolInput,
-    currentUser: CurrentUser,
+    patientId: string,
   ): Promise<Protocol>;
   getProtocolSchedule(
     id: string,
-    currentUser: CurrentUser,
+    patientId: string,
     startDate?: string,
     endDate?: string,
   ): Promise<ProtocolSchedule>;

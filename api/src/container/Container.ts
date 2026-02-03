@@ -2,9 +2,7 @@ import { PrismaClient } from "@logmydose/shared/prisma";
 
 // Repository interfaces
 import {
-  IUserRepository,
   IPatientRepository,
-  ITenantRepository,
   ISubstanceRepository,
   IProtocolRepository,
   IDoseRepository,
@@ -14,9 +12,7 @@ import {
 
 // Repository implementations
 import {
-  UserRepository,
   PatientRepository,
-  TenantRepository,
   SubstanceRepository,
   ProtocolRepository,
   DoseRepository,
@@ -28,7 +24,6 @@ import {
 import {
   IAuthService,
   IPatientService,
-  ITenantService,
   ISubstanceService,
   IProtocolService,
   IDoseService,
@@ -43,7 +38,6 @@ import {
 import {
   AuthService,
   PatientService,
-  TenantService,
   SubstanceService,
   ProtocolService,
   DoseService,
@@ -62,9 +56,7 @@ export class Container {
   private static instance: Container;
 
   // Repositories
-  readonly userRepository: IUserRepository;
   readonly patientRepository: IPatientRepository;
-  readonly tenantRepository: ITenantRepository;
   readonly substanceRepository: ISubstanceRepository;
   readonly protocolRepository: IProtocolRepository;
   readonly doseRepository: IDoseRepository;
@@ -74,7 +66,6 @@ export class Container {
   // Services
   readonly authService: IAuthService;
   readonly patientService: IPatientService;
-  readonly tenantService: ITenantService;
   readonly substanceService: ISubstanceService;
   readonly protocolService: IProtocolService;
   readonly doseService: IDoseService;
@@ -89,9 +80,7 @@ export class Container {
 
   private constructor(prisma: PrismaClient) {
     // Initialize repositories
-    this.userRepository = new UserRepository(prisma);
     this.patientRepository = new PatientRepository(prisma);
-    this.tenantRepository = new TenantRepository(prisma);
     this.substanceRepository = new SubstanceRepository(prisma);
     this.protocolRepository = new ProtocolRepository(prisma);
     this.doseRepository = new DoseRepository(prisma);
@@ -117,21 +106,14 @@ export class Container {
 
     // Initialize services with repository dependencies
     this.authService = new AuthService(
-      this.userRepository,
       this.patientRepository,
       this.queueService,
     );
 
     this.patientService = new PatientService(
       this.patientRepository,
-      this.tenantRepository,
       this.protocolRepository,
       this.doseRepository,
-    );
-
-    this.tenantService = new TenantService(
-      this.tenantRepository,
-      this.patientRepository,
     );
 
     this.substanceService = new SubstanceService(this.substanceRepository);

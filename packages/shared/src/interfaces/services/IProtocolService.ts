@@ -4,7 +4,6 @@ import {
   TemplateWithRelations,
 } from "../../entities/index.js";
 import { UpdateProtocolInput } from "../repositories/IProtocolRepository.js";
-import { CurrentUser } from "./IAuthService.js";
 import { PaginatedResponse, InputJsonValue } from "../../types/index.js";
 
 export interface GetTemplatesQuery {
@@ -29,6 +28,8 @@ export interface CreateProtocolSubstanceServiceInput {
 }
 
 export interface CreateProtocolServiceInput {
+  name?: string;
+  description?: string;
   source: "template" | "custom";
   templateId?: string;
   startDate?: string;
@@ -62,16 +63,16 @@ export interface IProtocolService {
   ): Promise<ProtocolWithDetails>;
   getProtocolById(
     id: string,
-    currentUser: CurrentUser,
+    patientId: string,
   ): Promise<ProtocolWithDetails | null>;
   updateProtocol(
     id: string,
     data: UpdateProtocolInput,
-    currentUser: CurrentUser,
+    patientId: string,
   ): Promise<Protocol>;
   getProtocolSchedule(
     id: string,
-    currentUser: CurrentUser,
+    patientId: string,
     startDate?: string,
     endDate?: string,
   ): Promise<ProtocolSchedule>;

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-LogMyDose is a peptide therapy tracking platform with a D2C-first model and optional clinic integration. The platform provides AI-powered ambient intelligence that proactively surfaces insights without requiring user prompts.
+LogMyDose is a D2C (Direct-to-Consumer) peptide therapy tracking platform. The platform provides AI-powered ambient intelligence that proactively surfaces insights without requiring user prompts. Users can register, create protocols with substances, log doses, and track their progress.
 
 **Current Status**: Active development - see `vision.md` for product vision and `logmydose-plan.md` for detailed implementation plan.
 
@@ -40,10 +40,6 @@ LogMyDose is a peptide therapy tracking platform with a D2C-first model and opti
 - Shared packages in `/packages` for code reuse
 - Run `npm run build` from root to build all packages
 
-### Multi-tenancy
-- All tenant-scoped tables include `tenant_id` with Row Level Security (RLS) policies
-- `clinic_id` is optional in patients table (NULL = D2C user)
-
 ### AI Strategy ("Ambient Intelligence")
 The platform's core differentiator is AI that works proactively, not reactively:
 - **Proactive Insight Cards**: Pattern detection, progress updates, safety alerts
@@ -55,7 +51,6 @@ The platform's core differentiator is AI that works proactively, not reactively:
 
 ### HIPAA Compliance
 - D2C self-tracking = personal health app (lighter compliance)
-- Clinic integration = full HIPAA compliance required
 - Build with HIPAA-ready architecture from start
 - BAAs required with Supabase, hosting provider for PHI
 
@@ -66,15 +61,12 @@ The platform's core differentiator is AI that works proactively, not reactively:
   /src/routes           # API routes
   /src/services         # Business logic
   /src/repositories     # Data access layer
-  /src/middleware       # Auth, tenant context, audit logging
+  /src/middleware       # Auth, audit logging
   /src/lib              # Utilities and helpers
 /web-app                # Patient portal (React + Vite)
   /src/pages            # Page components
   /src/components       # UI components
   /src/hooks            # Custom React hooks
-/admin-app              # Admin portal (React + Vite)
-  /src/pages            # Admin pages
-  /src/components       # Admin components
 /web-landing            # Marketing landing page
   /src/components       # Landing page components
 /mobile                 # React Native app (Expo)
@@ -99,9 +91,9 @@ The platform's core differentiator is AI that works proactively, not reactively:
 ## Key Data Models
 
 Core entities (defined in `/packages/shared/src/entities`):
-- `tenants`: Clinic/white-label instances
-- `patients`: Unified D2C and clinic-managed users
-- `products`: Products (peptides, hormones, supplements)
+- `patients`: D2C users who track their doses
+- `substances`: Substances (peptides, hormones, supplements)
+- `products`: Specific products for substances
 - `protocols`: Patient's active protocols
 - `doses`: Dose logging
 - `side_effects`: Side effect tracking
@@ -121,7 +113,6 @@ npm run dev
 # Individual services
 npm run dev:api        # Backend API
 npm run dev:app        # Patient web app
-npm run dev:admin      # Admin portal
 npm run dev:landing    # Landing page
 npm run dev:workers    # Background workers
 

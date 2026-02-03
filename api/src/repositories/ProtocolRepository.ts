@@ -34,14 +34,6 @@ export class ProtocolRepository implements IProtocolRepository {
         template: {
           select: { id: true, name: true },
         },
-        provider: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            credentials: true,
-          },
-        },
         substances: {
           include: {
             substance: {
@@ -116,8 +108,6 @@ export class ProtocolRepository implements IProtocolRepository {
         templateId: data.templateId,
         name: data.name,
         description: data.description,
-        clinicId: data.clinicId,
-        providerId: data.providerId,
         startDate: data.startDate,
         endDate: data.endDate,
         notes: data.notes,
@@ -269,7 +259,6 @@ export class ProtocolRepository implements IProtocolRepository {
         difficultyLevel: data.difficultyLevel,
         tags: data.tags || [],
         isPublic: data.isPublic ?? true,
-        createdByClinicId: data.createdByClinicId,
       },
       include: {
         category: true,

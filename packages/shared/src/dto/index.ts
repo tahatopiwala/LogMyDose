@@ -2,17 +2,11 @@
 // Re-export service inputs as DTOs for API consumers
 export {
   RegisterPatientInput,
-  RegisterUserInput,
   LoginInput,
   RefreshInput,
 } from "../interfaces/services/IAuthService.js";
 
 export { PatientDosesQuery } from "../interfaces/services/IPatientService.js";
-
-export {
-  GetClinicPatientsQuery,
-  CreateClinicInvitationInput,
-} from "../interfaces/services/ITenantService.js";
 
 export { GetSubstancesQuery } from "../interfaces/services/ISubstanceService.js";
 

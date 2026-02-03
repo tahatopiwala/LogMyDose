@@ -1,21 +1,13 @@
 export {
   IAuthService,
   RegisterPatientInput,
-  RegisterUserInput,
   LoginInput,
   TokenPair,
   PatientAuthResponse,
-  UserAuthResponse,
   RefreshInput,
-  CurrentUser,
+  CurrentPatient,
 } from "./IAuthService.js";
 export { IPatientService, PatientDosesQuery } from "./IPatientService.js";
-export {
-  ITenantService,
-  GetClinicPatientsQuery,
-  CreateInvitationInput,
-  InvitationResponse,
-} from "./ITenantService.js";
 export { ISubstanceService, GetSubstancesQuery } from "./ISubstanceService.js";
 export {
   IProtocolService,

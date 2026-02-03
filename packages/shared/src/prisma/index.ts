@@ -4,10 +4,7 @@ export { PrismaClient, Prisma } from "@prisma/client";
 
 // Re-export all model types from @prisma/client for consumers who need the raw Prisma types
 export type {
-  Tenant,
-  User,
   Patient,
-  ClinicInvitation,
   EmailVerificationToken,
   SubstanceCategory,
   Substance,

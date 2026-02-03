@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { z } from "zod";
 import { getContainer } from "../container/index.js";
-import { authenticate, requirePatient, requireSuperAdmin } from "../middleware/auth.js";
+import { authenticate, requirePatient } from "../middleware/auth.js";
 import { paginationSchema } from "../types/index.js";
 
 const router = Router();
@@ -130,95 +130,5 @@ router.delete("/:id", authenticate, requirePatient, async (req, res, next) => {
     next(error);
   }
 });
-
-// ============================================
-// Admin Endpoints
-// ============================================
-
-// GET /api/v1/products/admin/global - List all global products
-router.get(
-  "/admin/global",
-  authenticate,
-  requireSuperAdmin,
-  async (req, res, next) => {
-    try {
-      const { page, limit } = paginationSchema.parse(req.query);
-      const { substanceId, search } = req.query;
-
-      const productService = getContainer().productService;
-      const result = await productService.getGlobalProducts({
-        page,
-        limit,
-        substanceId: substanceId as string,
-        search: search as string,
-      });
-
-      res.json({
-        products: result.data,
-        pagination: result.pagination,
-      });
-    } catch (error) {
-      next(error);
-    }
-  },
-);
-
-// POST /api/v1/products/admin/global - Create global product
-router.post(
-  "/admin/global",
-  authenticate,
-  requireSuperAdmin,
-  async (req, res, next) => {
-    try {
-      const data = createProductSchema.parse(req.body);
-
-      const productService = getContainer().productService;
-      const product = await productService.createGlobalProduct(data);
-
-      res.status(201).json({ product });
-    } catch (error) {
-      next(error);
-    }
-  },
-);
-
-// PUT /api/v1/products/admin/global/:id - Update global product
-router.put(
-  "/admin/global/:id",
-  authenticate,
-  requireSuperAdmin,
-  async (req, res, next) => {
-    try {
-      const id = req.params.id as string;
-      const data = updateProductSchema.parse(req.body);
-
-      const productService = getContainer().productService;
-      const product = await productService.updateGlobalProduct(id, data);
-
-      res.json({ product });
-    } catch (error) {
-      next(error);
-    }
-  },
-);
-
-// DELETE /api/v1/products/admin/global/:id - Delete global product
-router.delete(
-  "/admin/global/:id",
-  authenticate,
-  requireSuperAdmin,
-  async (req, res, next) => {
-    try {
-      const id = req.params.id as string;
-
-      const productService = getContainer().productService;
-      await productService.deleteGlobalProduct(id);
-
-      res.status(204).send();
-    } catch (error) {
-      next(error);
-    }
-  },
-);
 
 export default router;

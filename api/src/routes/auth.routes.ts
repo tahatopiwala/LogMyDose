@@ -65,26 +65,14 @@ const registerPatientSchema = z.object({
   lastName: z.string().min(1).max(100).optional(),
 });
 
-const registerUserSchema = z.object({
-  email: z.string().email(),
-  password: passwordSchema,
-  firstName: z.string().min(1).max(100).optional(),
-  lastName: z.string().min(1).max(100).optional(),
-  role: z.enum(["provider", "clinic_admin"]),
-  tenantId: z.string().uuid(),
-  credentials: z.string().max(255).optional(),
-});
-
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(1),
-  userType: z.enum(["patient", "user"]).default("patient"),
   rememberMe: z.boolean().default(false),
 });
 
 const refreshSchema = z.object({
   refreshToken: z.string().min(1),
-  userType: z.enum(["patient", "user"]).default("patient"),
 });
 
 // POST /api/v1/auth/register/patient
@@ -111,32 +99,6 @@ router.post("/register/patient", async (req, res, next) => {
   }
 });
 
-// POST /api/v1/auth/register/user (for providers/admins)
-router.post("/register/user", authenticate, async (req, res, next) => {
-  try {
-    const data = registerUserSchema.parse(req.body);
-    const authService = getContainer().authService;
-
-    const result = await authService.registerUser(data, {
-      id: req.user!.id,
-      email: req.user!.email,
-      role: req.user!.role,
-      tenantId: req.user!.tenantId,
-    });
-
-    await createAuditLog(req, {
-      action: "user.register",
-      tableName: "users",
-      recordId: result.user.id,
-      newValues: { email: result.user.email, role: result.user.role },
-    });
-
-    res.status(201).json(result);
-  } catch (error) {
-    next(error);
-  }
-});
-
 // POST /api/v1/auth/login
 router.post("/login", async (req, res, next) => {
   try {
@@ -145,11 +107,10 @@ router.post("/login", async (req, res, next) => {
 
     const result = await authService.login(data);
 
-    const isPatient = "patient" in result;
     await createAuditLog(req, {
-      action: isPatient ? "patient.login" : "user.login",
-      tableName: isPatient ? "patients" : "users",
-      recordId: isPatient ? result.patient.id : result.user.id,
+      action: "patient.login",
+      tableName: "patients",
+      recordId: result.patient.id,
     });
 
     // Set httpOnly cookies for web clients
@@ -172,11 +133,10 @@ router.post("/refresh", async (req, res, next) => {
     // Support refresh token from body or cookie
     const refreshToken =
       req.body.refreshToken || req.cookies?.lmd_refresh_token;
-    const userType = req.body.userType || "patient";
     // Preserve rememberMe preference from cookie
     const rememberMe = req.cookies?.lmd_remember_me === "1";
 
-    const data = refreshSchema.parse({ refreshToken, userType });
+    const data = refreshSchema.parse({ refreshToken });
     const authService = getContainer().authService;
 
     const tokens = await authService.refresh(data);
@@ -195,16 +155,11 @@ router.post("/logout", authenticate, async (req, res, next) => {
   try {
     const authService = getContainer().authService;
 
-    await authService.logout({
-      id: req.user!.id,
-      email: req.user!.email,
-      role: req.user!.role,
-      tenantId: req.user!.tenantId,
-    });
+    await authService.logout(req.user!.id);
 
     await createAuditLog(req, {
-      action: req.user!.role === "patient" ? "patient.logout" : "user.logout",
-      tableName: req.user!.role === "patient" ? "patients" : "users",
+      action: "patient.logout",
+      tableName: "patients",
       recordId: req.user!.id,
     });
 
@@ -222,13 +177,8 @@ router.get("/me", authenticate, async (req, res, next) => {
   try {
     const authService = getContainer().authService;
 
-    if (req.user!.role === "patient") {
-      const patient = await authService.getCurrentPatient(req.user!.id);
-      res.json({ patient });
-    } else {
-      const user = await authService.getCurrentUser(req.user!.id);
-      res.json({ user });
-    }
+    const patient = await authService.getCurrentPatient(req.user!.id);
+    res.json({ patient });
   } catch (error) {
     next(error);
   }
@@ -252,13 +202,6 @@ router.get("/verify-email", async (req, res, next) => {
 router.post("/resend-verification", authenticate, async (req, res, next) => {
   try {
     const authService = getContainer().authService;
-
-    // Only patients can request verification emails
-    if (req.user!.role !== "patient") {
-      return res
-        .status(403)
-        .json({ error: "Only patients can request verification emails" });
-    }
 
     await authService.resendVerificationEmail(req.user!.id);
 

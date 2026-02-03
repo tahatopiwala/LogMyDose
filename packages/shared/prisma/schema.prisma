@@ -1,5 +1,5 @@
 // Prisma Schema for LogMyDose
-// Peptide therapy tracking platform with D2C + Clinic model
+// D2C Peptide therapy tracking platform
 
 generator client {
   provider = "prisma-client-js"
@@ -10,58 +10,7 @@ datasource db {
 }
 
 // =============================================================================
-// TENANTS & USERS (Clinic/Admin Side)
-// =============================================================================
-
-// Clinic/white-label instances
-model Tenant {
-  id                 String    @id @default(uuid()) @db.Uuid
-  name               String    @db.VarChar(255)
-  slug               String    @unique @db.VarChar(100) // for white-label URLs
-  branding           Json?     // logo_url, primary_color, secondary_color, app_name
-  subscriptionTier   String?   @map("subscription_tier") @db.VarChar(50)
-  subscriptionStatus String?   @map("subscription_status") @db.VarChar(50)
-  stripeCustomerId   String?   @map("stripe_customer_id") @db.VarChar(255)
-  settings           Json?
-  createdAt          DateTime  @default(now()) @map("created_at")
-  updatedAt          DateTime  @updatedAt @map("updated_at")
-
-  // Relations
-  users              User[]
-  patients           Patient[]
-  protocols          Protocol[]
-  clinicInvitations  ClinicInvitation[]
-  protocolTemplates  ProtocolTemplate[]
-  auditLogs          AuditLog[]
-
-  @@map("tenants")
-}
-
-// Users (providers, admins, super admins) - NOT patients
-model User {
-  id           String   @id @default(uuid()) @db.Uuid
-  tenantId     String?  @map("tenant_id") @db.Uuid
-  email        String   @unique @db.VarChar(255)
-  passwordHash String   @map("password_hash") @db.VarChar(255)
-  role         String   @db.VarChar(50) // super_admin, clinic_admin, provider
-  firstName    String?  @map("first_name") @db.VarChar(100)
-  lastName     String?  @map("last_name") @db.VarChar(100)
-  credentials  String?  @db.VarChar(255) // MD, DO, NP, etc.
-  permissions  Json?
-  isActive     Boolean  @default(true) @map("is_active")
-  tokenVersion Int      @default(0) @map("token_version") // For refresh token invalidation
-  createdAt    DateTime @default(now()) @map("created_at")
-
-  // Relations
-  tenant            Tenant?    @relation(fields: [tenantId], references: [id])
-  assignedProtocols Protocol[] @relation("AssignedProvider")
-  approvedProtocols Protocol[] @relation("ApprovedBy")
-
-  @@map("users")
-}
-
-// =============================================================================
-// PATIENTS (D2C and Clinic-managed)
+// PATIENTS (D2C Users)
 // =============================================================================
 
 model Patient {
@@ -73,9 +22,6 @@ model Patient {
   dateOfBirth          DateTime? @map("date_of_birth") @db.Date
   phone                String?   @db.VarChar(20)
 
-  // Account type
-  accountType          String    @default("d2c") @map("account_type") @db.VarChar(50) // d2c, clinic_managed, hybrid
-
   // D2C subscription
   subscriptionTier     String?   @map("subscription_tier") @db.VarChar(50) // free, pro
   subscriptionStatus   String?   @map("subscription_status") @db.VarChar(50)
@@ -86,12 +32,6 @@ model Patient {
   trialEndsAt          DateTime? @map("trial_ends_at")
   cancelAtPeriodEnd    Boolean   @default(false) @map("cancel_at_period_end")
 
-  // Clinic link (optional)
-  clinicId             String?   @map("clinic_id") @db.Uuid // NULL = D2C user
-  clinicLinkedAt       DateTime? @map("clinic_linked_at")
-  clinicControlLevel   String?   @map("clinic_control_level") @db.VarChar(50) // view_only, can_modify, full_control
-
-  consentSignedAt      DateTime? @map("consent_signed_at")
   settings             Json?
   tokenVersion         Int       @default(0) @map("token_version")
   emailVerifiedAt      DateTime? @map("email_verified_at")
@@ -99,7 +39,6 @@ model Patient {
   createdAt            DateTime  @default(now()) @map("created_at")
 
   // Relations
-  clinic               Tenant?           @relation(fields: [clinicId], references: [id])
   emailVerificationTokens EmailVerificationToken[]
   protocols            Protocol[]
   doses                Dose[]
@@ -129,21 +68,6 @@ model EmailVerificationToken {
   @@index([token])
   @@index([patientId])
   @@map("email_verification_tokens")
-}
-
-model ClinicInvitation {
-  id         String   @id @default(uuid()) @db.Uuid
-  clinicId   String   @map("clinic_id") @db.Uuid
-  email      String   @db.VarChar(255)
-  inviteCode String   @unique @map("invite_code") @db.VarChar(50)
-  status     String   @default("pending") @db.VarChar(50) // pending, accepted, expired
-  expiresAt  DateTime @map("expires_at")
-  createdAt  DateTime @default(now()) @map("created_at")
-
-  // Relations
-  clinic     Tenant   @relation(fields: [clinicId], references: [id])
-
-  @@map("clinic_invitations")
 }
 
 // PDF Export Jobs - track async export requests
@@ -291,13 +215,11 @@ model ProtocolTemplate {
   tags            String[]
   useCount        Int       @default(0) @map("use_count")
   isPublic        Boolean   @default(true) @map("is_public")
-  createdByClinicId String? @map("created_by_clinic_id") @db.Uuid
   createdAt       DateTime  @default(now()) @map("created_at")
 
   // Relations
   category        SubstanceCategory? @relation(fields: [categoryId], references: [id])
   substance       Substance?         @relation(fields: [substanceId], references: [id])
-  createdByClinic Tenant?            @relation(fields: [createdByClinicId], references: [id])
   protocols       Protocol[]
 
   @@map("protocol_templates")
@@ -311,28 +233,18 @@ model Protocol {
   description     String?   @db.Text
 
   // Source tracking
-  source          String    @db.VarChar(50) // template, clinic_assigned, custom
+  source          String    @db.VarChar(50) // template, custom
   templateId      String?   @map("template_id") @db.Uuid
-
-  // Clinic management (optional)
-  clinicId        String?   @map("clinic_id") @db.Uuid
-  providerId      String?   @map("provider_id") @db.Uuid
-  clinicCanModify Boolean   @default(false) @map("clinic_can_modify")
 
   status          String    @default("active") @db.VarChar(50) // draft, active, paused, completed
   startDate       DateTime? @map("start_date") @db.Date
   endDate         DateTime? @map("end_date") @db.Date
   notes           String?   @db.Text
-  approvedAt      DateTime? @map("approved_at")
-  approvedById    String?   @map("approved_by") @db.Uuid
   createdAt       DateTime  @default(now()) @map("created_at")
 
   // Relations
   patient         Patient           @relation(fields: [patientId], references: [id])
   template        ProtocolTemplate? @relation(fields: [templateId], references: [id])
-  clinic          Tenant?           @relation(fields: [clinicId], references: [id])
-  provider        User?             @relation("AssignedProvider", fields: [providerId], references: [id])
-  approvedBy      User?             @relation("ApprovedBy", fields: [approvedById], references: [id])
   substances      ProtocolSubstance[]
 
   @@map("protocols")
@@ -423,7 +335,6 @@ model ProgressEntry {
   data             Json?    // flexible storage for different types
   fileUrls         String[] @map("file_urls")
   notes            String?  @db.Text
-  sharedWithClinic Boolean  @default(false) @map("shared_with_clinic")
   recordedAt       DateTime @default(now()) @map("recorded_at")
 
   // Relations
@@ -525,8 +436,6 @@ model Content {
   tags         String[]
   categoryIds  String[] @map("category_ids") @db.Uuid // related substance categories
   substanceIds String[] @map("substance_ids") @db.Uuid // related substances
-  isGlobal     Boolean  @default(false) @map("is_global")
-  tenantIds    String[] @map("tenant_ids") @db.Uuid // specific tenant access
   isPublished  Boolean  @default(false) @map("is_published")
   createdAt    DateTime @default(now()) @map("created_at")
 
@@ -539,8 +448,6 @@ model Content {
 
 model AuditLog {
   id         String   @id @default(uuid()) @db.Uuid
-  tenantId   String?  @map("tenant_id") @db.Uuid
-  userId     String?  @map("user_id") @db.Uuid
   patientId  String?  @map("patient_id") @db.Uuid
   action     String   @db.VarChar(100)
   tableName  String?  @map("table_name") @db.VarChar(100)
@@ -550,9 +457,6 @@ model AuditLog {
   ipAddress  String?  @map("ip_address") @db.VarChar(45)
   userAgent  String?  @map("user_agent") @db.Text
   createdAt  DateTime @default(now()) @map("created_at")
-
-  // Relations
-  tenant     Tenant?  @relation(fields: [tenantId], references: [id])
 
   @@map("audit_logs")
 }
