@@ -60,7 +60,7 @@ const importOptions = [
 
 export function Switcher() {
   return (
-    <section id="switcher" className="py-20 px-4 sm:px-6 lg:px-8">
+    <section id="switcher" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
       <div className="max-w-7xl mx-auto">
         <FadeIn>
           <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-8 md:p-12 lg:p-16">
