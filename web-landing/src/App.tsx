@@ -1,8 +1,8 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Link } from "react-router-dom";
 import { Navbar } from "./components/Navbar";
+import { ScrollToTop } from "./components/ScrollToTop";
 import { Hero } from "./components/Hero";
 import { Problem } from "./components/Problem";
-import { Solution } from "./components/Solution";
 import { Comparison } from "./components/Comparison";
 import { Features } from "./components/Features";
 import { HowItWorks } from "./components/HowItWorks";
@@ -17,9 +17,8 @@ function LandingPage() {
     <>
       <Hero />
       <Problem />
-      <Solution />
-      <Comparison />
       <Features />
+      <Comparison />
       <HowItWorks />
       <Switcher />
       <Pricing />
@@ -32,6 +31,15 @@ function LandingPage() {
 function PrivacyPage() {
   return (
     <div className="pt-24 pb-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+      <Link
+        to="/"
+        className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors mb-8"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Back to Home
+      </Link>
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Privacy Policy</h1>
       <div className="prose prose-gray max-w-none">
         <p className="text-gray-600">
@@ -77,6 +85,15 @@ function PrivacyPage() {
 function TermsPage() {
   return (
     <div className="pt-24 pb-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+      <Link
+        to="/"
+        className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors mb-8"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Back to Home
+      </Link>
       <h1 className="text-3xl font-bold text-gray-900 mb-8">
         Terms of Service
       </h1>
@@ -125,6 +142,7 @@ function TermsPage() {
 export default function App() {
   return (
     <div className="min-h-screen bg-white">
+      <ScrollToTop />
       <Navbar />
       <main>
         <Routes>

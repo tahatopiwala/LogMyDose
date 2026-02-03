@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -9,7 +8,7 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-2">
+            <a href="/" className="flex items-center space-x-2">
               <svg
                 className="w-8 h-8"
                 viewBox="0 0 32 32"
@@ -63,30 +62,30 @@ export function Navbar() {
                 />
               </svg>
               <span className="text-xl font-bold text-gray-900">LogMyDose</span>
-            </Link>
+            </a>
           </div>
 
           <div className="hidden md:flex items-center space-x-8">
             <a
-              href="#features"
+              href="/#features"
               className="text-gray-600 hover:text-gray-900 transition-colors"
             >
               Features
             </a>
             <a
-              href="#how-it-works"
+              href="/#how-it-works"
               className="text-gray-600 hover:text-gray-900 transition-colors"
             >
               How It Works
             </a>
             <a
-              href="#pricing"
+              href="/#pricing"
               className="text-gray-600 hover:text-gray-900 transition-colors"
             >
               Pricing
             </a>
             <a
-              href="#faq"
+              href="/#faq"
               className="text-gray-600 hover:text-gray-900 transition-colors"
             >
               FAQ
@@ -140,19 +139,19 @@ export function Navbar() {
         {mobileMenuOpen && (
           <div className="md:hidden py-4 border-t border-gray-100">
             <div className="flex flex-col space-y-4">
-              <a href="#features" className="text-gray-600 hover:text-gray-900">
+              <a href="/#features" className="text-gray-600 hover:text-gray-900">
                 Features
               </a>
               <a
-                href="#how-it-works"
+                href="/#how-it-works"
                 className="text-gray-600 hover:text-gray-900"
               >
                 How It Works
               </a>
-              <a href="#pricing" className="text-gray-600 hover:text-gray-900">
+              <a href="/#pricing" className="text-gray-600 hover:text-gray-900">
                 Pricing
               </a>
-              <a href="#faq" className="text-gray-600 hover:text-gray-900">
+              <a href="/#faq" className="text-gray-600 hover:text-gray-900">
                 FAQ
               </a>
               <hr className="border-gray-100" />

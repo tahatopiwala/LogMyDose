@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { FadeIn, StaggerContainer, StaggerItem } from "./animations/FadeIn";
 
 const faqs = [
   {
@@ -49,59 +51,70 @@ export function FAQ() {
   return (
     <section id="faq" className="py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-16">
+        <FadeIn className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
             Questions? We've got answers.
           </h2>
-        </div>
+        </FadeIn>
 
-        <div className="space-y-4">
+        <StaggerContainer className="space-y-4" staggerDelay={0.05}>
           {faqs.map((faq, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-xl border border-gray-200 overflow-hidden"
-            >
-              <button
-                onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full px-6 py-5 text-left flex items-center justify-between gap-4 hover:bg-gray-50 transition-colors"
-              >
-                <span className="font-semibold text-gray-900">
-                  {faq.question}
-                </span>
-                <svg
-                  className={`w-5 h-5 text-gray-500 transition-transform flex-shrink-0 ${
-                    openIndex === index ? "rotate-180" : ""
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+            <StaggerItem key={index}>
+              <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                <button
+                  onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                  className="w-full px-6 py-5 text-left flex items-center justify-between gap-4 hover:bg-gray-50 transition-colors"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </button>
-              {openIndex === index && (
-                <div className="px-6 pb-5">
-                  <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
-                </div>
-              )}
-            </div>
+                  <span className="font-semibold text-gray-900">
+                    {faq.question}
+                  </span>
+                  <motion.svg
+                    animate={{ rotate: openIndex === index ? 180 : 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="w-5 h-5 text-gray-500 flex-shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </motion.svg>
+                </button>
+                <AnimatePresence>
+                  {openIndex === index && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-6 pb-5">
+                        <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
 
         {/* Disclaimer */}
-        <div className="mt-12 p-6 bg-gray-50 rounded-xl border border-gray-200">
-          <p className="text-sm text-gray-600 text-center">
-            <strong>Medical Disclaimer:</strong> LogMyDose is a personal
-            tracking tool, not a medical device. It does not diagnose, treat, or
-            provide medical advice. Always consult your healthcare provider for
-            medical decisions.
-          </p>
-        </div>
+        <FadeIn delay={0.3} className="mt-12">
+          <div className="p-6 bg-gray-50 rounded-xl border border-gray-200">
+            <p className="text-sm text-gray-600 text-center">
+              <strong>Medical Disclaimer:</strong> LogMyDose is a personal
+              tracking tool, not a medical device. It does not diagnose, treat, or
+              provide medical advice. Always consult your healthcare provider for
+              medical decisions.
+            </p>
+          </div>
+        </FadeIn>
       </div>
     </section>
   );

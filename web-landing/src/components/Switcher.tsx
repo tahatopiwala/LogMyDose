@@ -1,3 +1,5 @@
+import { FadeIn } from "./animations/FadeIn";
+
 const protocolExamples = [
   { name: "GLP-1s", examples: "Ozempic, Wegovy, Mounjaro" },
   { name: "Peptides", examples: "BPC-157, TB-500, and more" },
@@ -59,7 +61,8 @@ export function Switcher() {
   return (
     <section id="switcher" className="py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-8 md:p-12 lg:p-16">
+        <FadeIn>
+          <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-8 md:p-12 lg:p-16">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left side - Copy */}
             <div>
@@ -141,7 +144,8 @@ export function Switcher() {
               </a>
             </div>
           </div>
-        </div>
+          </div>
+        </FadeIn>
       </div>
     </section>
   );

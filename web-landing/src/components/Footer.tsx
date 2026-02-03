@@ -76,7 +76,7 @@ export function Footer() {
             <ul className="space-y-3 text-gray-400">
               <li>
                 <a
-                  href="#features"
+                  href="/#features"
                   className="hover:text-white transition-colors"
                 >
                   Features
@@ -84,7 +84,7 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="#pricing"
+                  href="/#pricing"
                   className="hover:text-white transition-colors"
                 >
                   Pricing
@@ -92,14 +92,14 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="#how-it-works"
+                  href="/#how-it-works"
                   className="hover:text-white transition-colors"
                 >
                   How It Works
                 </a>
               </li>
               <li>
-                <a href="#faq" className="hover:text-white transition-colors">
+                <a href="/#faq" className="hover:text-white transition-colors">
                   FAQ
                 </a>
               </li>

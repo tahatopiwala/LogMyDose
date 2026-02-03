@@ -1,3 +1,5 @@
+import { FadeIn, StaggerContainer, StaggerItem } from "./animations/FadeIn";
+
 const plans = [
   {
     name: "Free",
@@ -40,20 +42,20 @@ export function Pricing() {
   return (
     <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <FadeIn className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
             Simple pricing. Real value.
           </h2>
           <p className="mt-4 text-xl text-gray-600">
             Free to start tracking. Upgrade when you want more features.
           </p>
-        </div>
+        </FadeIn>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto" staggerDelay={0.15}>
           {plans.map((plan) => (
-            <div
-              key={plan.name}
-              className={`rounded-2xl p-8 ${
+            <StaggerItem key={plan.name}>
+              <div
+              className={`rounded-2xl p-8 h-full ${
                 plan.highlighted
                   ? "bg-primary-600 text-white ring-4 ring-primary-600 ring-offset-2"
                   : "bg-white border border-gray-200"
@@ -129,14 +131,17 @@ export function Pricing() {
               >
                 {plan.cta}
               </a>
-            </div>
+              </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
 
-        <div className="mt-8 text-center text-gray-500 text-sm">
-          No credit card required to start. Cancel anytime. Your data is always
-          exportable.
-        </div>
+        <FadeIn delay={0.3}>
+          <p className="mt-8 text-center text-gray-500 text-sm">
+            No credit card required to start. Cancel anytime. Your data is always
+            exportable.
+          </p>
+        </FadeIn>
       </div>
     </section>
   );

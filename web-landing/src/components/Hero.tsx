@@ -1,10 +1,17 @@
+import { motion } from "framer-motion";
+
 export function Hero() {
   return (
     <section className="min-h-screen w-full pt-20 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden flex items-center">
       <div className="max-w-7xl mx-auto w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           {/* Left Side - Text Content */}
-          <div className="max-w-xl">
+          <motion.div
+            className="max-w-xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+          >
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-50 text-primary-700 text-sm font-medium mb-6">
               <span className="w-2 h-2 bg-primary-500 rounded-full animate-pulse" />
               Smart Protocol Tracking
@@ -49,7 +56,7 @@ export function Hero() {
                 Get Started Free
               </a>
               <a
-                href="#how-it-works"
+                href="/#how-it-works"
                 className="bg-white text-gray-900 px-8 py-4 rounded-xl text-lg font-semibold border border-gray-200 hover:border-gray-300 transition-colors text-center"
               >
                 See How It Works
@@ -96,10 +103,15 @@ export function Hero() {
                 Your data stays yours
               </span>
             </div>
-          </div>
+          </motion.div>
 
           {/* Right Side - App Mockup */}
-          <div className="relative lg:h-[600px] flex items-center justify-center">
+          <motion.div
+            className="relative lg:h-[600px] flex items-center justify-center"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.7, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+          >
             {/* Background decorations */}
             <div
               className="absolute inset-0 opacity-[0.08]"
@@ -225,7 +237,7 @@ export function Hero() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

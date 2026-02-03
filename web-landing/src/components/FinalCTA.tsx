@@ -1,7 +1,9 @@
+import { FadeIn } from "./animations/FadeIn";
+
 export function FinalCTA() {
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8 bg-primary-600">
-      <div className="max-w-4xl mx-auto text-center">
+      <FadeIn className="max-w-4xl mx-auto text-center">
         <h2 className="text-3xl sm:text-4xl font-bold text-white">
           Ready to get organized?
         </h2>
@@ -68,7 +70,7 @@ export function FinalCTA() {
             Cancel anytime
           </span>
         </div>
-      </div>
+      </FadeIn>
     </section>
   );
 }

@@ -1,3 +1,5 @@
+import { FadeIn, StaggerContainer, StaggerItem } from "./animations/FadeIn";
+
 const capabilities = [
   {
     title: "See Your Patterns",
@@ -86,7 +88,7 @@ export function Solution() {
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <FadeIn className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
             Your data, organized and ready to share
           </h2>
@@ -95,45 +97,48 @@ export function Solution() {
             supplements, and more—so you can have better conversations with your
             healthcare provider.
           </p>
-        </div>
+        </FadeIn>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           {capabilities.map((item) => {
             const colors = colorClasses[item.color as keyof typeof colorClasses];
             return (
-              <div
-                key={item.title}
-                className={`bg-white rounded-2xl p-6 shadow-sm border ${colors.border}`}
-              >
+              <StaggerItem key={item.title}>
                 <div
-                  className={`w-12 h-12 ${colors.bg} rounded-xl flex items-center justify-center ${colors.text} mb-4`}
+                  className={`bg-white rounded-2xl p-6 shadow-sm border ${colors.border} h-full`}
                 >
-                  {item.icon}
+                  <div
+                    className={`w-12 h-12 ${colors.bg} rounded-xl flex items-center justify-center ${colors.text} mb-4`}
+                  >
+                    {item.icon}
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    {item.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm leading-relaxed italic">
+                    "{item.description}"
+                  </p>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  {item.title}
-                </h3>
-                <p className="text-gray-600 text-sm leading-relaxed italic">
-                  "{item.description}"
-                </p>
-              </div>
+              </StaggerItem>
             );
           })}
-        </div>
+        </StaggerContainer>
 
         {/* What we are callout */}
-        <div className="bg-gray-900 rounded-2xl p-8 md:p-12 text-center">
-          <div className="max-w-2xl mx-auto">
-            <h3 className="text-2xl font-bold text-white mb-4">
-              A tracking tool—not a medical device
-            </h3>
-            <p className="text-gray-300 text-lg">
-              LogMyDose helps you organize your personal health notes. We don't
-              diagnose, treat, or provide medical advice. Always work with your
-              healthcare provider for medical decisions.
-            </p>
+        <FadeIn delay={0.2}>
+          <div className="bg-gray-900 rounded-2xl p-8 md:p-12 text-center">
+            <div className="max-w-2xl mx-auto">
+              <h3 className="text-2xl font-bold text-white mb-4">
+                A tracking tool—not a medical device
+              </h3>
+              <p className="text-gray-300 text-lg">
+                LogMyDose helps you organize your personal health notes. We don't
+                diagnose, treat, or provide medical advice. Always work with your
+                healthcare provider for medical decisions.
+              </p>
+            </div>
           </div>
-        </div>
+        </FadeIn>
       </div>
     </section>
   );
