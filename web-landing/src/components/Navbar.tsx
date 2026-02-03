@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { getAppUrl } from "../lib/config";
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -92,15 +93,9 @@ export function Navbar() {
             </a>
           </div>
 
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center">
             <a
-              href="https://app.logmydose.com/login"
-              className="text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Sign In
-            </a>
-            <a
-              href="https://app.logmydose.com/signup"
+              href={getAppUrl("/signup")}
               className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors"
             >
               Get Started
@@ -156,13 +151,7 @@ export function Navbar() {
               </a>
               <hr className="border-gray-100" />
               <a
-                href="https://app.logmydose.com/login"
-                className="text-gray-600 hover:text-gray-900"
-              >
-                Sign In
-              </a>
-              <a
-                href="https://app.logmydose.com/signup"
+                href={getAppUrl("/signup")}
                 className="bg-primary-600 text-white px-4 py-2 rounded-lg text-center hover:bg-primary-700"
               >
                 Get Started

@@ -1,4 +1,5 @@
 import { FadeIn } from "./animations/FadeIn";
+import { getAppUrl } from "../lib/config";
 
 const protocolExamples = [
   { name: "GLP-1s", examples: "Ozempic, Wegovy, Mounjaro" },
@@ -137,7 +138,7 @@ export function Switcher() {
               ))}
 
               <a
-                href="https://app.logmydose.com/signup"
+                href={getAppUrl("/signup")}
                 className="mt-6 block w-full bg-primary-600 hover:bg-primary-700 text-white text-center py-4 rounded-xl font-semibold transition-colors"
               >
                 Get Started

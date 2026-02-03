@@ -1,4 +1,5 @@
 import { FadeIn, StaggerContainer, StaggerItem } from "./animations/FadeIn";
+import { getAppUrl } from "../lib/config";
 
 const plans = [
   {
@@ -14,7 +15,7 @@ const plans = [
       "Export to PDF",
     ],
     cta: "Start Free",
-    ctaLink: "https://app.logmydose.com/signup",
+    ctaPath: "/signup",
     highlighted: false,
   },
   {
@@ -33,7 +34,7 @@ const plans = [
       "Priority support",
     ],
     cta: "Start 7-Day Trial",
-    ctaLink: "https://app.logmydose.com/signup?plan=pro",
+    ctaPath: "/signup?plan=pro",
     highlighted: true,
   },
 ];
@@ -122,7 +123,7 @@ export function Pricing() {
                 ))}
               </ul>
               <a
-                href={plan.ctaLink}
+                href={getAppUrl(plan.ctaPath)}
                 className={`mt-8 block w-full py-3 px-4 rounded-xl text-center font-semibold transition-colors ${
                   plan.highlighted
                     ? "bg-white text-primary-600 hover:bg-primary-50"

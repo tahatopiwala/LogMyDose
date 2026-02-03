@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { getAppUrl } from "../lib/config";
 
 export function Hero() {
   return (
@@ -50,7 +51,7 @@ export function Hero() {
 
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
               <a
-                href="https://app.logmydose.com/signup"
+                href={getAppUrl("/signup")}
                 className="bg-primary-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-primary-700 transition-colors shadow-lg shadow-primary-600/25 text-center"
               >
                 Get Started Free

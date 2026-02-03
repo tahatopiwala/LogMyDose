@@ -1,4 +1,5 @@
 import { FadeIn } from "./animations/FadeIn";
+import { getAppUrl } from "../lib/config";
 
 export function FinalCTA() {
   return (
@@ -13,7 +14,7 @@ export function FinalCTA() {
 
         <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
           <a
-            href="https://app.logmydose.com/signup"
+            href={getAppUrl("/signup")}
             className="bg-white text-primary-600 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-primary-50 transition-colors shadow-lg"
           >
             Get Started Free
