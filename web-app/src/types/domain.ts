@@ -28,6 +28,8 @@ export interface ProtocolSubstance {
 export interface Protocol {
   id: string;
   patientId: string;
+  name: string | null;
+  description: string | null;
   source: string;
   templateId: string | null;
   status: "draft" | "active" | "paused" | "completed";

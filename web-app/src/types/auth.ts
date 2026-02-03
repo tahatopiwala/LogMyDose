@@ -5,7 +5,6 @@ export interface Patient {
   lastName: string | null;
   dateOfBirth: string | null;
   phone: string | null;
-  accountType: string;
   subscriptionTier: string | null;
   subscriptionStatus: string | null;
   stripeCustomerId: string | null;
@@ -14,7 +13,7 @@ export interface Patient {
   subscriptionPriceId: string | null;
   trialEndsAt: string | null;
   cancelAtPeriodEnd: boolean;
-  clinicId: string | null;
+  emailVerifiedAt: string | null;
   createdAt: string;
 }
 
