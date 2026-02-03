@@ -62,9 +62,9 @@ export function Footer() {
               <span className="text-xl font-bold">LogMyDose</span>
             </Link>
             <p className="mt-4 text-gray-400 max-w-md">
-              A simple tracking tool for your health protocols. GLP-1s,
-              peptides, HRT, supplements—organize your notes and share what
-              matters with your doctor.
+              The biohacker's health tracking tool. GLP-1s, peptides, HRT,
+              supplements—organize your notes and share what matters with your
+              doctor.
             </p>
             <p className="mt-4 text-sm text-gray-500">
               Your data is yours. Export anytime.

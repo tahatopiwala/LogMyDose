@@ -15,7 +15,7 @@ export function Hero() {
           >
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-50 text-primary-700 text-sm font-medium mb-6">
               <span className="w-2 h-2 bg-primary-500 rounded-full animate-pulse" />
-              Smart Protocol Tracking
+              The Biohacker's Health Tracking Tool
             </div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
               Take control of your{" "}
