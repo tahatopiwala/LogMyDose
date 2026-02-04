@@ -4,3 +4,4 @@ export * from "./useVials";
 export * from "./useBiometrics";
 export * from "./useCycles";
 export * from "./useTitrations";
+export * from "./useProducts";

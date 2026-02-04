@@ -11,13 +11,31 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useProtocol, useUpdateProtocolStatus } from "../../../src/hooks/useProtocols";
+import { useCycles } from "../../../src/hooks/useCycles";
+import { useTitrations } from "../../../src/hooks/useTitrations";
 import { Card, Badge } from "../../../src/components/ui";
+import { CycleStatusBadge } from "../../../src/components/CycleStatusBadge";
+import { TitrationProgressCard } from "../../../src/components/TitrationProgress";
+import { CycleWithSubstance, TitrationPhaseWithSubstance } from "../../../src/types/domain";
 
 export default function ProtocolDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { data: protocol, isLoading, error } = useProtocol(id || "");
   const updateStatus = useUpdateProtocolStatus();
+  const { data: allCycles } = useCycles();
+  const { data: allTitrations } = useTitrations();
+
+  // Filter cycles and titrations for this protocol's substances
+  const protocolSubstanceIds = protocol?.substances.map((s) => s.id) || [];
+
+  const cycles = (allCycles || []).filter((c: CycleWithSubstance) =>
+    protocolSubstanceIds.includes(c.protocolSubstanceId) && c.status !== "completed"
+  );
+
+  const titrations = (allTitrations || []).filter((t: TitrationPhaseWithSubstance) =>
+    protocolSubstanceIds.includes(t.protocolSubstanceId) && t.status === "active"
+  );
 
   const getStatusVariant = (status: string) => {
     switch (status) {
@@ -240,6 +258,112 @@ export default function ProtocolDetailScreen() {
             </Card>
           ))}
         </View>
+
+        {/* Active Cycles */}
+        {cycles.length > 0 && (
+          <View className="px-5 mt-6">
+            <Text className="text-lg font-semibold text-gray-100 mb-4">
+              Active Cycles
+            </Text>
+            {cycles.map((cycle: CycleWithSubstance) => {
+              const totalWeeks = cycle.onWeeks + cycle.offWeeks;
+              const currentWeekInCycle = ((cycle.currentWeek - 1) % totalWeeks) + 1;
+              const isOnPhase = currentWeekInCycle <= cycle.onWeeks;
+              const progressPercent = (currentWeekInCycle / totalWeeks) * 100;
+              const onPhasePercent = (cycle.onWeeks / totalWeeks) * 100;
+
+              return (
+                <Card key={cycle.id} className="mb-3">
+                  <View className="flex-row items-center justify-between mb-3">
+                    <View>
+                      <Text className="font-semibold text-gray-100">
+                        {cycle.protocolSubstance.substance.name}
+                      </Text>
+                      <Text className="text-sm text-gray-500">
+                        Cycle #{cycle.cycleNumber} • Week {cycle.currentWeek}
+                      </Text>
+                    </View>
+                    <CycleStatusBadge status={cycle.status} compact />
+                  </View>
+
+                  {/* Progress bar */}
+                  <View className="h-3 bg-surface-elevated rounded-full overflow-hidden mb-2">
+                    <View
+                      className="absolute h-full bg-green-500/20"
+                      style={{ width: `${onPhasePercent}%` }}
+                    />
+                    <View
+                      className={`h-full rounded-full ${isOnPhase ? "bg-green-500" : "bg-amber-500"}`}
+                      style={{ width: `${progressPercent}%` }}
+                    />
+                  </View>
+
+                  <View className="flex-row justify-between">
+                    <View className="flex-row items-center">
+                      <View className={`w-2 h-2 rounded-full ${isOnPhase ? "bg-green-500" : "bg-green-500/30"} mr-1`} />
+                      <Text className={`text-xs ${isOnPhase ? "text-green-400" : "text-gray-500"}`}>
+                        {cycle.onWeeks}w on
+                      </Text>
+                    </View>
+                    <View className="flex-row items-center">
+                      <View className={`w-2 h-2 rounded-full ${!isOnPhase ? "bg-amber-500" : "bg-amber-500/30"} mr-1`} />
+                      <Text className={`text-xs ${!isOnPhase ? "text-amber-400" : "text-gray-500"}`}>
+                        {cycle.offWeeks}w off
+                      </Text>
+                    </View>
+                  </View>
+                </Card>
+              );
+            })}
+          </View>
+        )}
+
+        {/* Active Titrations */}
+        {titrations.length > 0 && (
+          <View className="px-5 mt-6">
+            <Text className="text-lg font-semibold text-gray-100 mb-4">
+              Titration Progress
+            </Text>
+            {titrations.map((titration: TitrationPhaseWithSubstance) => (
+              <Card key={titration.id} className="mb-3">
+                <View className="flex-row items-center justify-between mb-2">
+                  <Text className="font-semibold text-gray-100">
+                    {titration.protocolSubstance.substance.name}
+                  </Text>
+                  <View className={`px-2 py-1 rounded-full ${
+                    titration.isMaintenancePhase
+                      ? "bg-green-500/20"
+                      : "bg-primary-500/20"
+                  }`}>
+                    <Text className={`text-xs font-semibold ${
+                      titration.isMaintenancePhase
+                        ? "text-green-400"
+                        : "text-primary-400"
+                    }`}>
+                      {titration.isMaintenancePhase ? "MAINT" : "TITRATING"}
+                    </Text>
+                  </View>
+                </View>
+
+                <View className="flex-row items-baseline mb-2">
+                  <Text className="text-2xl font-bold text-primary-500">
+                    {Number(titration.doseAmount)}
+                  </Text>
+                  <Text className="text-gray-400 ml-1">{titration.doseUnit}</Text>
+                  {titration.targetDose && (
+                    <Text className="text-gray-500 ml-2 text-sm">
+                      → {Number(titration.targetDose)} {titration.doseUnit}
+                    </Text>
+                  )}
+                </View>
+
+                <Text className="text-sm text-gray-400">
+                  Phase {titration.phaseNumber} • {titration.weeksAtDose} weeks at this dose
+                </Text>
+              </Card>
+            ))}
+          </View>
+        )}
 
         {/* Protocol Notes */}
         {protocol.notes && (

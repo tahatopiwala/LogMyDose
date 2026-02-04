@@ -19,6 +19,7 @@ import {
   useMarkVialDepleted,
   Vial,
 } from "../../src/hooks/useVials";
+import { useProducts, Product } from "../../src/hooks/useProducts";
 import { Card } from "../../src/components/ui";
 
 type VialStatus = "active" | "depleted" | "expired" | "disposed";
@@ -343,23 +344,43 @@ interface CreateVialModalProps {
 }
 
 function CreateVialModal({ visible, onClose }: CreateVialModalProps) {
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [vialAmountMcg, setVialAmountMcg] = useState("");
   const [lotNumber, setLotNumber] = useState("");
   const [storageLocation, setStorageLocation] = useState("");
   const [notes, setNotes] = useState("");
 
+  const { data: products, isLoading: productsLoading } = useProducts({ limit: 100 });
   const createVial = useCreateVial();
 
   const handleSubmit = () => {
-    // Note: In a real implementation, you'd have a product picker here
-    // For now, this modal shows the structure but needs product selection
-    Alert.alert(
-      "Product Selection Required",
-      "Please select a product from your protocols to create a vial. This feature requires product selection which will be added soon."
+    if (!selectedProduct) {
+      Alert.alert("Error", "Please select a product");
+      return;
+    }
+
+    createVial.mutate(
+      {
+        productId: selectedProduct.id,
+        vialAmountMcg: vialAmountMcg ? parseFloat(vialAmountMcg) : undefined,
+        lotNumber: lotNumber || undefined,
+        storageLocation: storageLocation || undefined,
+        notes: notes || undefined,
+      },
+      {
+        onSuccess: () => {
+          handleClose();
+          Alert.alert("Success", "Vial added successfully");
+        },
+        onError: () => {
+          Alert.alert("Error", "Failed to create vial. Please try again.");
+        },
+      }
     );
   };
 
   const handleClose = () => {
+    setSelectedProduct(null);
     setVialAmountMcg("");
     setLotNumber("");
     setStorageLocation("");
@@ -370,7 +391,7 @@ function CreateVialModal({ visible, onClose }: CreateVialModalProps) {
   return (
     <Modal visible={visible} animationType="slide" transparent>
       <View className="flex-1 bg-black/50 justify-end">
-        <View className="bg-surface-card rounded-t-3xl p-6">
+        <View className="bg-surface-card rounded-t-3xl p-6 max-h-[85%]">
           <View className="flex-row items-center justify-between mb-6">
             <Text className="text-xl font-bold text-gray-100">Add New Vial</Text>
             <TouchableOpacity onPress={handleClose}>
@@ -378,69 +399,124 @@ function CreateVialModal({ visible, onClose }: CreateVialModalProps) {
             </TouchableOpacity>
           </View>
 
-          <View className="space-y-4">
-            {/* Vial Amount */}
-            <View>
-              <Text className="text-sm text-gray-400 mb-2">Vial Amount (mcg)</Text>
-              <TextInput
-                value={vialAmountMcg}
-                onChangeText={setVialAmountMcg}
-                placeholder="e.g., 5000"
-                placeholderTextColor="#6B7280"
-                keyboardType="numeric"
-                className="bg-surface-elevated rounded-lg px-4 py-3 text-gray-100"
-              />
-            </View>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <View className="space-y-4 pb-4">
+              {/* Product Selection */}
+              <View>
+                <Text className="text-sm text-gray-400 mb-2">Product *</Text>
+                {productsLoading ? (
+                  <View className="bg-surface-elevated rounded-lg px-4 py-3">
+                    <Text className="text-gray-500">Loading products...</Text>
+                  </View>
+                ) : !products || products.length === 0 ? (
+                  <View className="bg-surface-elevated rounded-lg px-4 py-3">
+                    <Text className="text-gray-500">No products available. Add a protocol first.</Text>
+                  </View>
+                ) : (
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    className="pb-2"
+                  >
+                    <View className="flex-row gap-2">
+                      {products.map((product) => (
+                        <TouchableOpacity
+                          key={product.id}
+                          onPress={() => setSelectedProduct(product)}
+                          className={`px-4 py-3 rounded-lg border min-w-[140px] ${
+                            selectedProduct?.id === product.id
+                              ? "border-primary-500 bg-primary-500/20"
+                              : "border-surface-border bg-surface-elevated"
+                          }`}
+                        >
+                          <Text
+                            className={`font-medium ${
+                              selectedProduct?.id === product.id
+                                ? "text-primary-400"
+                                : "text-gray-300"
+                            }`}
+                            numberOfLines={1}
+                          >
+                            {product.name}
+                          </Text>
+                          <Text className="text-xs text-gray-500 mt-0.5" numberOfLines={1}>
+                            {product.substance?.name}
+                          </Text>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  </ScrollView>
+                )}
+              </View>
 
-            {/* Lot Number */}
-            <View>
-              <Text className="text-sm text-gray-400 mb-2">Lot Number</Text>
-              <TextInput
-                value={lotNumber}
-                onChangeText={setLotNumber}
-                placeholder="e.g., LOT2024A"
-                placeholderTextColor="#6B7280"
-                className="bg-surface-elevated rounded-lg px-4 py-3 text-gray-100"
-              />
-            </View>
+              {/* Vial Amount */}
+              <View>
+                <Text className="text-sm text-gray-400 mb-2">Vial Amount (mcg)</Text>
+                <TextInput
+                  value={vialAmountMcg}
+                  onChangeText={setVialAmountMcg}
+                  placeholder="e.g., 5000"
+                  placeholderTextColor="#6B7280"
+                  keyboardType="numeric"
+                  className="bg-surface-elevated rounded-lg px-4 py-3 text-gray-100"
+                />
+              </View>
 
-            {/* Storage Location */}
-            <View>
-              <Text className="text-sm text-gray-400 mb-2">Storage Location</Text>
-              <TextInput
-                value={storageLocation}
-                onChangeText={setStorageLocation}
-                placeholder="e.g., Main Fridge"
-                placeholderTextColor="#6B7280"
-                className="bg-surface-elevated rounded-lg px-4 py-3 text-gray-100"
-              />
-            </View>
+              {/* Lot Number */}
+              <View>
+                <Text className="text-sm text-gray-400 mb-2">Lot Number</Text>
+                <TextInput
+                  value={lotNumber}
+                  onChangeText={setLotNumber}
+                  placeholder="e.g., LOT2024A"
+                  placeholderTextColor="#6B7280"
+                  className="bg-surface-elevated rounded-lg px-4 py-3 text-gray-100"
+                />
+              </View>
 
-            {/* Notes */}
-            <View>
-              <Text className="text-sm text-gray-400 mb-2">Notes</Text>
-              <TextInput
-                value={notes}
-                onChangeText={setNotes}
-                placeholder="Any additional notes..."
-                placeholderTextColor="#6B7280"
-                multiline
-                numberOfLines={2}
-                className="bg-surface-elevated rounded-lg px-4 py-3 text-gray-100"
-              />
-            </View>
+              {/* Storage Location */}
+              <View>
+                <Text className="text-sm text-gray-400 mb-2">Storage Location</Text>
+                <TextInput
+                  value={storageLocation}
+                  onChangeText={setStorageLocation}
+                  placeholder="e.g., Main Fridge"
+                  placeholderTextColor="#6B7280"
+                  className="bg-surface-elevated rounded-lg px-4 py-3 text-gray-100"
+                />
+              </View>
 
-            {/* Submit Button */}
-            <TouchableOpacity
-              onPress={handleSubmit}
-              disabled={createVial.isPending}
-              className="bg-primary-500 py-4 rounded-lg mt-2"
-            >
-              <Text className="text-surface-base text-center font-bold">
-                {createVial.isPending ? "Creating..." : "Add Vial"}
-              </Text>
-            </TouchableOpacity>
-          </View>
+              {/* Notes */}
+              <View>
+                <Text className="text-sm text-gray-400 mb-2">Notes</Text>
+                <TextInput
+                  value={notes}
+                  onChangeText={setNotes}
+                  placeholder="Any additional notes..."
+                  placeholderTextColor="#6B7280"
+                  multiline
+                  numberOfLines={2}
+                  className="bg-surface-elevated rounded-lg px-4 py-3 text-gray-100"
+                />
+              </View>
+
+              {/* Submit Button */}
+              {/* Submit Button */}
+              <TouchableOpacity
+                onPress={handleSubmit}
+                disabled={!selectedProduct || createVial.isPending}
+                className={`py-4 rounded-lg mt-2 ${
+                  !selectedProduct || createVial.isPending
+                    ? "bg-gray-600"
+                    : "bg-primary-500"
+                }`}
+              >
+                <Text className="text-surface-base text-center font-bold">
+                  {createVial.isPending ? "Creating..." : "Add Vial"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
         </View>
       </View>
     </Modal>
