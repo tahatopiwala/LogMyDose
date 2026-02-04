@@ -9,6 +9,7 @@ import { AddProtocol } from "./pages/AddProtocol";
 import { ProtocolDetail } from "./pages/ProtocolDetail";
 import { Settings } from "./pages/Settings";
 import { Biometrics } from "./pages/Biometrics";
+import { Vials } from "./pages/Vials";
 
 function History() {
   return (
@@ -90,6 +91,16 @@ export default function App() {
           <ProtectedRoute>
             <Layout>
               <Biometrics />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/vials"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <Vials />
             </Layout>
           </ProtectedRoute>
         }

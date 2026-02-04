@@ -8,11 +8,13 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import { useAuth } from "../../src/contexts/AuthContext";
 import { Card } from "../../src/components/ui";
 
 export default function ProfileScreen() {
   const { patient, logout } = useAuth();
+  const router = useRouter();
 
   const handleLogout = () => {
     Alert.alert("Sign Out", "Are you sure you want to sign out?", [
@@ -26,6 +28,11 @@ export default function ProfileScreen() {
   };
 
   const menuItems = [
+    {
+      icon: "flask-outline" as const,
+      label: "My Vials",
+      onPress: () => router.push("/vials"),
+    },
     {
       icon: "person-outline" as const,
       label: "Edit Profile",

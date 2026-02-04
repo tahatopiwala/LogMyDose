@@ -75,6 +75,12 @@ export default function AppLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="vials"
+        options={{
+          href: null, // Hide from tab bar
+        }}
+      />
     </Tabs>
   );
 }
