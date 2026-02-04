@@ -10,6 +10,8 @@ const router = Router();
 const logDoseSchema = z.object({
   protocolSubstanceId: z.string().uuid().optional(), // Optional for ad-hoc logging
   substanceId: z.string().uuid(),
+  productId: z.string().uuid().optional(), // Optional product reference
+  vialId: z.string().uuid().optional(), // Optional vial for injectable substances
   dose: z.number().positive(),
   doseUnit: z.string().max(20).optional(),
   scheduledAt: z.string().optional(),

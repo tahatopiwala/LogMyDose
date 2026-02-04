@@ -10,6 +10,8 @@ import { PaginatedResponse } from "../../types/index.js";
 export interface LogDoseInput {
   protocolSubstanceId?: string; // Optional for ad-hoc logging
   substanceId: string;
+  productId?: string; // Optional product reference
+  vialId?: string; // Optional vial reference for injectable substances
   dose: number;
   doseUnit?: string;
   scheduledAt?: string;

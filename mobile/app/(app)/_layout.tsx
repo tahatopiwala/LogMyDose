@@ -49,6 +49,15 @@ export default function AppLayout() {
         }}
       />
       <Tabs.Screen
+        name="biometrics"
+        options={{
+          title: "Metrics",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="analytics" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="insights"
         options={{
           title: "Insights",

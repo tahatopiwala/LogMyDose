@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiClient } from "../lib/api-client";
-import { ActiveProtocolSubstance, Substance, Dose } from "../types/domain";
+import { ActiveProtocolSubstance, Substance, Dose, Vial } from "../types/domain";
 import { QuickProtocolModal } from "../components/protocols/QuickProtocolModal";
 
 const INJECTION_SITES = [
@@ -72,6 +72,10 @@ export function LogDose() {
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>(getTimeOfDay());
   const [needleGauge, setNeedleGauge] = useState<NeedleGauge | null>(null);
   const [injectionDepth, setInjectionDepth] = useState<InjectionDepth | null>(null);
+
+  // Vial state
+  const [vials, setVials] = useState<Vial[]>([]);
+  const [selectedVial, setSelectedVial] = useState<Vial | null>(null);
 
   // Fetch data on mount
   useEffect(() => {
@@ -180,6 +184,8 @@ export function LogDose() {
         timeOfDay: timeOfDay || undefined,
         needleGauge: needleGauge || undefined,
         injectionDepth: injectionDepth || undefined,
+        vialId: selectedVial?.id || undefined,
+        productId: selectedVial?.productId || undefined,
       };
 
       if (logType === "protocol" && selectedProtocolSubstance) {
@@ -227,6 +233,7 @@ export function LogDose() {
       setTimeOfDay(getTimeOfDay());
       setNeedleGauge(null);
       setInjectionDepth(null);
+      setSelectedVial(null);
     } else if (currentStep === 2) {
       setLogType(null);
       setAdHocSearch("");
@@ -271,6 +278,33 @@ export function LogDose() {
     }
     return false;
   }, [logType, selectedProtocolSubstance, selectedSubstance]);
+
+  // Fetch vials when an injectable substance is selected
+  const currentSubstanceId = logType === "protocol" && selectedProtocolSubstance
+    ? selectedProtocolSubstance.substanceId
+    : logType === "adhoc" && selectedSubstance
+      ? selectedSubstance.id
+      : undefined;
+
+  useEffect(() => {
+    if (currentSubstanceId && isInjectable) {
+      fetchVials(currentSubstanceId);
+    } else {
+      setVials([]);
+      setSelectedVial(null);
+    }
+  }, [currentSubstanceId, isInjectable]);
+
+  const fetchVials = async (substanceId: string) => {
+    try {
+      const response = await apiClient.get<{ vials: Vial[] }>(
+        `/vials?status=active&substanceId=${substanceId}`
+      );
+      setVials(response.vials || []);
+    } catch {
+      setVials([]);
+    }
+  };
 
   const stepLabels = ["Choose type", "Select substance", "Enter details"];
 
@@ -794,6 +828,68 @@ export function LogDose() {
                 {/* Injection-specific fields */}
                 {isInjectable && (
                   <>
+                    {/* Vial Selection */}
+                    {vials.length > 0 && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                          Select Vial (Optional)
+                        </label>
+                        <div className="space-y-2">
+                          {/* None option */}
+                          <button
+                            type="button"
+                            onClick={() => setSelectedVial(null)}
+                            className={`w-full p-3 rounded-lg border text-left transition-colors ${
+                              !selectedVial
+                                ? "border-primary-500 bg-primary-500/20 text-primary-400"
+                                : "border-surface-border bg-surface-card text-gray-400 hover:bg-surface-elevated"
+                            }`}
+                          >
+                            <span className="text-sm">No vial tracking</span>
+                          </button>
+                          {/* Vial options */}
+                          {vials.map((vial) => (
+                            <button
+                              key={vial.id}
+                              type="button"
+                              onClick={() => setSelectedVial(vial)}
+                              className={`w-full p-3 rounded-lg border text-left transition-colors ${
+                                selectedVial?.id === vial.id
+                                  ? "border-primary-500 bg-primary-500/20"
+                                  : "border-surface-border bg-surface-card hover:bg-surface-elevated"
+                              }`}
+                            >
+                              <div className="flex justify-between items-center">
+                                <div>
+                                  <div
+                                    className={`text-sm font-medium ${
+                                      selectedVial?.id === vial.id
+                                        ? "text-primary-400"
+                                        : "text-gray-300"
+                                    }`}
+                                  >
+                                    {vial.product?.name || "Unknown Product"}
+                                  </div>
+                                  <div className="text-xs text-gray-500 mt-0.5">
+                                    {vial.lotNumber
+                                      ? `Lot: ${vial.lotNumber}`
+                                      : "No lot number"}
+                                    {vial.remainingAmountMcg !== null &&
+                                      ` • ${vial.remainingAmountMcg} mcg remaining`}
+                                  </div>
+                                </div>
+                                {vial.reconstitutedAt && (
+                                  <span className="text-xs bg-blue-900/40 text-blue-400 px-2 py-1 rounded">
+                                    Reconstituted
+                                  </span>
+                                )}
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Injection Depth */}
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-2">

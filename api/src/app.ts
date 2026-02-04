@@ -20,6 +20,10 @@ import subscriptionRoutes, {
 } from "./routes/subscription.routes.js";
 import productsRoutes from "./routes/products.routes.js";
 import exportsRoutes from "./routes/exports.routes.js";
+import vialsRoutes from "./routes/vials.routes.js";
+import biometricsRoutes from "./routes/biometrics.routes.js";
+import cyclesRoutes from "./routes/cycles.routes.js";
+import titrationsRoutes from "./routes/titrations.routes.js";
 
 export const app = express();
 
@@ -89,6 +93,10 @@ app.use("/api/v1/settings", settingsRoutes);
 app.use("/api/v1/subscription", subscriptionRoutes);
 app.use("/api/v1/products", productsRoutes);
 app.use("/api/v1/exports", exportsRoutes);
+app.use("/api/v1/vials", vialsRoutes);
+app.use("/api/v1/biometrics", biometricsRoutes);
+app.use("/api/v1/cycles", cyclesRoutes);
+app.use("/api/v1/titrations", titrationsRoutes);
 
 // 404 handler
 app.use((_req, res) => {

@@ -14,6 +14,7 @@ export type {
   ProtocolSubstance,
   Dose,
   SideEffect,
+  BiometricEntry,
   ProgressEntry,
   Alert,
   AiInsight,
@@ -22,4 +23,7 @@ export type {
   Content,
   AuditLog,
   ExportJob,
+  Vial,
+  Cycle,
+  TitrationPhase,
 } from "@prisma/client";

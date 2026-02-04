@@ -46,6 +46,8 @@ export function useDoses(params: DosesParams = {}) {
 interface LogDoseData {
   protocolSubstanceId?: string; // Optional for ad-hoc logging
   substanceId: string; // Required - identifies what was taken
+  productId?: string; // Optional product reference
+  vialId?: string; // Optional vial for injectable substances
   dose: number;
   doseUnit?: string;
   status?: "taken" | "missed" | "skipped";

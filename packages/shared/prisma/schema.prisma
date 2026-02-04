@@ -43,6 +43,7 @@ model Patient {
   protocols            Protocol[]
   doses                Dose[]
   sideEffects          SideEffect[]
+  biometricEntries     BiometricEntry[]
   progressEntries      ProgressEntry[]
   alerts               Alert[]
   aiInsights           AiInsight[]
@@ -50,6 +51,9 @@ model Patient {
   aiReports            AiReport[]
   customProducts       Product[]
   exportJobs           ExportJob[]
+  vials                Vial[]
+  cycles               Cycle[]
+  titrationPhases      TitrationPhase[]
 
   @@map("patients")
 }
@@ -191,11 +195,56 @@ model Product {
   patient            Patient?            @relation(fields: [patientId], references: [id])
   protocolSubstances ProtocolSubstance[]
   doses              Dose[]
+  vials              Vial[]
 
   @@index([substanceId])
   @@index([patientId])
   @@index([isGlobal])
   @@map("products")
+}
+
+// Vials - track individual vials with reconstitution and inventory
+model Vial {
+  id                   String    @id @default(uuid()) @db.Uuid
+  patientId            String    @map("patient_id") @db.Uuid
+  productId            String    @map("product_id") @db.Uuid
+
+  // Reconstitution details
+  reconstitutedAt      DateTime? @map("reconstituted_at")
+  diluentType          String?   @map("diluent_type") @db.VarChar(50) // bacteriostatic_water, saline, sterile_water
+  diluentVolumeMl      Decimal?  @map("diluent_volume_ml")
+  concentrationMcgMl   Decimal?  @map("concentration_mcg_ml") // Calculated: vialAmountMcg / diluentVolumeMl
+
+  // Vial contents
+  vialAmountMcg        Decimal?  @map("vial_amount_mcg") // Original amount in vial
+  remainingAmountMcg   Decimal?  @map("remaining_amount_mcg") // Decremented as doses are logged
+
+  // Lot/batch tracking
+  lotNumber            String?   @map("lot_number") @db.VarChar(100)
+  manufacturerExpDate  DateTime? @map("manufacturer_exp_date") @db.Date // Manufacturer expiration
+  calculatedExpDate    DateTime? @map("calculated_exp_date") @db.Date // Based on reconstitution + shelf life
+
+  // Storage
+  storageLocation      String?   @map("storage_location") @db.VarChar(100) // home_fridge, travel_cooler, etc.
+  requiresRefrigeration Boolean  @default(true) @map("requires_refrigeration")
+
+  // Status
+  status               String    @default("active") @db.VarChar(50) // active, depleted, expired, disposed
+  depletedAt           DateTime? @map("depleted_at")
+
+  notes                String?   @db.Text
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  patient              Patient   @relation(fields: [patientId], references: [id])
+  product              Product   @relation(fields: [productId], references: [id])
+  doses                Dose[]
+
+  @@index([patientId])
+  @@index([productId])
+  @@index([status])
+  @@map("vials")
 }
 
 // Protocol templates (public library)
@@ -276,6 +325,8 @@ model ProtocolSubstance {
   substance            Substance @relation(fields: [substanceId], references: [id])
   product              Product?  @relation(fields: [productId], references: [id])
   doses                Dose[]
+  cycles               Cycle[]
+  titrationPhases      TitrationPhase[]
 
   @@map("protocol_substances")
 }
@@ -290,6 +341,7 @@ model Dose {
   protocolSubstanceId  String?   @map("protocol_substance_id") @db.Uuid // Nullable for ad-hoc logging
   substanceId          String    @map("substance_id") @db.Uuid
   productId            String?   @map("product_id") @db.Uuid
+  vialId               String?   @map("vial_id") @db.Uuid // Track which vial this dose came from
   dose                 Decimal
   doseUnit             String?   @map("dose_unit") @db.VarChar(20)
   scheduledAt          DateTime? @map("scheduled_at")
@@ -312,8 +364,11 @@ model Dose {
   protocolSubstance    ProtocolSubstance? @relation(fields: [protocolSubstanceId], references: [id], onDelete: SetNull)
   substance            Substance          @relation(fields: [substanceId], references: [id])
   product              Product?           @relation(fields: [productId], references: [id])
+  vial                 Vial?              @relation(fields: [vialId], references: [id])
   sideEffects          SideEffect[]
+  biometricEntries     BiometricEntry[]
 
+  @@index([vialId])
   @@map("doses")
 }
 
@@ -336,6 +391,31 @@ model SideEffect {
   @@map("side_effects")
 }
 
+model BiometricEntry {
+  id          String   @id @default(uuid()) @db.Uuid
+  patientId   String   @map("patient_id") @db.Uuid
+  doseId      String?  @map("dose_id") @db.Uuid
+
+  // Metric data
+  metricType  String   @map("metric_type") @db.VarChar(50) // weight, blood_glucose, blood_pressure_systolic, blood_pressure_diastolic, sleep_quality, energy_level, appetite_level, pain_level, mood, heart_rate, body_fat_percentage, etc.
+  value       Decimal
+  unit        String?  @db.VarChar(20) // kg, lbs, mg/dL, mmol/L, bpm, %, etc.
+
+  notes       String?  @db.Text
+  recordedAt  DateTime @default(now()) @map("recorded_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  dose        Dose?    @relation(fields: [doseId], references: [id])
+
+  @@index([patientId])
+  @@index([metricType])
+  @@index([recordedAt])
+  @@index([doseId])
+  @@map("biometric_entries")
+}
+
 model ProgressEntry {
   id               String   @id @default(uuid()) @db.Uuid
   patientId        String   @map("patient_id") @db.Uuid
@@ -349,6 +429,72 @@ model ProgressEntry {
   patient          Patient  @relation(fields: [patientId], references: [id])
 
   @@map("progress_entries")
+}
+
+// Cycle tracking for substances that require on/off periods
+model Cycle {
+  id                   String    @id @default(uuid()) @db.Uuid
+  patientId            String    @map("patient_id") @db.Uuid
+  protocolSubstanceId  String    @map("protocol_substance_id") @db.Uuid
+
+  cycleNumber          Int       @map("cycle_number")
+  startDate            DateTime  @map("start_date") @db.Date
+  endDate              DateTime? @map("end_date") @db.Date
+
+  onWeeks              Int       @map("on_weeks")
+  offWeeks             Int       @map("off_weeks")
+
+  status               String    @default("on") @db.VarChar(20) // on, off, completed
+  currentWeek          Int       @default(1) @map("current_week")
+
+  notes                String?   @db.Text
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  patient              Patient           @relation(fields: [patientId], references: [id])
+  protocolSubstance    ProtocolSubstance @relation(fields: [protocolSubstanceId], references: [id], onDelete: Cascade)
+
+  @@index([patientId])
+  @@index([protocolSubstanceId])
+  @@index([status])
+  @@map("cycles")
+}
+
+// Titration tracking for dose escalation (GLP-1s like Semaglutide, Tirzepatide)
+model TitrationPhase {
+  id                   String    @id @default(uuid()) @db.Uuid
+  patientId            String    @map("patient_id") @db.Uuid
+  protocolSubstanceId  String    @map("protocol_substance_id") @db.Uuid
+
+  phaseNumber          Int       @map("phase_number")
+  doseAmount           Decimal   @map("dose_amount")
+  doseUnit             String    @map("dose_unit") @db.VarChar(20)
+
+  startDate            DateTime  @map("start_date") @db.Date
+  endDate              DateTime? @map("end_date") @db.Date
+  weeksAtDose          Int       @map("weeks_at_dose")
+
+  // Why this phase was created
+  reason               String    @db.VarChar(50) // scheduled, tolerability, side_effects, plateau, custom
+  status               String    @default("active") @db.VarChar(20) // active, completed, skipped
+
+  // Target dose info (for tracking progress toward maintenance)
+  targetDose           Decimal?  @map("target_dose")
+  isMaintenancePhase   Boolean   @default(false) @map("is_maintenance_phase")
+
+  notes                String?   @db.Text
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  patient              Patient           @relation(fields: [patientId], references: [id])
+  protocolSubstance    ProtocolSubstance @relation(fields: [protocolSubstanceId], references: [id], onDelete: Cascade)
+
+  @@index([patientId])
+  @@index([protocolSubstanceId])
+  @@index([status])
+  @@map("titration_phases")
 }
 
 // =============================================================================

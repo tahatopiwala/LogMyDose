@@ -4,3 +4,7 @@ export { ProtocolRepository } from "./ProtocolRepository.js";
 export { DoseRepository } from "./DoseRepository.js";
 export { ProductRepository } from "./ProductRepository.js";
 export { ExportJobRepository } from "./ExportJobRepository.js";
+export { VialRepository } from "./VialRepository.js";
+export { BiometricRepository } from "./BiometricRepository.js";
+export { CycleRepository } from "./CycleRepository.js";
+export { TitrationRepository } from "./TitrationRepository.js";

@@ -1,4 +1,4 @@
-import { Dose } from "@biostak/shared/prisma";
+import { Dose, Prisma } from "@biostak/shared/prisma";
 import {
   IDoseService,
   LogDoseInput,
@@ -17,6 +17,7 @@ import {
 } from "../interfaces/repositories/IDoseRepository.js";
 import { ISubstanceRepository } from "../interfaces/repositories/ISubstanceRepository.js";
 import { IProtocolRepository } from "../interfaces/repositories/IProtocolRepository.js";
+import { IVialRepository } from "../interfaces/repositories/IVialRepository.js";
 import { PaginatedResponse } from "../types/index.js";
 import { AppError } from "../middleware/errorHandler.js";
 
@@ -25,6 +26,7 @@ export class DoseService implements IDoseService {
     private readonly doseRepository: IDoseRepository,
     private readonly substanceRepository: ISubstanceRepository,
     private readonly protocolRepository: IProtocolRepository,
+    private readonly vialRepository?: IVialRepository,
   ) {}
 
   async logDose(patientId: string, input: LogDoseInput): Promise<Dose> {
@@ -70,10 +72,36 @@ export class DoseService implements IDoseService {
     }
     // If no protocolSubstanceId, this is an ad-hoc dose - allowed
 
-    return this.doseRepository.create({
+    // If vialId is provided, verify the vial belongs to the patient and is active
+    let productId = input.productId;
+    if (input.vialId && this.vialRepository) {
+      const vial = await this.vialRepository.findById(input.vialId);
+
+      if (!vial) {
+        throw new AppError(404, "Vial not found", "VIAL_NOT_FOUND");
+      }
+
+      if (vial.patientId !== patientId) {
+        throw new AppError(403, "Vial does not belong to this patient", "FORBIDDEN");
+      }
+
+      if (vial.status !== "active") {
+        throw new AppError(400, "Vial is not active", "VIAL_NOT_ACTIVE");
+      }
+
+      // Use the vial's productId if not provided
+      if (!productId) {
+        productId = vial.productId;
+      }
+    }
+
+    // Create the dose
+    const dose = await this.doseRepository.create({
       patientId,
       protocolSubstanceId: input.protocolSubstanceId,
       substanceId: input.substanceId,
+      productId,
+      vialId: input.vialId,
       dose: input.dose,
       doseUnit: input.doseUnit || substance.doseUnit || undefined,
       scheduledAt: input.scheduledAt ? new Date(input.scheduledAt) : undefined,
@@ -89,6 +117,16 @@ export class DoseService implements IDoseService {
       needleGauge: input.needleGauge,
       injectionDepth: input.injectionDepth,
     });
+
+    // If a vial was used and status is "taken", decrement the vial's remaining amount
+    if (input.vialId && this.vialRepository && (input.status === "taken" || !input.status)) {
+      // Convert dose to mcg for decrementing
+      // Note: This assumes the dose is in mcg. For other units, conversion may be needed.
+      const doseMcg = input.dose;
+      await this.vialRepository.decrementRemaining(input.vialId, new Prisma.Decimal(doseMcg));
+    }
+
+    return dose;
   }
 
   async getDoses(

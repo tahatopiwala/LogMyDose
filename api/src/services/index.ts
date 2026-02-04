@@ -7,3 +7,7 @@ export { QueueService } from "./QueueService.js";
 export { ProductService } from "./ProductService.js";
 export { StorageService } from "./StorageService.js";
 export { ExportJobService } from "./ExportJobService.js";
+export { VialService } from "./VialService.js";
+export { BiometricService } from "./BiometricService.js";
+export { CycleService } from "./CycleService.js";
+export { TitrationService } from "./TitrationService.js";

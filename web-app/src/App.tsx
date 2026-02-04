@@ -8,6 +8,7 @@ import { LogDose } from "./pages/LogDose";
 import { AddProtocol } from "./pages/AddProtocol";
 import { ProtocolDetail } from "./pages/ProtocolDetail";
 import { Settings } from "./pages/Settings";
+import { Biometrics } from "./pages/Biometrics";
 
 function History() {
   return (
@@ -79,6 +80,16 @@ export default function App() {
           <ProtectedRoute>
             <Layout>
               <Insights />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/biometrics"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <Biometrics />
             </Layout>
           </ProtectedRoute>
         }

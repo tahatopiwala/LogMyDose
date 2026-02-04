@@ -16,6 +16,8 @@ export interface Dose {
   patientId: string;
   protocolSubstanceId: string | null;
   substanceId: string;
+  productId: string | null;
+  vialId: string | null;
   dose: Decimal;
   doseUnit: string | null;
   scheduledAt: Date | null;

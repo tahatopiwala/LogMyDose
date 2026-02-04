@@ -8,6 +8,10 @@ import {
   IDoseRepository,
   IProductRepository,
   IExportJobRepository,
+  IVialRepository,
+  IBiometricRepository,
+  ICycleRepository,
+  ITitrationRepository,
 } from "../interfaces/repositories/index.js";
 
 // Repository implementations
@@ -18,6 +22,10 @@ import {
   DoseRepository,
   ProductRepository,
   ExportJobRepository,
+  VialRepository,
+  BiometricRepository,
+  CycleRepository,
+  TitrationRepository,
 } from "../repositories/index.js";
 
 // Service interfaces
@@ -32,6 +40,10 @@ import {
   IPdfExportService,
   IStorageService,
   IExportJobService,
+  IVialService,
+  IBiometricService,
+  ICycleService,
+  ITitrationService,
 } from "../interfaces/services/index.js";
 
 // Service implementations
@@ -45,6 +57,10 @@ import {
   ProductService,
   StorageService,
   ExportJobService,
+  VialService,
+  BiometricService,
+  CycleService,
+  TitrationService,
 } from "../services/index.js";
 import { PdfExportService } from "../services/pdf/PdfExportService.js";
 import { createRequireProTier } from "../middleware/subscription.js";
@@ -62,6 +78,10 @@ export class Container {
   readonly doseRepository: IDoseRepository;
   readonly productRepository: IProductRepository;
   readonly exportJobRepository: IExportJobRepository;
+  readonly vialRepository: IVialRepository;
+  readonly biometricRepository: IBiometricRepository;
+  readonly cycleRepository: ICycleRepository;
+  readonly titrationRepository: ITitrationRepository;
 
   // Services
   readonly authService: IAuthService;
@@ -74,6 +94,10 @@ export class Container {
   readonly pdfExportService: IPdfExportService;
   readonly storageService: IStorageService;
   readonly exportJobService: IExportJobService;
+  readonly vialService: IVialService;
+  readonly biometricService: IBiometricService;
+  readonly cycleService: ICycleService;
+  readonly titrationService: ITitrationService;
 
   // Middleware
   readonly requireProTierMiddleware: RequestHandler;
@@ -86,6 +110,10 @@ export class Container {
     this.doseRepository = new DoseRepository(prisma);
     this.productRepository = new ProductRepository(prisma);
     this.exportJobRepository = new ExportJobRepository(prisma);
+    this.vialRepository = new VialRepository(prisma);
+    this.biometricRepository = new BiometricRepository(prisma);
+    this.cycleRepository = new CycleRepository(prisma);
+    this.titrationRepository = new TitrationRepository(prisma);
 
     // Initialize queue service
     this.queueService = new QueueService({
@@ -127,6 +155,7 @@ export class Container {
       this.doseRepository,
       this.substanceRepository,
       this.protocolRepository,
+      this.vialRepository,
     );
 
     this.productService = new ProductService(
@@ -140,6 +169,26 @@ export class Container {
       this.exportJobRepository,
       this.storageService,
       this.queueService,
+    );
+
+    this.vialService = new VialService(
+      this.vialRepository,
+      this.productRepository,
+    );
+
+    this.biometricService = new BiometricService(
+      this.biometricRepository,
+      this.doseRepository,
+    );
+
+    this.cycleService = new CycleService(
+      this.cycleRepository,
+      this.protocolRepository,
+    );
+
+    this.titrationService = new TitrationService(
+      this.titrationRepository,
+      this.protocolRepository,
     );
 
     // Initialize middleware

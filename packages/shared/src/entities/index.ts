@@ -43,3 +43,59 @@ export { Content } from "./content.js";
 
 // Audit entities
 export { AuditLog } from "./audit.js";
+
+// Vial entities
+export {
+  Vial,
+  VialWithProduct,
+  VialWithStats,
+  VialStatus,
+  DiluentType,
+  CreateVialInput,
+  UpdateVialInput,
+  ReconstitutionInput,
+} from "./vial.js";
+
+// Biometric entities
+export {
+  MetricType,
+  MetricCategory,
+  BiometricEntry,
+  BiometricEntryWithDose,
+  CreateBiometricEntryInput,
+  BatchCreateBiometricInput,
+  BiometricStats,
+  BiometricTrend,
+  METRIC_UNITS,
+  DEFAULT_UNITS,
+  METRIC_DISPLAY_NAMES,
+  METRIC_CATEGORIES,
+} from "./biometric.js";
+
+// Cycle entities
+export {
+  Cycle,
+  CycleStatus,
+  CycleWithSubstance,
+  CreateCycleInput,
+  UpdateCycleInput,
+  CyclePhaseInfo,
+  CycleSummary,
+} from "./cycle.js";
+
+// Titration entities
+export {
+  TitrationPhase,
+  TitrationPhaseStatus,
+  TitrationReason,
+  TitrationPhaseWithSubstance,
+  CreateTitrationPhaseInput,
+  UpdateTitrationPhaseInput,
+  TitrationStep,
+  TitrationPlanTemplate,
+  TitrationProgress,
+  SEMAGLUTIDE_TITRATION,
+  TIRZEPATIDE_TITRATION,
+  STANDARD_TITRATION_PLANS,
+  findTitrationPlan,
+} from "./titration.js";

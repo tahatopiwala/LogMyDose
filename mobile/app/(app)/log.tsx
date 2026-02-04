@@ -13,7 +13,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { useActiveSubstances, useSubstances, useLogDose } from "../../src/hooks";
+import { useActiveSubstances, useSubstances, useLogDose, useActiveVialsBySubstance, Vial } from "../../src/hooks";
 import { Card, Button, Input } from "../../src/components/ui";
 import { ActiveProtocolSubstance } from "../../src/types/domain";
 
@@ -83,6 +83,18 @@ export default function LogDoseScreen() {
   const [administrationSite, setAdministrationSite] = useState<string | null>(null);
   const [needleGauge, setNeedleGauge] = useState<NeedleGauge | null>(null);
   const [injectionDepth, setInjectionDepth] = useState<InjectionDepth | null>(null);
+  const [selectedVial, setSelectedVial] = useState<Vial | null>(null);
+
+  // Get the current substance ID for fetching vials
+  const currentSubstanceId = logType === "protocol" && selectedProtocolSubstance
+    ? selectedProtocolSubstance.substanceId
+    : logType === "adhoc" && selectedSubstance
+      ? selectedSubstance.id
+      : undefined;
+
+  // Fetch active vials for the selected substance
+  const { data: vialsData } = useActiveVialsBySubstance(currentSubstanceId);
+  const activeVials = vialsData || [];
 
   const isLoading = loadingProtocols || loadingSubstances;
 
@@ -154,6 +166,8 @@ export default function LogDoseScreen() {
         administrationSite: administrationSite || undefined,
         needleGauge: needleGauge || undefined,
         injectionDepth: injectionDepth || undefined,
+        vialId: selectedVial?.id || undefined,
+        productId: selectedVial?.productId || undefined,
       };
 
       if (logType === "protocol" && selectedProtocolSubstance) {
@@ -201,6 +215,7 @@ export default function LogDoseScreen() {
       setAdministrationSite(null);
       setNeedleGauge(null);
       setInjectionDepth(null);
+      setSelectedVial(null);
     } else if (currentStep === 2) {
       setLogType(null);
       setAdHocSearch("");
@@ -621,6 +636,76 @@ export default function LogDoseScreen() {
                     {/* Injection-specific fields */}
                     {isInjectable && (
                       <>
+                        {/* Vial Selection */}
+                        {activeVials.length > 0 && (
+                          <View>
+                            <Text className="text-gray-300 mb-2 font-medium text-sm">
+                              Select Vial (Optional)
+                            </Text>
+                            <View className="gap-2">
+                              {/* None option */}
+                              <TouchableOpacity
+                                onPress={() => setSelectedVial(null)}
+                                className={`p-3 rounded-lg border ${
+                                  !selectedVial
+                                    ? "border-primary-500 bg-primary-500/20"
+                                    : "border-surface-border bg-surface-card"
+                                }`}
+                              >
+                                <Text
+                                  className={`text-sm ${
+                                    !selectedVial
+                                      ? "text-primary-400 font-medium"
+                                      : "text-gray-400"
+                                  }`}
+                                >
+                                  No vial tracking
+                                </Text>
+                              </TouchableOpacity>
+                              {/* Vial options */}
+                              {activeVials.map((vial) => (
+                                <TouchableOpacity
+                                  key={vial.id}
+                                  onPress={() => setSelectedVial(vial)}
+                                  className={`p-3 rounded-lg border ${
+                                    selectedVial?.id === vial.id
+                                      ? "border-primary-500 bg-primary-500/20"
+                                      : "border-surface-border bg-surface-card"
+                                  }`}
+                                >
+                                  <View className="flex-row justify-between items-center">
+                                    <View>
+                                      <Text
+                                        className={`text-sm font-medium ${
+                                          selectedVial?.id === vial.id
+                                            ? "text-primary-400"
+                                            : "text-gray-300"
+                                        }`}
+                                      >
+                                        {vial.product.name}
+                                      </Text>
+                                      <Text className="text-xs text-gray-500 mt-0.5">
+                                        {vial.lotNumber
+                                          ? `Lot: ${vial.lotNumber}`
+                                          : "No lot number"}
+                                        {vial.remainingAmountMcg !== null &&
+                                          ` • ${vial.remainingAmountMcg} mcg remaining`}
+                                      </Text>
+                                    </View>
+                                    {vial.reconstitutedAt && (
+                                      <View className="bg-blue-900/40 px-2 py-1 rounded">
+                                        <Text className="text-xs text-blue-400">
+                                          Reconstituted
+                                        </Text>
+                                      </View>
+                                    )}
+                                  </View>
+                                </TouchableOpacity>
+                              ))}
+                            </View>
+                          </View>
+                        )}
+
                         {/* Administration Site */}
                         <View>
                           <Text className="text-gray-300 mb-2 font-medium text-sm">

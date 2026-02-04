@@ -6,6 +6,8 @@ export interface CreateDoseInput {
   patientId: string;
   protocolSubstanceId?: string; // Optional for ad-hoc logging
   substanceId: string;
+  productId?: string; // Optional product reference
+  vialId?: string; // Optional vial reference for injectable substances
   dose: Prisma.Decimal | number;
   doseUnit?: string;
   scheduledAt?: Date;

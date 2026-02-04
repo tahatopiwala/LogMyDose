@@ -5,3 +5,7 @@ export * from "./IProtocolRepository.js";
 export * from "./IDoseRepository.js";
 export * from "./IProductRepository.js";
 export * from "./IExportJobRepository.js";
+export * from "./IVialRepository.js";
+export * from "./IBiometricRepository.js";
+export * from "./ICycleRepository.js";
+export * from "./ITitrationRepository.js";

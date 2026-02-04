@@ -7,6 +7,7 @@ const navigation = [
   { name: "Dashboard", href: "/dashboard" },
   { name: "Log Dose", href: "/log" },
   { name: "History", href: "/history" },
+  { name: "Biometrics", href: "/biometrics" },
   { name: "Insights", href: "/insights" },
   { name: "Settings", href: "/settings" },
 ];
