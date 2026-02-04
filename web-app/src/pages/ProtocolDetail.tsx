@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { apiClient } from "@/lib/api-client";
-import { Protocol, Dose } from "@/types/domain";
+import { Protocol, Dose, CycleWithSubstance, TitrationProgress } from "@/types/domain";
 import { useUpdateProtocol, useArchiveProtocol } from "@/hooks/useProtocols";
 import { ArchiveProtocolModal } from "@/components/protocols/ArchiveProtocolModal";
+import { CycleStatusBadge } from "@/components/cycles";
+import { TitrationProgressCard } from "@/components/titrations";
 
 interface ProtocolStats {
   adherenceRate: number;
@@ -130,6 +132,8 @@ export function ProtocolDetail() {
   const navigate = useNavigate();
   const [protocol, setProtocol] = useState<Protocol | null>(null);
   const [doses, setDoses] = useState<Dose[]>([]);
+  const [cycles, setCycles] = useState<CycleWithSubstance[]>([]);
+  const [titrationProgress, setTitrationProgress] = useState<Record<string, TitrationProgress>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showArchiveModal, setShowArchiveModal] = useState(false);
@@ -151,14 +155,43 @@ export function ProtocolDetail() {
       console.log("Fetching protocol:", id);
 
       try {
-        const [protocolRes, dosesRes] = await Promise.all([
+        const [protocolRes, dosesRes, cyclesRes] = await Promise.all([
           apiClient.get<{ protocol: Protocol }>(`/protocols/${id}`),
           apiClient.get<{ doses: Dose[] }>("/doses?limit=100"),
+          apiClient.get<{ cycles: CycleWithSubstance[] }>("/cycles/active"),
         ]);
 
         console.log("Protocol data:", protocolRes.protocol);
         setProtocol(protocolRes.protocol);
         setDoses(dosesRes.doses);
+
+        // Filter cycles for this protocol's substances
+        const protocolSubstanceIds = protocolRes.protocol.substances.map(s => s.id);
+        const protocolCycles = (cyclesRes.cycles || []).filter(c =>
+          protocolSubstanceIds.includes(c.protocolSubstanceId)
+        );
+        setCycles(protocolCycles);
+
+        // Fetch titration progress for each substance that might have titrations
+        const titrationPromises = protocolRes.protocol.substances.map(async (ps) => {
+          try {
+            const res = await apiClient.get<{ progress: TitrationProgress }>(
+              `/titrations/progress/${ps.id}`
+            );
+            return { id: ps.id, progress: res.progress };
+          } catch {
+            return null;
+          }
+        });
+
+        const titrationResults = await Promise.all(titrationPromises);
+        const titrationMap: Record<string, TitrationProgress> = {};
+        titrationResults.forEach(result => {
+          if (result && result.progress && result.progress.phases.length > 0) {
+            titrationMap[result.id] = result.progress;
+          }
+        });
+        setTitrationProgress(titrationMap);
       } catch (err) {
         console.error("Error fetching protocol:", err);
         setError(
@@ -577,6 +610,91 @@ export function ProtocolDetail() {
           ))}
         </div>
       </div>
+
+      {/* Active Cycles */}
+      {cycles.length > 0 && (
+        <div className="bg-surface-card rounded-xl border border-surface-border overflow-hidden">
+          <div className="bg-surface-elevated px-6 py-4 border-b border-surface-border">
+            <h2 className="text-lg font-semibold text-gray-100">
+              Active Cycles
+            </h2>
+            <p className="text-sm text-gray-500 mt-1">
+              On/off cycling status for your substances
+            </p>
+          </div>
+          <div className="p-6 space-y-4">
+            {cycles.map((cycle) => {
+              const totalWeeks = cycle.onWeeks + cycle.offWeeks;
+              const currentWeekInCycle = ((cycle.currentWeek - 1) % totalWeeks) + 1;
+              const isOnPhase = currentWeekInCycle <= cycle.onWeeks;
+
+              return (
+                <div
+                  key={cycle.id}
+                  className="p-4 rounded-lg border border-surface-border bg-surface-base"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <h4 className="font-medium text-gray-100">
+                        {cycle.protocolSubstance.substance.name}
+                      </h4>
+                      <p className="text-sm text-gray-500">
+                        Cycle #{cycle.cycleNumber} • Week {cycle.currentWeek}
+                      </p>
+                    </div>
+                    <CycleStatusBadge status={cycle.status} compact />
+                  </div>
+
+                  {/* Mini progress bar */}
+                  <div className="relative h-2 bg-surface-elevated rounded-full overflow-hidden mb-2">
+                    <div
+                      className="absolute h-full bg-green-500/20"
+                      style={{ width: `${(cycle.onWeeks / totalWeeks) * 100}%` }}
+                    />
+                    <div
+                      className={`absolute h-full ${isOnPhase ? "bg-green-500" : "bg-amber-500"} rounded-full`}
+                      style={{ width: `${(currentWeekInCycle / totalWeeks) * 100}%` }}
+                    />
+                  </div>
+
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <span>{cycle.onWeeks}w on</span>
+                    <span>{cycle.offWeeks}w off</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Active Titrations */}
+      {Object.keys(titrationProgress).length > 0 && (
+        <div className="bg-surface-card rounded-xl border border-surface-border overflow-hidden">
+          <div className="bg-surface-elevated px-6 py-4 border-b border-surface-border">
+            <h2 className="text-lg font-semibold text-gray-100">
+              Titration Progress
+            </h2>
+            <p className="text-sm text-gray-500 mt-1">
+              Dose escalation tracking for GLP-1s and similar
+            </p>
+          </div>
+          <div className="p-6 space-y-4">
+            {protocol.substances.map((ps) => {
+              const progress = titrationProgress[ps.id];
+              if (!progress) return null;
+
+              return (
+                <TitrationProgressCard
+                  key={ps.id}
+                  progress={progress}
+                  substanceName={ps.substance.name}
+                />
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Dose History */}
       {(() => {
