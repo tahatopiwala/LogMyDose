@@ -1,7 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { apiClient } from "../lib/api-client";
 import { ActiveProtocolSubstance, Substance, Dose } from "../types/domain";
+import { QuickProtocolModal } from "../components/protocols/QuickProtocolModal";
 
 const INJECTION_SITES = [
   "Subcutaneous - Abdomen",
@@ -48,6 +49,7 @@ export function LogDose() {
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [adHocSearch, setAdHocSearch] = useState("");
+  const [showCustomProtocolModal, setShowCustomProtocolModal] = useState(false);
 
   // Fetch data on mount
   useEffect(() => {
@@ -193,6 +195,22 @@ export function LogDose() {
     } else {
       navigate("/dashboard");
     }
+  };
+
+  const handleCustomProtocolCreated = async (protocolSubstanceId: string) => {
+    // Refresh the protocol substances list
+    await fetchData();
+    setShowCustomProtocolModal(false);
+    // Set to protocol mode and find the newly created protocol substance
+    setLogType("protocol");
+    // The protocolSubstances will be updated after fetchData,
+    // so we need to wait for the next render to find it
+    setTimeout(() => {
+      const newPs = protocolSubstances.find(ps => ps.id === protocolSubstanceId);
+      if (newPs) {
+        handleProtocolSubstanceSelect(newPs);
+      }
+    }, 100);
   };
 
   const currentDoseUnit =
@@ -374,9 +392,10 @@ export function LogDose() {
           </button>
 
           {/* Create Protocol Option */}
-          <Link
-            to="/protocols/new"
-            className="block w-full p-6 rounded-xl border border-dashed border-surface-border text-left hover:border-primary-300 hover:bg-primary-500/20 transition-all"
+          <button
+            type="button"
+            onClick={() => setShowCustomProtocolModal(true)}
+            className="w-full p-6 rounded-xl border border-dashed border-surface-border text-left hover:border-primary-300 hover:bg-primary-500/20 transition-all"
           >
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 rounded-xl bg-surface-elevated flex items-center justify-center">
@@ -416,7 +435,7 @@ export function LogDose() {
                 />
               </svg>
             </div>
-          </Link>
+          </button>
 
           {/* Cancel Button */}
           <button
@@ -643,6 +662,13 @@ export function LogDose() {
           </div>
         </form>
       )}
+
+      {/* Custom Protocol Modal */}
+      <QuickProtocolModal
+        isOpen={showCustomProtocolModal}
+        onClose={() => setShowCustomProtocolModal(false)}
+        onProtocolCreated={handleCustomProtocolCreated}
+      />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import {
   ProtocolTemplate,
   SubstanceCategory,
 } from "@/types/domain";
+import { QuickProtocolModal } from "@/components/protocols/QuickProtocolModal";
 
 export function AddProtocol() {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ export function AddProtocol() {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState<string | null>(null);
+  const [showCustomModal, setShowCustomModal] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -47,6 +49,10 @@ export function AddProtocol() {
       t.substance?.name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
+
+  function handleCustomProtocolCreated() {
+    navigate("/dashboard");
+  }
 
   async function handleStartProtocol(template: ProtocolTemplate) {
     if (!template.substanceId) {
@@ -169,6 +175,38 @@ export function AddProtocol() {
         ))}
       </div>
 
+      {/* Custom Protocol Option */}
+      <div className="mb-6">
+        <button
+          onClick={() => setShowCustomModal(true)}
+          className="w-full bg-surface-card rounded-xl border-2 border-dashed border-surface-border p-6 hover:border-primary-500 hover:bg-surface-elevated transition-all text-left group"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-primary-500/20 flex items-center justify-center group-hover:bg-primary-500/30 transition-colors">
+              <svg
+                className="w-6 h-6 text-primary-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-100">Create Custom Protocol</h3>
+              <p className="text-sm text-gray-400 mt-1">
+                Build your own protocol by selecting a substance and configuring dosing details
+              </p>
+            </div>
+          </div>
+        </button>
+      </div>
+
       {/* Templates Grid */}
       {filteredTemplates.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -204,6 +242,13 @@ export function AddProtocol() {
           </p>
         </div>
       )}
+
+      {/* Custom Protocol Modal */}
+      <QuickProtocolModal
+        isOpen={showCustomModal}
+        onClose={() => setShowCustomModal(false)}
+        onProtocolCreated={handleCustomProtocolCreated}
+      />
     </div>
   );
 }

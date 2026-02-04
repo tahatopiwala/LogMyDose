@@ -51,6 +51,9 @@ export function useActiveSubstances() {
 }
 
 interface CreateProtocolData {
+  source: "custom" | "template";
+  name?: string;
+  description?: string;
   substances: Array<{
     substanceId: string;
     productId?: string;
@@ -59,6 +62,7 @@ interface CreateProtocolData {
     frequency?: string;
   }>;
   startDate?: string;
+  endDate?: string;
   notes?: string;
 }
 
@@ -67,9 +71,10 @@ export function useCreateProtocol() {
 
   return useMutation({
     mutationFn: (data: CreateProtocolData) =>
-      api.post<Protocol>("/protocols", data),
+      api.post<{ protocol: Protocol }>("/protocols", data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["protocols"] });
+      queryClient.invalidateQueries({ queryKey: ["protocols", "my-substances"] });
     },
   });
 }
