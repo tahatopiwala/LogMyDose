@@ -18,6 +18,28 @@ import { Card, Button, Input } from "../../src/components/ui";
 import { ActiveProtocolSubstance } from "../../src/types/domain";
 
 type LogType = "protocol" | "adhoc" | null;
+type FastingState = "fasted" | "fed" | "unknown";
+type TimeOfDay = "morning" | "afternoon" | "evening" | "night";
+type NeedleGauge = "25g" | "27g" | "29g" | "30g" | "31g";
+type InjectionDepth = "subcutaneous" | "intramuscular";
+
+const INJECTION_SITES = [
+  "Abdomen",
+  "Thigh",
+  "Upper Arm",
+  "Gluteal",
+];
+
+const NEEDLE_GAUGES: NeedleGauge[] = ["25g", "27g", "29g", "30g", "31g"];
+
+// Determine time of day from current hour
+const getTimeOfDay = (): TimeOfDay => {
+  const hour = new Date().getHours();
+  if (hour >= 5 && hour < 12) return "morning";
+  if (hour >= 12 && hour < 17) return "afternoon";
+  if (hour >= 17 && hour < 21) return "evening";
+  return "night";
+};
 
 interface ProtocolGroup {
   protocol: {
@@ -53,6 +75,14 @@ export default function LogDoseScreen() {
   const [dose, setDose] = useState("");
   const [notes, setNotes] = useState("");
   const [adHocSearch, setAdHocSearch] = useState("");
+
+  // Advanced options state
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [fastingState, setFastingState] = useState<FastingState | null>(null);
+  const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>(getTimeOfDay());
+  const [administrationSite, setAdministrationSite] = useState<string | null>(null);
+  const [needleGauge, setNeedleGauge] = useState<NeedleGauge | null>(null);
+  const [injectionDepth, setInjectionDepth] = useState<InjectionDepth | null>(null);
 
   const isLoading = loadingProtocols || loadingSubstances;
 
@@ -117,6 +147,15 @@ export default function LogDoseScreen() {
     if (logType === "adhoc" && !selectedSubstance) return;
 
     try {
+      // Build context fields object
+      const contextFields = {
+        fastingState: fastingState || undefined,
+        timeOfDay: timeOfDay || undefined,
+        administrationSite: administrationSite || undefined,
+        needleGauge: needleGauge || undefined,
+        injectionDepth: injectionDepth || undefined,
+      };
+
       if (logType === "protocol" && selectedProtocolSubstance) {
         await logDoseMutation.mutateAsync({
           protocolSubstanceId: selectedProtocolSubstance.id,
@@ -125,6 +164,7 @@ export default function LogDoseScreen() {
           doseUnit: selectedProtocolSubstance.doseUnit || undefined,
           status: "taken",
           notes: notes || undefined,
+          ...contextFields,
         });
       } else if (logType === "adhoc" && selectedSubstance) {
         await logDoseMutation.mutateAsync({
@@ -133,6 +173,7 @@ export default function LogDoseScreen() {
           doseUnit: selectedSubstance.doseUnit || undefined,
           status: "taken",
           notes: notes || undefined,
+          ...contextFields,
         });
       }
 
@@ -153,6 +194,13 @@ export default function LogDoseScreen() {
       setSelectedSubstance(null);
       setDose("");
       setNotes("");
+      // Reset advanced options
+      setShowAdvanced(false);
+      setFastingState(null);
+      setTimeOfDay(getTimeOfDay());
+      setAdministrationSite(null);
+      setNeedleGauge(null);
+      setInjectionDepth(null);
     } else if (currentStep === 2) {
       setLogType(null);
       setAdHocSearch("");
@@ -167,6 +215,18 @@ export default function LogDoseScreen() {
       : logType === "adhoc" && selectedSubstance
         ? selectedSubstance.doseUnit || "units"
         : "units";
+
+  // Check if the selected substance is injectable
+  const isInjectable = useMemo(() => {
+    if (logType === "protocol" && selectedProtocolSubstance) {
+      const route = selectedProtocolSubstance.substance.administrationRoute;
+      return route?.includes("injection") || false;
+    }
+    if (logType === "adhoc" && selectedSubstance) {
+      return selectedSubstance.administrationRoute?.includes("injection") || false;
+    }
+    return false;
+  }, [logType, selectedProtocolSubstance, selectedSubstance]);
 
   const stepLabels = ["Choose type", "Select substance", "Enter details"];
 
@@ -459,6 +519,215 @@ export default function LogDoseScreen() {
                   numberOfLines={2}
                   textAlignVertical="top"
                 />
+
+                {/* Advanced Options Toggle */}
+                <TouchableOpacity
+                  onPress={() => setShowAdvanced(!showAdvanced)}
+                  className="flex-row items-center justify-between py-3 px-4 border border-surface-border rounded-lg bg-surface-card"
+                >
+                  <View className="flex-row items-center">
+                    <Ionicons
+                      name="options-outline"
+                      size={20}
+                      color="#9CA3AF"
+                    />
+                    <Text className="text-gray-300 ml-2 font-medium">
+                      Advanced Options
+                    </Text>
+                  </View>
+                  <Ionicons
+                    name={showAdvanced ? "chevron-up" : "chevron-down"}
+                    size={20}
+                    color="#6B7280"
+                  />
+                </TouchableOpacity>
+
+                {/* Advanced Options Content */}
+                {showAdvanced && (
+                  <View className="gap-4 p-4 border border-surface-border rounded-lg bg-surface-raised">
+                    {/* Fasting State */}
+                    <View>
+                      <Text className="text-gray-300 mb-2 font-medium text-sm">
+                        Fasting State
+                      </Text>
+                      <View className="flex-row gap-2">
+                        {(["fasted", "fed", "unknown"] as FastingState[]).map(
+                          (state) => (
+                            <TouchableOpacity
+                              key={state}
+                              onPress={() =>
+                                setFastingState(
+                                  fastingState === state ? null : state
+                                )
+                              }
+                              className={`flex-1 py-2.5 px-3 rounded-lg border ${
+                                fastingState === state
+                                  ? "border-primary-500 bg-primary-500/20"
+                                  : "border-surface-border bg-surface-card"
+                              }`}
+                            >
+                              <Text
+                                className={`text-center text-sm capitalize ${
+                                  fastingState === state
+                                    ? "text-primary-400 font-medium"
+                                    : "text-gray-400"
+                                }`}
+                              >
+                                {state}
+                              </Text>
+                            </TouchableOpacity>
+                          )
+                        )}
+                      </View>
+                    </View>
+
+                    {/* Time of Day */}
+                    <View>
+                      <Text className="text-gray-300 mb-2 font-medium text-sm">
+                        Time of Day
+                      </Text>
+                      <View className="flex-row gap-2 flex-wrap">
+                        {(
+                          [
+                            "morning",
+                            "afternoon",
+                            "evening",
+                            "night",
+                          ] as TimeOfDay[]
+                        ).map((time) => (
+                          <TouchableOpacity
+                            key={time}
+                            onPress={() => setTimeOfDay(time)}
+                            className={`py-2 px-4 rounded-lg border ${
+                              timeOfDay === time
+                                ? "border-primary-500 bg-primary-500/20"
+                                : "border-surface-border bg-surface-card"
+                            }`}
+                          >
+                            <Text
+                              className={`text-sm capitalize ${
+                                timeOfDay === time
+                                  ? "text-primary-400 font-medium"
+                                  : "text-gray-400"
+                              }`}
+                            >
+                              {time}
+                            </Text>
+                          </TouchableOpacity>
+                        ))}
+                      </View>
+                    </View>
+
+                    {/* Injection-specific fields */}
+                    {isInjectable && (
+                      <>
+                        {/* Administration Site */}
+                        <View>
+                          <Text className="text-gray-300 mb-2 font-medium text-sm">
+                            Injection Site
+                          </Text>
+                          <View className="flex-row gap-2 flex-wrap">
+                            {INJECTION_SITES.map((site) => (
+                              <TouchableOpacity
+                                key={site}
+                                onPress={() =>
+                                  setAdministrationSite(
+                                    administrationSite === site ? null : site
+                                  )
+                                }
+                                className={`py-2 px-4 rounded-lg border ${
+                                  administrationSite === site
+                                    ? "border-primary-500 bg-primary-500/20"
+                                    : "border-surface-border bg-surface-card"
+                                }`}
+                              >
+                                <Text
+                                  className={`text-sm ${
+                                    administrationSite === site
+                                      ? "text-primary-400 font-medium"
+                                      : "text-gray-400"
+                                  }`}
+                                >
+                                  {site}
+                                </Text>
+                              </TouchableOpacity>
+                            ))}
+                          </View>
+                        </View>
+
+                        {/* Injection Depth */}
+                        <View>
+                          <Text className="text-gray-300 mb-2 font-medium text-sm">
+                            Injection Depth
+                          </Text>
+                          <View className="flex-row gap-2">
+                            {(
+                              ["subcutaneous", "intramuscular"] as InjectionDepth[]
+                            ).map((depth) => (
+                              <TouchableOpacity
+                                key={depth}
+                                onPress={() =>
+                                  setInjectionDepth(
+                                    injectionDepth === depth ? null : depth
+                                  )
+                                }
+                                className={`flex-1 py-2.5 px-3 rounded-lg border ${
+                                  injectionDepth === depth
+                                    ? "border-primary-500 bg-primary-500/20"
+                                    : "border-surface-border bg-surface-card"
+                                }`}
+                              >
+                                <Text
+                                  className={`text-center text-sm capitalize ${
+                                    injectionDepth === depth
+                                      ? "text-primary-400 font-medium"
+                                      : "text-gray-400"
+                                  }`}
+                                >
+                                  {depth === "subcutaneous" ? "SubQ" : "IM"}
+                                </Text>
+                              </TouchableOpacity>
+                            ))}
+                          </View>
+                        </View>
+
+                        {/* Needle Gauge */}
+                        <View>
+                          <Text className="text-gray-300 mb-2 font-medium text-sm">
+                            Needle Gauge
+                          </Text>
+                          <View className="flex-row gap-2 flex-wrap">
+                            {NEEDLE_GAUGES.map((gauge) => (
+                              <TouchableOpacity
+                                key={gauge}
+                                onPress={() =>
+                                  setNeedleGauge(
+                                    needleGauge === gauge ? null : gauge
+                                  )
+                                }
+                                className={`py-2 px-4 rounded-lg border ${
+                                  needleGauge === gauge
+                                    ? "border-primary-500 bg-primary-500/20"
+                                    : "border-surface-border bg-surface-card"
+                                }`}
+                              >
+                                <Text
+                                  className={`text-sm ${
+                                    needleGauge === gauge
+                                      ? "text-primary-400 font-medium"
+                                      : "text-gray-400"
+                                  }`}
+                                >
+                                  {gauge}
+                                </Text>
+                              </TouchableOpacity>
+                            ))}
+                          </View>
+                        </View>
+                      </>
+                    )}
+                  </View>
+                )}
 
                 <View className="flex-row gap-3 pt-2">
                   <TouchableOpacity

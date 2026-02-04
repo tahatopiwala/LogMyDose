@@ -90,6 +90,13 @@ export interface Dose {
   status: "taken" | "missed" | "skipped";
   administrationSite: string | null;
   notes: string | null;
+  // Dose context fields
+  fastingState: "fasted" | "fed" | "unknown" | null;
+  takenWithFood: boolean | null;
+  mealFatContent: "none" | "low" | "medium" | "high" | null;
+  timeOfDay: "morning" | "afternoon" | "evening" | "night" | null;
+  needleGauge: "25g" | "27g" | "29g" | "30g" | "31g" | null;
+  injectionDepth: "subcutaneous" | "intramuscular" | null;
   substance: {
     id: string;
     name: string;

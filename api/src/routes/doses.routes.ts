@@ -17,6 +17,13 @@ const logDoseSchema = z.object({
   administrationSite: z.string().max(50).optional(),
   notes: z.string().optional(),
   photoUrl: z.string().url().optional(),
+  // Dose context fields
+  fastingState: z.enum(["fasted", "fed", "unknown"]).optional(),
+  takenWithFood: z.boolean().optional(),
+  mealFatContent: z.enum(["none", "low", "medium", "high"]).optional(),
+  timeOfDay: z.enum(["morning", "afternoon", "evening", "night"]).optional(),
+  needleGauge: z.enum(["25g", "27g", "29g", "30g", "31g"]).optional(),
+  injectionDepth: z.enum(["subcutaneous", "intramuscular"]).optional(),
 });
 
 const logSideEffectSchema = z.object({
@@ -32,6 +39,13 @@ const updateDoseSchema = z.object({
   status: z.enum(["taken", "missed", "skipped"]).optional(),
   administrationSite: z.string().max(50).optional(),
   notes: z.string().optional(),
+  // Dose context fields
+  fastingState: z.enum(["fasted", "fed", "unknown"]).optional(),
+  takenWithFood: z.boolean().optional(),
+  mealFatContent: z.enum(["none", "low", "medium", "high"]).optional(),
+  timeOfDay: z.enum(["morning", "afternoon", "evening", "night"]).optional(),
+  needleGauge: z.enum(["25g", "27g", "29g", "30g", "31g"]).optional(),
+  injectionDepth: z.enum(["subcutaneous", "intramuscular"]).optional(),
 });
 
 // POST /api/v1/doses

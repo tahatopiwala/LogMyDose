@@ -17,12 +17,26 @@ export interface LogDoseInput {
   administrationSite?: string;
   notes?: string;
   photoUrl?: string;
+  // Dose context fields
+  fastingState?: "fasted" | "fed" | "unknown";
+  takenWithFood?: boolean;
+  mealFatContent?: "none" | "low" | "medium" | "high";
+  timeOfDay?: "morning" | "afternoon" | "evening" | "night";
+  needleGauge?: "25g" | "27g" | "29g" | "30g" | "31g";
+  injectionDepth?: "subcutaneous" | "intramuscular";
 }
 
 export interface UpdateDoseInput {
   status?: "taken" | "missed" | "skipped";
   administrationSite?: string;
   notes?: string;
+  // Dose context fields
+  fastingState?: "fasted" | "fed" | "unknown";
+  takenWithFood?: boolean;
+  mealFatContent?: "none" | "low" | "medium" | "high";
+  timeOfDay?: "morning" | "afternoon" | "evening" | "night";
+  needleGauge?: "25g" | "27g" | "29g" | "30g" | "31g";
+  injectionDepth?: "subcutaneous" | "intramuscular";
 }
 
 export interface LogSideEffectInput {

@@ -1,5 +1,12 @@
 import { Decimal } from "../types/database.js";
 
+// Dose context field types
+export type FastingState = "fasted" | "fed" | "unknown";
+export type MealFatContent = "none" | "low" | "medium" | "high";
+export type TimeOfDay = "morning" | "afternoon" | "evening" | "night";
+export type NeedleGauge = "25g" | "27g" | "29g" | "30g" | "31g";
+export type InjectionDepth = "subcutaneous" | "intramuscular";
+
 /**
  * Dose entity - Individual dose logs
  * Maps to: doses table
@@ -17,6 +24,14 @@ export interface Dose {
   administrationSite: string | null;
   notes: string | null;
   photoUrl: string | null;
+
+  // Dose context fields
+  fastingState: FastingState | null;
+  takenWithFood: boolean | null;
+  mealFatContent: MealFatContent | null;
+  timeOfDay: TimeOfDay | null;
+  needleGauge: NeedleGauge | null;
+  injectionDepth: InjectionDepth | null;
 }
 
 /**

@@ -299,6 +299,14 @@ model Dose {
   notes                String?   @db.Text
   photoUrl             String?   @map("photo_url") @db.VarChar(500)
 
+  // Dose context fields
+  fastingState         String?   @map("fasting_state") @db.VarChar(20) // fasted, fed, unknown
+  takenWithFood        Boolean?  @map("taken_with_food")
+  mealFatContent       String?   @map("meal_fat_content") @db.VarChar(20) // none, low, medium, high
+  timeOfDay            String?   @map("time_of_day") @db.VarChar(20) // morning, afternoon, evening, night
+  needleGauge          String?   @map("needle_gauge") @db.VarChar(10) // 25g, 27g, 29g, 30g, 31g
+  injectionDepth       String?   @map("injection_depth") @db.VarChar(20) // subcutaneous, intramuscular
+
   // Relations
   patient              Patient            @relation(fields: [patientId], references: [id])
   protocolSubstance    ProtocolSubstance? @relation(fields: [protocolSubstanceId], references: [id], onDelete: SetNull)

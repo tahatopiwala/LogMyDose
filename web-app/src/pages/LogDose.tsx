@@ -13,6 +13,21 @@ const INJECTION_SITES = [
 ];
 
 type LogType = "protocol" | "adhoc" | null;
+type FastingState = "fasted" | "fed" | "unknown";
+type TimeOfDay = "morning" | "afternoon" | "evening" | "night";
+type NeedleGauge = "25g" | "27g" | "29g" | "30g" | "31g";
+type InjectionDepth = "subcutaneous" | "intramuscular";
+
+const NEEDLE_GAUGES: NeedleGauge[] = ["25g", "27g", "29g", "30g", "31g"];
+
+// Determine time of day from current hour
+const getTimeOfDay = (): TimeOfDay => {
+  const hour = new Date().getHours();
+  if (hour >= 5 && hour < 12) return "morning";
+  if (hour >= 12 && hour < 17) return "afternoon";
+  if (hour >= 17 && hour < 21) return "evening";
+  return "night";
+};
 
 interface ProtocolGroup {
   protocol: {
@@ -50,6 +65,13 @@ export function LogDose() {
   const [submitting, setSubmitting] = useState(false);
   const [adHocSearch, setAdHocSearch] = useState("");
   const [showCustomProtocolModal, setShowCustomProtocolModal] = useState(false);
+
+  // Dose context state
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [fastingState, setFastingState] = useState<FastingState | null>(null);
+  const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>(getTimeOfDay());
+  const [needleGauge, setNeedleGauge] = useState<NeedleGauge | null>(null);
+  const [injectionDepth, setInjectionDepth] = useState<InjectionDepth | null>(null);
 
   // Fetch data on mount
   useEffect(() => {
@@ -152,6 +174,14 @@ export function LogDose() {
     setError(null);
 
     try {
+      // Build context fields object
+      const contextFields = {
+        fastingState: fastingState || undefined,
+        timeOfDay: timeOfDay || undefined,
+        needleGauge: needleGauge || undefined,
+        injectionDepth: injectionDepth || undefined,
+      };
+
       if (logType === "protocol" && selectedProtocolSubstance) {
         await apiClient.post<{ dose: Dose }>("/doses", {
           protocolSubstanceId: selectedProtocolSubstance.id,
@@ -163,6 +193,7 @@ export function LogDose() {
           status: "taken",
           administrationSite: site,
           notes: notes || undefined,
+          ...contextFields,
         });
       } else if (logType === "adhoc" && selectedSubstance) {
         await apiClient.post<{ dose: Dose }>("/doses", {
@@ -172,6 +203,7 @@ export function LogDose() {
           status: "taken",
           administrationSite: site,
           notes: notes || undefined,
+          ...contextFields,
         });
       }
 
@@ -189,6 +221,12 @@ export function LogDose() {
       setSelectedSubstance(null);
       setDose("");
       setDoseUnit("");
+      // Reset context fields
+      setShowAdvanced(false);
+      setFastingState(null);
+      setTimeOfDay(getTimeOfDay());
+      setNeedleGauge(null);
+      setInjectionDepth(null);
     } else if (currentStep === 2) {
       setLogType(null);
       setAdHocSearch("");
@@ -221,6 +259,18 @@ export function LogDose() {
       : logType === "adhoc" && selectedSubstance
         ? doseUnit || selectedSubstance.doseUnit || "units"
         : "units";
+
+  // Check if the selected substance is injectable
+  const isInjectable = useMemo(() => {
+    if (logType === "protocol" && selectedProtocolSubstance) {
+      const route = selectedProtocolSubstance.substance.administrationRoute;
+      return route?.includes("injection") || false;
+    }
+    if (logType === "adhoc" && selectedSubstance) {
+      return selectedSubstance.administrationRoute?.includes("injection") || false;
+    }
+    return false;
+  }, [logType, selectedProtocolSubstance, selectedSubstance]);
 
   const stepLabels = ["Choose type", "Select substance", "Enter details"];
 
@@ -641,6 +691,168 @@ export function LogDose() {
               placeholder="Any observations or side effects..."
               className="mt-1 block w-full px-3 py-2 border border-surface-border rounded-lg bg-surface-raised text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
             />
+          </div>
+
+          {/* Advanced Options Accordion */}
+          <div className="border border-surface-border rounded-lg overflow-hidden">
+            <button
+              type="button"
+              onClick={() => setShowAdvanced(!showAdvanced)}
+              className="w-full flex items-center justify-between p-4 bg-surface-card hover:bg-surface-elevated transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <svg
+                  className="w-5 h-5 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+                  />
+                </svg>
+                <span className="text-sm font-medium text-gray-300">
+                  Dose Context
+                </span>
+              </div>
+              <svg
+                className={`w-5 h-5 text-gray-400 transition-transform ${
+                  showAdvanced ? "rotate-180" : ""
+                }`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+
+            {showAdvanced && (
+              <div className="p-4 bg-surface-raised border-t border-surface-border space-y-5">
+                {/* Fasting State */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Fasting State
+                  </label>
+                  <div className="flex gap-2">
+                    {(["fasted", "fed", "unknown"] as FastingState[]).map(
+                      (state) => (
+                        <button
+                          key={state}
+                          type="button"
+                          onClick={() =>
+                            setFastingState(
+                              fastingState === state ? null : state
+                            )
+                          }
+                          className={`flex-1 py-2 px-3 rounded-lg border text-sm capitalize transition-colors ${
+                            fastingState === state
+                              ? "border-primary-500 bg-primary-500/20 text-primary-400 font-medium"
+                              : "border-surface-border bg-surface-card text-gray-400 hover:bg-surface-elevated"
+                          }`}
+                        >
+                          {state}
+                        </button>
+                      )
+                    )}
+                  </div>
+                </div>
+
+                {/* Time of Day */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Time of Day
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {(
+                      ["morning", "afternoon", "evening", "night"] as TimeOfDay[]
+                    ).map((time) => (
+                      <button
+                        key={time}
+                        type="button"
+                        onClick={() => setTimeOfDay(time)}
+                        className={`py-2 px-4 rounded-lg border text-sm capitalize transition-colors ${
+                          timeOfDay === time
+                            ? "border-primary-500 bg-primary-500/20 text-primary-400 font-medium"
+                            : "border-surface-border bg-surface-card text-gray-400 hover:bg-surface-elevated"
+                        }`}
+                      >
+                        {time}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Injection-specific fields */}
+                {isInjectable && (
+                  <>
+                    {/* Injection Depth */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        Injection Depth
+                      </label>
+                      <div className="flex gap-2">
+                        {(
+                          ["subcutaneous", "intramuscular"] as InjectionDepth[]
+                        ).map((depth) => (
+                          <button
+                            key={depth}
+                            type="button"
+                            onClick={() =>
+                              setInjectionDepth(
+                                injectionDepth === depth ? null : depth
+                              )
+                            }
+                            className={`flex-1 py-2 px-3 rounded-lg border text-sm transition-colors ${
+                              injectionDepth === depth
+                                ? "border-primary-500 bg-primary-500/20 text-primary-400 font-medium"
+                                : "border-surface-border bg-surface-card text-gray-400 hover:bg-surface-elevated"
+                            }`}
+                          >
+                            {depth === "subcutaneous" ? "SubQ" : "Intramuscular"}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Needle Gauge */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        Needle Gauge
+                      </label>
+                      <div className="flex flex-wrap gap-2">
+                        {NEEDLE_GAUGES.map((gauge) => (
+                          <button
+                            key={gauge}
+                            type="button"
+                            onClick={() =>
+                              setNeedleGauge(
+                                needleGauge === gauge ? null : gauge
+                              )
+                            }
+                            className={`py-2 px-4 rounded-lg border text-sm transition-colors ${
+                              needleGauge === gauge
+                                ? "border-primary-500 bg-primary-500/20 text-primary-400 font-medium"
+                                : "border-surface-border bg-surface-card text-gray-400 hover:bg-surface-elevated"
+                            }`}
+                          >
+                            {gauge}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Actions */}

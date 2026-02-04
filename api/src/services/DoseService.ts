@@ -81,6 +81,13 @@ export class DoseService implements IDoseService {
       administrationSite: input.administrationSite,
       notes: input.notes,
       photoUrl: input.photoUrl,
+      // Dose context fields
+      fastingState: input.fastingState,
+      takenWithFood: input.takenWithFood,
+      mealFatContent: input.mealFatContent,
+      timeOfDay: input.timeOfDay,
+      needleGauge: input.needleGauge,
+      injectionDepth: input.injectionDepth,
     });
   }
 
