@@ -3,9 +3,9 @@ import { useEffect, useRef } from "react";
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  title: string;
+  title?: string;
   children: React.ReactNode;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
 }
 
 export function Modal({
@@ -48,8 +48,26 @@ export function Modal({
   const sizeClasses = {
     sm: "max-w-sm",
     md: "max-w-md",
-    lg: "max-w-lg",
+    lg: "max-w-2xl",
+    xl: "max-w-3xl",
   };
+
+  // If no title provided, render children directly (component provides its own structure)
+  if (!title) {
+    return (
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
+        onClick={handleBackdropClick}
+      >
+        <div
+          ref={modalRef}
+          className={`w-full ${sizeClasses[size]} bg-surface-card rounded-xl shadow-xl border border-surface-border`}
+        >
+          {children}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

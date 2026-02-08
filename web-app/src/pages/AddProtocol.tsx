@@ -1,11 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { apiClient } from "@/lib/api-client";
-import {
-  ProtocolTemplate,
-  SubstanceCategory,
-} from "@/types/domain";
-import { QuickProtocolModal } from "@/components/protocols/QuickProtocolModal";
+import { ProtocolTemplate, SubstanceCategory } from "@/types/domain";
+import { ProtocolBuilder } from "@/components/protocols/ProtocolBuilder";
 
 export function AddProtocol() {
   const navigate = useNavigate();
@@ -14,18 +11,21 @@ export function AddProtocol() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
-  const [creating, setCreating] = useState<string | null>(null);
-  const [showCustomModal, setShowCustomModal] = useState(false);
+
+  // Protocol Builder state
+  const [showBuilder, setShowBuilder] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] =
+    useState<ProtocolTemplate | null>(null);
 
   useEffect(() => {
     async function fetchData() {
       try {
         const [templatesRes, categoriesRes] = await Promise.all([
           apiClient.get<{ templates: ProtocolTemplate[] }>(
-            "/protocols/templates?limit=50",
+            "/protocols/templates?limit=50"
           ),
           apiClient.get<{ categories: SubstanceCategory[] }>(
-            "/substances/categories",
+            "/substances/categories"
           ),
         ]);
         setTemplates(templatesRes.templates || []);
@@ -50,37 +50,25 @@ export function AddProtocol() {
     return matchesCategory && matchesSearch;
   });
 
-  function handleCustomProtocolCreated() {
+  function handleProtocolCreated() {
+    setShowBuilder(false);
+    setSelectedTemplate(null);
     navigate("/dashboard");
   }
 
-  async function handleStartProtocol(template: ProtocolTemplate) {
-    if (!template.substanceId) {
-      console.error("Template has no substance");
-      return;
-    }
+  function handleOpenCustomBuilder() {
+    setSelectedTemplate(null);
+    setShowBuilder(true);
+  }
 
-    setCreating(template.id);
-    try {
-      await apiClient.post("/protocols", {
-        source: "template",
-        templateId: template.id,
-        startDate: new Date().toISOString().split("T")[0],
-        status: "active",
-        substances: [
-          {
-            substanceId: template.substanceId,
-            dose: Number(template.defaultDose) || 250,
-            doseUnit: template.doseUnit || "mcg",
-            frequency: template.frequency || "daily",
-          },
-        ],
-      });
-      navigate("/dashboard");
-    } catch (error) {
-      console.error("Failed to create protocol:", error);
-      setCreating(null);
-    }
+  function handleOpenTemplateBuilder(template: ProtocolTemplate) {
+    setSelectedTemplate(template);
+    setShowBuilder(true);
+  }
+
+  function handleCloseBuilder() {
+    setShowBuilder(false);
+    setSelectedTemplate(null);
   }
 
   if (loading) {
@@ -117,7 +105,7 @@ export function AddProtocol() {
           </Link>
           <h1 className="text-2xl font-bold text-gray-100">Add a Protocol</h1>
           <p className="text-gray-400 mt-1">
-            Choose from our curated protocol templates to get started.
+            Choose a template or create your own custom protocol.
           </p>
         </div>
       </div>
@@ -155,7 +143,7 @@ export function AddProtocol() {
           className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
             selectedCategory === null
               ? "bg-primary-500 text-white"
-              : "bg-surface-elevated text-gray-300 hover:bg-gray-200"
+              : "bg-surface-elevated text-gray-300 hover:bg-surface-hover"
           }`}
         >
           All
@@ -167,7 +155,7 @@ export function AddProtocol() {
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
               selectedCategory === category.id
                 ? "bg-primary-500 text-white"
-                : "bg-surface-elevated text-gray-300 hover:bg-gray-200"
+                : "bg-surface-elevated text-gray-300 hover:bg-surface-hover"
             }`}
           >
             {category.displayName}
@@ -178,7 +166,7 @@ export function AddProtocol() {
       {/* Custom Protocol Option */}
       <div className="mb-6">
         <button
-          onClick={() => setShowCustomModal(true)}
+          onClick={handleOpenCustomBuilder}
           className="w-full bg-surface-card rounded-xl border-2 border-dashed border-surface-border p-6 hover:border-primary-500 hover:bg-surface-elevated transition-all text-left group"
         >
           <div className="flex items-center gap-4">
@@ -198,9 +186,12 @@ export function AddProtocol() {
               </svg>
             </div>
             <div>
-              <h3 className="font-semibold text-gray-100">Create Custom Protocol</h3>
+              <h3 className="font-semibold text-gray-100">
+                Create Custom Protocol
+              </h3>
               <p className="text-sm text-gray-400 mt-1">
-                Build your own protocol by selecting a substance and configuring dosing details
+                Build your own protocol with multiple substances and smart
+                defaults
               </p>
             </div>
           </div>
@@ -214,8 +205,7 @@ export function AddProtocol() {
             <TemplateCard
               key={template.id}
               template={template}
-              onStart={() => handleStartProtocol(template)}
-              isCreating={creating === template.id}
+              onStart={() => handleOpenTemplateBuilder(template)}
             />
           ))}
         </div>
@@ -243,11 +233,12 @@ export function AddProtocol() {
         </div>
       )}
 
-      {/* Custom Protocol Modal */}
-      <QuickProtocolModal
-        isOpen={showCustomModal}
-        onClose={() => setShowCustomModal(false)}
-        onProtocolCreated={handleCustomProtocolCreated}
+      {/* Protocol Builder Modal */}
+      <ProtocolBuilder
+        isOpen={showBuilder}
+        onClose={handleCloseBuilder}
+        onProtocolCreated={handleProtocolCreated}
+        template={selectedTemplate}
       />
     </div>
   );
@@ -256,11 +247,9 @@ export function AddProtocol() {
 function TemplateCard({
   template,
   onStart,
-  isCreating,
 }: {
   template: ProtocolTemplate;
   onStart: () => void;
-  isCreating: boolean;
 }) {
   const difficultyColors: Record<string, string> = {
     beginner: "bg-green-900/40 text-green-400",
@@ -269,7 +258,7 @@ function TemplateCard({
   };
 
   return (
-    <div className="bg-surface-card rounded-xl border border-surface-border p-5 hover:border-primary-300 hover:shadow-sm transition-all">
+    <div className="bg-surface-card rounded-xl border border-surface-border p-5 hover:border-primary-500/50 hover:shadow-sm transition-all">
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
           <h3 className="font-semibold text-gray-100">{template.name}</h3>
@@ -318,10 +307,9 @@ function TemplateCard({
         </span>
         <button
           onClick={onStart}
-          disabled={isCreating}
-          className="px-4 py-2 bg-primary-500 text-white text-sm font-medium rounded-lg hover:bg-primary-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-4 py-2 bg-primary-500 text-white text-sm font-medium rounded-lg hover:bg-primary-400 transition-colors"
         >
-          {isCreating ? "Starting..." : "Start Protocol"}
+          Start Protocol
         </button>
       </div>
     </div>
