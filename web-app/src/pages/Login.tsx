@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { ApiError } from "@/types/auth";
 
 export function Login() {
   const { login, isAuthenticated, isLoading: authLoading } = useAuth();
+  const location = useLocation();
+  const from = (location.state as { from?: { pathname: string } })?.from?.pathname || "/dashboard";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -22,7 +24,7 @@ export function Login() {
 
   // Redirect if already authenticated
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to={from} replace />;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -31,7 +33,7 @@ export function Login() {
     setIsSubmitting(true);
 
     try {
-      await login({ email, password, rememberMe });
+      await login({ email, password, rememberMe }, from);
     } catch (err) {
       const apiError = err as ApiError;
       setError(apiError.error || "Login failed. Please try again.");

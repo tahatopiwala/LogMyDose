@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { ApiError } from "@/types/auth";
 
 export function Signup() {
   const { register, isAuthenticated, isLoading: authLoading } = useAuth();
+  const location = useLocation();
+  const from = (location.state as { from?: { pathname: string } })?.from?.pathname || "/dashboard";
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -24,7 +26,7 @@ export function Signup() {
 
   // Redirect if already authenticated
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to={from} replace />;
   }
 
   const hasMinLength = password.length >= 12;
@@ -57,7 +59,7 @@ export function Signup() {
         password,
         firstName: firstName || undefined,
         lastName: lastName || undefined,
-      });
+      }, from);
     } catch (err) {
       const apiError = err as ApiError;
 

@@ -20,8 +20,8 @@ interface AuthContextType {
   patient: Patient | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (data: LoginRequest) => Promise<void>;
-  register: (data: RegisterRequest) => Promise<void>;
+  login: (data: LoginRequest, redirectTo?: string) => Promise<void>;
+  register: (data: RegisterRequest, redirectTo?: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshPatient: () => Promise<void>;
 }
@@ -42,7 +42,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     // Prevent duplicate calls during React StrictMode double-mounting
     if (hasCheckedAuth.current) {
-      setIsLoading(false);
       return;
     }
 
@@ -58,7 +57,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   const login = useCallback(
-    async (data: LoginRequest) => {
+    async (data: LoginRequest, redirectTo: string = "/dashboard") => {
       const res = await apiClient.post<AuthResponse>("/auth/login", {
         email: data.email,
         password: data.password,
@@ -66,19 +65,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
         rememberMe: data.rememberMe ?? false,
       });
       setPatient(res.patient);
-      navigate("/dashboard");
+      navigate(redirectTo);
     },
     [navigate],
   );
 
   const register = useCallback(
-    async (data: RegisterRequest) => {
+    async (data: RegisterRequest, redirectTo: string = "/dashboard") => {
       const res = await apiClient.post<AuthResponse>(
         "/auth/register/patient",
         data,
       );
       setPatient(res.patient);
-      navigate("/dashboard");
+      navigate(redirectTo);
     },
     [navigate],
   );
