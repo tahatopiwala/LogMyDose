@@ -105,6 +105,7 @@ export class DoseService implements IDoseService {
       dose: input.dose,
       doseUnit: input.doseUnit || substance.doseUnit || undefined,
       scheduledAt: input.scheduledAt ? new Date(input.scheduledAt) : undefined,
+      loggedAt: input.loggedAt ? new Date(input.loggedAt) : undefined,
       status: input.status || "taken",
       administrationSite: input.administrationSite,
       notes: input.notes,

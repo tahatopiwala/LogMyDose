@@ -75,6 +75,11 @@ export default function LogDoseScreen() {
   const [dose, setDose] = useState("");
   const [notes, setNotes] = useState("");
   const [adHocSearch, setAdHocSearch] = useState("");
+  const [logDate, setLogDate] = useState(() => {
+    const now = new Date();
+    return now.toISOString().slice(0, 10);
+  });
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   // Advanced options state
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -159,6 +164,12 @@ export default function LogDoseScreen() {
     if (logType === "adhoc" && !selectedSubstance) return;
 
     try {
+      // Build loggedAt from selected date
+      const today = new Date().toISOString().slice(0, 10);
+      const loggedAt = logDate !== today
+        ? new Date(`${logDate}T12:00:00.000Z`).toISOString()
+        : undefined;
+
       // Build context fields object
       const contextFields = {
         fastingState: fastingState || undefined,
@@ -168,6 +179,7 @@ export default function LogDoseScreen() {
         injectionDepth: injectionDepth || undefined,
         vialId: selectedVial?.id || undefined,
         productId: selectedVial?.productId || undefined,
+        loggedAt,
       };
 
       if (logType === "protocol" && selectedProtocolSubstance) {
@@ -208,6 +220,8 @@ export default function LogDoseScreen() {
       setSelectedSubstance(null);
       setDose("");
       setNotes("");
+      setLogDate(new Date().toISOString().slice(0, 10));
+      setShowDatePicker(false);
       // Reset advanced options
       setShowAdvanced(false);
       setFastingState(null);
@@ -534,6 +548,63 @@ export default function LogDoseScreen() {
                   numberOfLines={2}
                   textAlignVertical="top"
                 />
+
+                {/* Log Date */}
+                <View>
+                  <Text className="text-gray-300 mb-2 font-medium text-sm">Date</Text>
+                  <TouchableOpacity
+                    onPress={() => setShowDatePicker(!showDatePicker)}
+                    className="flex-row items-center justify-between border border-surface-border rounded-lg px-4 py-3 bg-surface-raised"
+                  >
+                    <Text className="text-gray-100">
+                      {new Date(logDate + "T00:00:00").toLocaleDateString(undefined, {
+                        weekday: "short",
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </Text>
+                    <Ionicons name="calendar-outline" size={20} color="#9CA3AF" />
+                  </TouchableOpacity>
+                  {showDatePicker && (
+                    <View className="mt-2 border border-surface-border rounded-lg bg-surface-raised p-3">
+                      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                        <View className="flex-row gap-2">
+                          {Array.from({ length: 7 }, (_, i) => {
+                            const d = new Date();
+                            d.setDate(d.getDate() - i);
+                            const val = d.toISOString().slice(0, 10);
+                            const label = i === 0 ? "Today" : i === 1 ? "Yesterday" : d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+                            return (
+                              <TouchableOpacity
+                                key={val}
+                                onPress={() => {
+                                  setLogDate(val);
+                                  setShowDatePicker(false);
+                                }}
+                                className={`py-2 px-4 rounded-lg border ${
+                                  logDate === val
+                                    ? "border-primary-500 bg-primary-500/20"
+                                    : "border-surface-border bg-surface-card"
+                                }`}
+                              >
+                                <Text
+                                  className={`text-sm ${
+                                    logDate === val
+                                      ? "text-primary-400 font-medium"
+                                      : "text-gray-400"
+                                  }`}
+                                >
+                                  {label}
+                                </Text>
+                              </TouchableOpacity>
+                            );
+                          })}
+                        </View>
+                      </ScrollView>
+                    </View>
+                  )}
+                </View>
 
                 {/* Advanced Options Toggle */}
                 <TouchableOpacity

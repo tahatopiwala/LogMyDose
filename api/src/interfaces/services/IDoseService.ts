@@ -15,6 +15,7 @@ export interface LogDoseInput {
   dose: number;
   doseUnit?: string;
   scheduledAt?: string;
+  loggedAt?: string;
   status?: "taken" | "missed" | "skipped";
   administrationSite?: string;
   notes?: string;

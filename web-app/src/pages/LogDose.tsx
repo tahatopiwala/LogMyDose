@@ -66,6 +66,12 @@ export function LogDose() {
   const [adHocSearch, setAdHocSearch] = useState("");
   const [showCustomProtocolModal, setShowCustomProtocolModal] = useState(false);
 
+  // Date override state
+  const [logDate, setLogDate] = useState(() => {
+    const now = new Date();
+    return now.toISOString().slice(0, 10);
+  });
+
   // Dose context state
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [fastingState, setFastingState] = useState<FastingState | null>(null);
@@ -178,6 +184,12 @@ export function LogDose() {
     setError(null);
 
     try {
+      // Build loggedAt from selected date with current time
+      const today = new Date().toISOString().slice(0, 10);
+      const loggedAt = logDate !== today
+        ? new Date(`${logDate}T12:00:00.000Z`).toISOString()
+        : undefined;
+
       // Build context fields object
       const contextFields = {
         fastingState: fastingState || undefined,
@@ -186,6 +198,7 @@ export function LogDose() {
         injectionDepth: injectionDepth || undefined,
         vialId: selectedVial?.id || undefined,
         productId: selectedVial?.productId || undefined,
+        loggedAt,
       };
 
       if (logType === "protocol" && selectedProtocolSubstance) {
@@ -227,6 +240,7 @@ export function LogDose() {
       setSelectedSubstance(null);
       setDose("");
       setDoseUnit("");
+      setLogDate(new Date().toISOString().slice(0, 10));
       // Reset context fields
       setShowAdvanced(false);
       setFastingState(null);
@@ -685,6 +699,24 @@ export function LogDose() {
                   selectedProtocolSubstance.substance.doseUnit}
               </p>
             )}
+          </div>
+
+          {/* Log Date */}
+          <div>
+            <label
+              htmlFor="logDate"
+              className="block text-sm font-medium text-gray-300"
+            >
+              Date
+            </label>
+            <input
+              type="date"
+              id="logDate"
+              value={logDate}
+              max={new Date().toISOString().slice(0, 10)}
+              onChange={(e) => setLogDate(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-surface-border rounded-lg bg-surface-raised text-gray-100 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+            />
           </div>
 
           {/* Injection Site */}

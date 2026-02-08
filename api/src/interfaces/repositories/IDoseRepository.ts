@@ -11,6 +11,7 @@ export interface CreateDoseInput {
   dose: Prisma.Decimal | number;
   doseUnit?: string;
   scheduledAt?: Date;
+  loggedAt?: Date;
   status?: string;
   administrationSite?: string;
   notes?: string;

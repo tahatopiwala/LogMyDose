@@ -15,6 +15,7 @@ const logDoseSchema = z.object({
   dose: z.number().positive(),
   doseUnit: z.string().max(20).optional(),
   scheduledAt: z.string().optional(),
+  loggedAt: z.string().datetime().optional(),
   status: z.enum(["taken", "missed", "skipped"]).default("taken"),
   administrationSite: z.string().max(50).optional(),
   notes: z.string().optional(),
