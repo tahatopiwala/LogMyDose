@@ -72,6 +72,19 @@ router.get("/summary", authenticate, requirePatient, async (req, res, next) => {
   }
 });
 
+// GET /api/v1/cycles/active - Get all active cycles for patient
+router.get("/active", authenticate, requirePatient, async (req, res, next) => {
+  try {
+    const cycleService = getContainer().cycleService;
+    const cycles = await cycleService.getCycles(req.user!.id);
+    const activeCycles = cycles.filter((c) => c.status !== "completed");
+
+    res.json({ cycles: activeCycles });
+  } catch (error) {
+    next(error);
+  }
+});
+
 // GET /api/v1/cycles/active/:protocolSubstanceId - Get active cycle for a substance
 router.get(
   "/active/:protocolSubstanceId",
