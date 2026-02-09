@@ -64,11 +64,20 @@ function calculateProtocolStats(
           new Date(lastDose.loggedAt),
           substance.frequency,
         );
-        if (nextTime && nextTime > now) {
-          nextDoseTime = formatNextDoseTime(nextTime);
+        if (nextTime) {
+          nextDoseTime = nextTime > now ? formatNextDoseTime(nextTime) : "due now";
           nextDoseSubstance = lastDose.substance.name;
         }
       }
+    }
+  }
+
+  // If no doses logged at all but protocol has substances with frequencies, it's due now
+  if (!nextDoseTime) {
+    const substanceWithFreq = protocol.substances.find((ps) => ps.frequency);
+    if (substanceWithFreq) {
+      nextDoseTime = "due now";
+      nextDoseSubstance = substanceWithFreq.substance.name;
     }
   }
 
@@ -249,11 +258,11 @@ export function ProtocolCard({
           </div>
           {stats.nextDoseTime ? (
             <>
-              <p className="text-2xl font-bold text-purple-300">
+              <p className={`text-2xl font-bold ${stats.nextDoseTime === "due now" ? "text-amber-300" : "text-purple-300"}`}>
                 {stats.nextDoseTime}
               </p>
               {stats.nextDoseSubstance && (
-                <p className="text-xs text-purple-400 mt-0.5 truncate">
+                <p className={`text-xs mt-0.5 truncate ${stats.nextDoseTime === "due now" ? "text-amber-400" : "text-purple-400"}`}>
                   {stats.nextDoseSubstance}
                 </p>
               )}

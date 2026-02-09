@@ -24,30 +24,110 @@ function getUpbeatMessage(): string {
   return messages[Math.floor(Math.random() * messages.length)];
 }
 
-function formatNextDoseTime(doses: Dose[]): string | null {
+function estimateNextDose(lastDoseDate: Date, frequency: string): Date | null {
+  const freq = frequency.toLowerCase();
+  const nextDate = new Date(lastDoseDate);
+
+  if (freq.includes("daily") || freq.includes("qd")) {
+    nextDate.setDate(nextDate.getDate() + 1);
+  } else if (freq.includes("twice") || freq.includes("bid")) {
+    nextDate.setHours(nextDate.getHours() + 12);
+  } else if (freq.includes("weekly")) {
+    nextDate.setDate(nextDate.getDate() + 7);
+  } else if (freq.includes("every_other_day")) {
+    nextDate.setDate(nextDate.getDate() + 2);
+  } else {
+    return null;
+  }
+
+  return nextDate;
+}
+
+function formatTimeUntil(date: Date): string {
   const now = new Date();
-  const upcoming = doses
+  const diffMs = date.getTime() - now.getTime();
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+  if (diffHours > 48) {
+    const days = Math.floor(diffHours / 24);
+    return `in ${days} day${days > 1 ? "s" : ""}`;
+  }
+  if (diffHours > 24) {
+    return "tomorrow";
+  }
+  if (diffHours > 0) {
+    return `in ${diffHours}h ${diffMins}m`;
+  }
+  if (diffMins > 0) {
+    return `in ${diffMins}m`;
+  }
+  return "due now";
+}
+
+function computeNextDose(
+  protocols: Protocol[],
+  allDoses: Dose[],
+): { substanceName: string; timeLabel: string } | null {
+  const now = new Date();
+  const activeProtocols = protocols.filter((p) => p.status === "active");
+
+  // Check for upcoming scheduled doses
+  const upcomingScheduled = allDoses
     .filter((d) => d.scheduledAt && new Date(d.scheduledAt) > now)
     .sort(
       (a, b) =>
         new Date(a.scheduledAt!).getTime() - new Date(b.scheduledAt!).getTime(),
     );
 
-  if (upcoming.length === 0) return null;
-
-  const nextDose = upcoming[0];
-  const nextTime = new Date(nextDose.scheduledAt!);
-  const diffMs = nextTime.getTime() - now.getTime();
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-  const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-
-  if (diffHours > 24) {
-    return `in ${Math.floor(diffHours / 24)} day${Math.floor(diffHours / 24) > 1 ? "s" : ""}`;
+  if (upcomingScheduled.length > 0) {
+    const next = upcomingScheduled[0];
+    return {
+      substanceName: next.substance.name,
+      timeLabel: formatTimeUntil(new Date(next.scheduledAt!)),
+    };
   }
-  if (diffHours > 0) {
-    return `in ${diffHours}h ${diffMins}m`;
+
+  // Estimate based on frequency for each active protocol substance
+  let earliestFuture: { substanceName: string; dueTime: Date } | null = null;
+
+  for (const protocol of activeProtocols) {
+    for (const ps of protocol.substances) {
+      if (!ps.frequency) continue;
+
+      const substanceDoses = allDoses
+        .filter((d) => d.substanceId === ps.substanceId && d.status === "taken")
+        .sort(
+          (a, b) =>
+            new Date(b.loggedAt).getTime() - new Date(a.loggedAt).getTime(),
+        );
+
+      if (substanceDoses.length === 0) {
+        return { substanceName: ps.substance.name, timeLabel: "due now" };
+      }
+
+      const lastDose = substanceDoses[0];
+      const nextTime = estimateNextDose(new Date(lastDose.loggedAt), ps.frequency);
+
+      if (nextTime) {
+        if (nextTime <= now) {
+          return { substanceName: ps.substance.name, timeLabel: "due now" };
+        }
+        if (!earliestFuture || nextTime < earliestFuture.dueTime) {
+          earliestFuture = { substanceName: ps.substance.name, dueTime: nextTime };
+        }
+      }
+    }
   }
-  return `in ${diffMins}m`;
+
+  if (earliestFuture) {
+    return {
+      substanceName: earliestFuture.substanceName,
+      timeLabel: formatTimeUntil(earliestFuture.dueTime),
+    };
+  }
+
+  return null;
 }
 
 export function Dashboard() {
@@ -135,11 +215,8 @@ export function Dashboard() {
   ).length;
   const totalDosesToday = todayDoses.length;
 
-  // Get next scheduled dose
-  const nextDoseTime = formatNextDoseTime(todayDoses);
-  const nextDose = todayDoses.find(
-    (d) => d.scheduledAt && new Date(d.scheduledAt) > new Date(),
-  );
+  // Get next dose (scheduled or estimated from frequency)
+  const nextDoseInfo = computeNextDose(protocols, allDoses);
 
   if (loading) {
     return (
@@ -208,13 +285,13 @@ export function Dashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-400">Next Dose</p>
-              {nextDose ? (
+              {nextDoseInfo ? (
                 <>
                   <p className="text-xl font-bold text-gray-100 mt-1">
-                    {nextDose.substance.name}
+                    {nextDoseInfo.substanceName}
                   </p>
-                  <p className="text-sm text-primary-500 mt-0.5">
-                    {nextDoseTime}
+                  <p className={`text-sm mt-0.5 ${nextDoseInfo.timeLabel === "due now" ? "text-amber-400 font-semibold" : "text-primary-500"}`}>
+                    {nextDoseInfo.timeLabel}
                   </p>
                 </>
               ) : (

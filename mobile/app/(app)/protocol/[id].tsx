@@ -11,18 +11,103 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useProtocol, useUpdateProtocolStatus } from "../../../src/hooks/useProtocols";
+import { useDoses } from "../../../src/hooks/useDoses";
 import { useCycles } from "../../../src/hooks/useCycles";
 import { useTitrations } from "../../../src/hooks/useTitrations";
 import { Card, Badge } from "../../../src/components/ui";
 import { CycleStatusBadge } from "../../../src/components/CycleStatusBadge";
 import { TitrationProgressCard } from "../../../src/components/TitrationProgress";
-import { CycleWithSubstance, TitrationPhaseWithSubstance } from "../../../src/types/domain";
+import { CycleWithSubstance, TitrationPhaseWithSubstance, Protocol, Dose } from "../../../src/types/domain";
+
+function estimateNextDose(lastDoseDate: Date, frequency: string): Date | null {
+  const freq = frequency.toLowerCase();
+  const nextDate = new Date(lastDoseDate);
+
+  if (freq.includes("daily") || freq.includes("qd")) {
+    nextDate.setDate(nextDate.getDate() + 1);
+  } else if (freq.includes("twice") || freq.includes("bid")) {
+    nextDate.setHours(nextDate.getHours() + 12);
+  } else if (freq.includes("weekly")) {
+    nextDate.setDate(nextDate.getDate() + 7);
+  } else if (freq.includes("every_other_day")) {
+    nextDate.setDate(nextDate.getDate() + 2);
+  } else {
+    return null;
+  }
+
+  return nextDate;
+}
+
+function formatTimeUntil(date: Date): string {
+  const now = new Date();
+  const diffMs = date.getTime() - now.getTime();
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+  if (diffHours > 48) {
+    const days = Math.floor(diffHours / 24);
+    return `in ${days} day${days > 1 ? "s" : ""}`;
+  }
+  if (diffHours > 24) return "tomorrow";
+  if (diffHours > 0) return `in ${diffHours}h ${diffMins}m`;
+  if (diffMins > 0) return `in ${diffMins}m`;
+  return "due now";
+}
+
+function computeProtocolNextDose(
+  protocol: Protocol,
+  allDoses: Dose[],
+): { substanceName: string; timeLabel: string } | null {
+  const now = new Date();
+  const protocolDoses = allDoses.filter((d) =>
+    protocol.substances.some((ps) => ps.substanceId === d.substanceId),
+  );
+
+  let earliestFuture: { substanceName: string; dueTime: Date } | null = null;
+
+  for (const ps of protocol.substances) {
+    if (!ps.frequency) continue;
+
+    const substanceDoses = protocolDoses
+      .filter((d) => d.substanceId === ps.substanceId && d.status === "taken")
+      .sort(
+        (a, b) =>
+          new Date(b.loggedAt).getTime() - new Date(a.loggedAt).getTime(),
+      );
+
+    if (substanceDoses.length === 0) {
+      return { substanceName: ps.substance.name, timeLabel: "due now" };
+    }
+
+    const lastDose = substanceDoses[0];
+    const nextTime = estimateNextDose(new Date(lastDose.loggedAt), ps.frequency);
+
+    if (nextTime) {
+      if (nextTime <= now) {
+        return { substanceName: ps.substance.name, timeLabel: "due now" };
+      }
+      if (!earliestFuture || nextTime < earliestFuture.dueTime) {
+        earliestFuture = { substanceName: ps.substance.name, dueTime: nextTime };
+      }
+    }
+  }
+
+  if (earliestFuture) {
+    return {
+      substanceName: earliestFuture.substanceName,
+      timeLabel: formatTimeUntil(earliestFuture.dueTime),
+    };
+  }
+
+  return null;
+}
 
 export default function ProtocolDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { data: protocol, isLoading, error } = useProtocol(id || "");
   const updateStatus = useUpdateProtocolStatus();
+  const { data: allDosesData } = useDoses({ limit: 100 });
   const { data: allCycles } = useCycles();
   const { data: allTitrations } = useTitrations();
 
@@ -178,6 +263,46 @@ export default function ProtocolDetailScreen() {
             </Text>
           )}
         </View>
+
+        {/* Next Dose Card */}
+        {protocol.status === "active" && (() => {
+          const allDoses = allDosesData?.data || [];
+          const nextDoseInfo = computeProtocolNextDose(protocol, allDoses);
+
+          if (!nextDoseInfo) return null;
+
+          const isDueNow = nextDoseInfo.timeLabel === "due now";
+
+          return (
+            <TouchableOpacity
+              className={`mx-5 mt-4 rounded-xl p-4 flex-row items-center ${
+                isDueNow
+                  ? "bg-amber-900/30 border border-amber-800"
+                  : "bg-purple-900/30 border border-purple-800"
+              }`}
+              onPress={() => router.push("/(app)/log")}
+            >
+              <View className={`w-10 h-10 rounded-full items-center justify-center ${
+                isDueNow ? "bg-amber-500/20" : "bg-purple-500/20"
+              }`}>
+                <Ionicons
+                  name={isDueNow ? "alert-circle" : "time-outline"}
+                  size={24}
+                  color={isDueNow ? "#FBBF24" : "#A78BFA"}
+                />
+              </View>
+              <View className="ml-3 flex-1">
+                <Text className={`font-semibold ${isDueNow ? "text-amber-300" : "text-purple-300"}`}>
+                  {isDueNow ? "Dose Due Now" : `Next dose ${nextDoseInfo.timeLabel}`}
+                </Text>
+                <Text className={`text-sm ${isDueNow ? "text-amber-400" : "text-purple-400"}`}>
+                  {nextDoseInfo.substanceName}
+                </Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color="#6B7280" />
+            </TouchableOpacity>
+          );
+        })()}
 
         {/* Paused Banner */}
         {protocol.status === "paused" && (
