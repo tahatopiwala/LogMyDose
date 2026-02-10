@@ -10,14 +10,22 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { useProtocol, useUpdateProtocolStatus } from "../../../src/hooks/useProtocols";
+import {
+  useProtocol,
+  useUpdateProtocolStatus,
+} from "../../../src/hooks/useProtocols";
 import { useDoses } from "../../../src/hooks/useDoses";
 import { useCycles } from "../../../src/hooks/useCycles";
 import { useTitrations } from "../../../src/hooks/useTitrations";
 import { Card, Badge } from "../../../src/components/ui";
 import { CycleStatusBadge } from "../../../src/components/CycleStatusBadge";
 import { TitrationProgressCard } from "../../../src/components/TitrationProgress";
-import { CycleWithSubstance, TitrationPhaseWithSubstance, Protocol, Dose } from "../../../src/types/domain";
+import {
+  CycleWithSubstance,
+  TitrationPhaseWithSubstance,
+  Protocol,
+  Dose,
+} from "../../../src/types/domain";
 
 function estimateNextDose(lastDoseDate: Date, frequency: string): Date | null {
   const freq = frequency.toLowerCase();
@@ -80,14 +88,20 @@ function computeProtocolNextDose(
     }
 
     const lastDose = substanceDoses[0];
-    const nextTime = estimateNextDose(new Date(lastDose.loggedAt), ps.frequency);
+    const nextTime = estimateNextDose(
+      new Date(lastDose.loggedAt),
+      ps.frequency,
+    );
 
     if (nextTime) {
       if (nextTime <= now) {
         return { substanceName: ps.substance.name, timeLabel: "due now" };
       }
       if (!earliestFuture || nextTime < earliestFuture.dueTime) {
-        earliestFuture = { substanceName: ps.substance.name, dueTime: nextTime };
+        earliestFuture = {
+          substanceName: ps.substance.name,
+          dueTime: nextTime,
+        };
       }
     }
   }
@@ -114,12 +128,16 @@ export default function ProtocolDetailScreen() {
   // Filter cycles and titrations for this protocol's substances
   const protocolSubstanceIds = protocol?.substances.map((s) => s.id) || [];
 
-  const cycles = (allCycles || []).filter((c: CycleWithSubstance) =>
-    protocolSubstanceIds.includes(c.protocolSubstanceId) && c.status !== "completed"
+  const cycles = (allCycles || []).filter(
+    (c: CycleWithSubstance) =>
+      protocolSubstanceIds.includes(c.protocolSubstanceId) &&
+      c.status !== "completed",
   );
 
-  const titrations = (allTitrations || []).filter((t: TitrationPhaseWithSubstance) =>
-    protocolSubstanceIds.includes(t.protocolSubstanceId) && t.status === "active"
+  const titrations = (allTitrations || []).filter(
+    (t: TitrationPhaseWithSubstance) =>
+      protocolSubstanceIds.includes(t.protocolSubstanceId) &&
+      t.status === "active",
   );
 
   const getStatusVariant = (status: string) => {
@@ -151,16 +169,22 @@ export default function ProtocolDetailScreen() {
               { id: protocol.id, status: "paused" },
               {
                 onSuccess: () => {
-                  Alert.alert("Protocol Paused", "You can resume it anytime from this screen.");
+                  Alert.alert(
+                    "Protocol Paused",
+                    "You can resume it anytime from this screen.",
+                  );
                 },
                 onError: () => {
-                  Alert.alert("Error", "Failed to pause protocol. Please try again.");
+                  Alert.alert(
+                    "Error",
+                    "Failed to pause protocol. Please try again.",
+                  );
                 },
-              }
+              },
             );
           },
         },
-      ]
+      ],
     );
   };
 
@@ -179,16 +203,22 @@ export default function ProtocolDetailScreen() {
               { id: protocol.id, status: "active" },
               {
                 onSuccess: () => {
-                  Alert.alert("Protocol Resumed", "Your protocol is now active again.");
+                  Alert.alert(
+                    "Protocol Resumed",
+                    "Your protocol is now active again.",
+                  );
                 },
                 onError: () => {
-                  Alert.alert("Error", "Failed to resume protocol. Please try again.");
+                  Alert.alert(
+                    "Error",
+                    "Failed to resume protocol. Please try again.",
+                  );
                 },
-              }
+              },
             );
           },
         },
-      ]
+      ],
     );
   };
 
@@ -236,7 +266,10 @@ export default function ProtocolDetailScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-surface-base" edges={["top"]}>
-      <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 24 }}>
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{ paddingBottom: 24 }}
+      >
         {/* Header */}
         <View className="px-5 pt-4 pb-2">
           <TouchableOpacity
@@ -249,7 +282,7 @@ export default function ProtocolDetailScreen() {
 
           <View className="flex-row items-center gap-2">
             <Text className="text-2xl font-bold text-gray-100 flex-1">
-              {protocol.template?.name || "Custom Protocol"}
+              {protocol.name || protocol.template?.name || "Custom Protocol"}
             </Text>
             <Badge variant={getStatusVariant(protocol.status)}>
               {protocol.status}
@@ -265,44 +298,53 @@ export default function ProtocolDetailScreen() {
         </View>
 
         {/* Next Dose Card */}
-        {protocol.status === "active" && (() => {
-          const allDoses = allDosesData?.data || [];
-          const nextDoseInfo = computeProtocolNextDose(protocol, allDoses);
+        {protocol.status === "active" &&
+          (() => {
+            const allDoses = allDosesData?.data || [];
+            const nextDoseInfo = computeProtocolNextDose(protocol, allDoses);
 
-          if (!nextDoseInfo) return null;
+            if (!nextDoseInfo) return null;
 
-          const isDueNow = nextDoseInfo.timeLabel === "due now";
+            const isDueNow = nextDoseInfo.timeLabel === "due now";
 
-          return (
-            <TouchableOpacity
-              className={`mx-5 mt-4 rounded-xl p-4 flex-row items-center ${
-                isDueNow
-                  ? "bg-amber-900/30 border border-amber-800"
-                  : "bg-purple-900/30 border border-purple-800"
-              }`}
-              onPress={() => router.push("/(app)/log")}
-            >
-              <View className={`w-10 h-10 rounded-full items-center justify-center ${
-                isDueNow ? "bg-amber-500/20" : "bg-purple-500/20"
-              }`}>
-                <Ionicons
-                  name={isDueNow ? "alert-circle" : "time-outline"}
-                  size={24}
-                  color={isDueNow ? "#FBBF24" : "#A78BFA"}
-                />
-              </View>
-              <View className="ml-3 flex-1">
-                <Text className={`font-semibold ${isDueNow ? "text-amber-300" : "text-purple-300"}`}>
-                  {isDueNow ? "Dose Due Now" : `Next dose ${nextDoseInfo.timeLabel}`}
-                </Text>
-                <Text className={`text-sm ${isDueNow ? "text-amber-400" : "text-purple-400"}`}>
-                  {nextDoseInfo.substanceName}
-                </Text>
-              </View>
-              <Ionicons name="chevron-forward" size={20} color="#6B7280" />
-            </TouchableOpacity>
-          );
-        })()}
+            return (
+              <TouchableOpacity
+                className={`mx-5 mt-4 rounded-xl p-4 flex-row items-center ${
+                  isDueNow
+                    ? "bg-amber-900/30 border border-amber-800"
+                    : "bg-purple-900/30 border border-purple-800"
+                }`}
+                onPress={() => router.push("/(app)/log")}
+              >
+                <View
+                  className={`w-10 h-10 rounded-full items-center justify-center ${
+                    isDueNow ? "bg-amber-500/20" : "bg-purple-500/20"
+                  }`}
+                >
+                  <Ionicons
+                    name={isDueNow ? "alert-circle" : "time-outline"}
+                    size={24}
+                    color={isDueNow ? "#FBBF24" : "#A78BFA"}
+                  />
+                </View>
+                <View className="ml-3 flex-1">
+                  <Text
+                    className={`font-semibold ${isDueNow ? "text-amber-300" : "text-purple-300"}`}
+                  >
+                    {isDueNow
+                      ? "Dose Due Now"
+                      : `Next dose ${nextDoseInfo.timeLabel}`}
+                  </Text>
+                  <Text
+                    className={`text-sm ${isDueNow ? "text-amber-400" : "text-purple-400"}`}
+                  >
+                    {nextDoseInfo.substanceName}
+                  </Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#6B7280" />
+              </TouchableOpacity>
+            );
+          })()}
 
         {/* Paused Banner */}
         {protocol.status === "paused" && (
@@ -314,7 +356,8 @@ export default function ProtocolDetailScreen() {
                   Protocol Paused
                 </Text>
                 <Text className="text-amber-300 text-sm mt-1">
-                  This protocol won't appear in dose logging. Resume it to continue tracking.
+                  This protocol won't appear in dose logging. Resume it to
+                  continue tracking.
                 </Text>
               </View>
             </View>
@@ -392,7 +435,8 @@ export default function ProtocolDetailScreen() {
             </Text>
             {cycles.map((cycle: CycleWithSubstance) => {
               const totalWeeks = cycle.onWeeks + cycle.offWeeks;
-              const currentWeekInCycle = ((cycle.currentWeek - 1) % totalWeeks) + 1;
+              const currentWeekInCycle =
+                ((cycle.currentWeek - 1) % totalWeeks) + 1;
               const isOnPhase = currentWeekInCycle <= cycle.onWeeks;
               const progressPercent = (currentWeekInCycle / totalWeeks) * 100;
               const onPhasePercent = (cycle.onWeeks / totalWeeks) * 100;
@@ -425,14 +469,22 @@ export default function ProtocolDetailScreen() {
 
                   <View className="flex-row justify-between">
                     <View className="flex-row items-center">
-                      <View className={`w-2 h-2 rounded-full ${isOnPhase ? "bg-green-500" : "bg-green-500/30"} mr-1`} />
-                      <Text className={`text-xs ${isOnPhase ? "text-green-400" : "text-gray-500"}`}>
+                      <View
+                        className={`w-2 h-2 rounded-full ${isOnPhase ? "bg-green-500" : "bg-green-500/30"} mr-1`}
+                      />
+                      <Text
+                        className={`text-xs ${isOnPhase ? "text-green-400" : "text-gray-500"}`}
+                      >
                         {cycle.onWeeks}w on
                       </Text>
                     </View>
                     <View className="flex-row items-center">
-                      <View className={`w-2 h-2 rounded-full ${!isOnPhase ? "bg-amber-500" : "bg-amber-500/30"} mr-1`} />
-                      <Text className={`text-xs ${!isOnPhase ? "text-amber-400" : "text-gray-500"}`}>
+                      <View
+                        className={`w-2 h-2 rounded-full ${!isOnPhase ? "bg-amber-500" : "bg-amber-500/30"} mr-1`}
+                      />
+                      <Text
+                        className={`text-xs ${!isOnPhase ? "text-amber-400" : "text-gray-500"}`}
+                      >
                         {cycle.offWeeks}w off
                       </Text>
                     </View>
@@ -455,16 +507,20 @@ export default function ProtocolDetailScreen() {
                   <Text className="font-semibold text-gray-100">
                     {titration.protocolSubstance.substance.name}
                   </Text>
-                  <View className={`px-2 py-1 rounded-full ${
-                    titration.isMaintenancePhase
-                      ? "bg-green-500/20"
-                      : "bg-primary-500/20"
-                  }`}>
-                    <Text className={`text-xs font-semibold ${
+                  <View
+                    className={`px-2 py-1 rounded-full ${
                       titration.isMaintenancePhase
-                        ? "text-green-400"
-                        : "text-primary-400"
-                    }`}>
+                        ? "bg-green-500/20"
+                        : "bg-primary-500/20"
+                    }`}
+                  >
+                    <Text
+                      className={`text-xs font-semibold ${
+                        titration.isMaintenancePhase
+                          ? "text-green-400"
+                          : "text-primary-400"
+                      }`}
+                    >
                       {titration.isMaintenancePhase ? "MAINT" : "TITRATING"}
                     </Text>
                   </View>
@@ -474,7 +530,9 @@ export default function ProtocolDetailScreen() {
                   <Text className="text-2xl font-bold text-primary-500">
                     {Number(titration.doseAmount)}
                   </Text>
-                  <Text className="text-gray-400 ml-1">{titration.doseUnit}</Text>
+                  <Text className="text-gray-400 ml-1">
+                    {titration.doseUnit}
+                  </Text>
                   {titration.targetDose && (
                     <Text className="text-gray-500 ml-2 text-sm">
                       → {Number(titration.targetDose)} {titration.doseUnit}
@@ -483,7 +541,8 @@ export default function ProtocolDetailScreen() {
                 </View>
 
                 <Text className="text-sm text-gray-400">
-                  Phase {titration.phaseNumber} • {titration.weeksAtDose} weeks at this dose
+                  Phase {titration.phaseNumber} • {titration.weeksAtDose} weeks
+                  at this dose
                 </Text>
               </Card>
             ))}
@@ -524,7 +583,11 @@ export default function ProtocolDetailScreen() {
                 className="border-2 border-amber-500 rounded-xl py-4 flex-row items-center justify-center"
                 style={{ opacity: updateStatus.isPending ? 0.5 : 1 }}
               >
-                <Ionicons name="pause-circle-outline" size={24} color="#FBBF24" />
+                <Ionicons
+                  name="pause-circle-outline"
+                  size={24}
+                  color="#FBBF24"
+                />
                 <Text className="text-amber-400 font-semibold text-lg ml-2">
                   {updateStatus.isPending ? "Pausing..." : "Pause Protocol"}
                 </Text>

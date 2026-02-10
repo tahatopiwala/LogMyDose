@@ -7,7 +7,7 @@ import {
   Platform,
   TouchableOpacity,
 } from "react-native";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../src/contexts/AuthContext";
 import { Button, Input } from "../../src/components/ui";
@@ -23,6 +23,7 @@ export default function RegisterScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const { register } = useAuth();
+  const router = useRouter();
 
   const handleRegister = async () => {
     // Validation
@@ -51,6 +52,7 @@ export default function RegisterScreen() {
         firstName: firstName || undefined,
         lastName: lastName || undefined,
       });
+      router.replace("/(app)");
     } catch (err) {
       const axiosError = err as AxiosError<ApiError>;
       const errorMessage = axiosError.response?.data?.error;

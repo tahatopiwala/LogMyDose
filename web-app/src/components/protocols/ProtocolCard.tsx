@@ -65,7 +65,8 @@ function calculateProtocolStats(
           substance.frequency,
         );
         if (nextTime) {
-          nextDoseTime = nextTime > now ? formatNextDoseTime(nextTime) : "due now";
+          nextDoseTime =
+            nextTime > now ? formatNextDoseTime(nextTime) : "due now";
           nextDoseSubstance = lastDose.substance.name;
         }
       }
@@ -177,7 +178,7 @@ export function ProtocolCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <h3 className="font-semibold text-lg text-gray-100">
-              {protocol.template?.name || "Custom Protocol"}
+              {protocol.name || protocol.template?.name || "Custom Protocol"}
             </h3>
             <span
               className={`px-2.5 py-0.5 text-xs font-medium rounded-full border ${statusColors[protocol.status]}`}
@@ -258,11 +259,15 @@ export function ProtocolCard({
           </div>
           {stats.nextDoseTime ? (
             <>
-              <p className={`text-2xl font-bold ${stats.nextDoseTime === "due now" ? "text-amber-300" : "text-purple-300"}`}>
+              <p
+                className={`text-2xl font-bold ${stats.nextDoseTime === "due now" ? "text-amber-300" : "text-purple-300"}`}
+              >
                 {stats.nextDoseTime}
               </p>
               {stats.nextDoseSubstance && (
-                <p className={`text-xs mt-0.5 truncate ${stats.nextDoseTime === "due now" ? "text-amber-400" : "text-purple-400"}`}>
+                <p
+                  className={`text-xs mt-0.5 truncate ${stats.nextDoseTime === "due now" ? "text-amber-400" : "text-purple-400"}`}
+                >
                   {stats.nextDoseSubstance}
                 </p>
               )}

@@ -7,7 +7,7 @@ import {
   Platform,
   TouchableOpacity,
 } from "react-native";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../src/contexts/AuthContext";
 import { Button, Input } from "../../src/components/ui";
@@ -20,6 +20,7 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const { login } = useAuth();
+  const router = useRouter();
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -32,6 +33,7 @@ export default function LoginScreen() {
 
     try {
       await login({ email, password });
+      router.replace("/(app)");
     } catch (err) {
       const axiosError = err as AxiosError<ApiError>;
       setError(

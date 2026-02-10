@@ -11,7 +11,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../../src/contexts/AuthContext";
-import { useProtocols, useDoseStats, useDosesToday, useDoses } from "../../../src/hooks";
+import {
+  useProtocols,
+  useDoseStats,
+  useDosesToday,
+  useDoses,
+} from "../../../src/hooks";
 import { Card, Badge } from "../../../src/components/ui";
 import { Protocol, Dose } from "../../../src/types/domain";
 
@@ -75,14 +80,20 @@ function computeNextDose(
       }
 
       const lastDose = substanceDoses[0];
-      const nextTime = estimateNextDose(new Date(lastDose.loggedAt), ps.frequency);
+      const nextTime = estimateNextDose(
+        new Date(lastDose.loggedAt),
+        ps.frequency,
+      );
 
       if (nextTime) {
         if (nextTime <= now) {
           return { substanceName: ps.substance.name, timeLabel: "due now" };
         }
         if (!earliestFuture || nextTime < earliestFuture.dueTime) {
-          earliestFuture = { substanceName: ps.substance.name, dueTime: nextTime };
+          earliestFuture = {
+            substanceName: ps.substance.name,
+            dueTime: nextTime,
+          };
         }
       }
     }
@@ -108,7 +119,9 @@ export default function DashboardScreen() {
   } = useProtocols();
   const { data: stats, refetch: refetchStats } = useDoseStats("week");
   const { data: todayDoses, refetch: refetchToday } = useDosesToday();
-  const { data: allDosesData, refetch: refetchDoses } = useDoses({ limit: 100 });
+  const { data: allDosesData, refetch: refetchDoses } = useDoses({
+    limit: 100,
+  });
 
   const isLoading = protocolsLoading;
   const activeProtocols = protocols?.filter((p) => p.status === "active") || [];
@@ -118,7 +131,12 @@ export default function DashboardScreen() {
   const nextDoseInfo = computeNextDose(protocols || [], allDoses);
 
   const onRefresh = async () => {
-    await Promise.all([refetchProtocols(), refetchStats(), refetchToday(), refetchDoses()]);
+    await Promise.all([
+      refetchProtocols(),
+      refetchStats(),
+      refetchToday(),
+      refetchDoses(),
+    ]);
   };
 
   const getGreeting = () => {
@@ -179,26 +197,44 @@ export default function DashboardScreen() {
               }`}
               onPress={() => router.push("/(app)/log")}
             >
-              <View className={`w-10 h-10 rounded-full items-center justify-center ${
-                nextDoseInfo.timeLabel === "due now"
-                  ? "bg-amber-500/20"
-                  : "bg-purple-500/20"
-              }`}>
+              <View
+                className={`w-10 h-10 rounded-full items-center justify-center ${
+                  nextDoseInfo.timeLabel === "due now"
+                    ? "bg-amber-500/20"
+                    : "bg-purple-500/20"
+                }`}
+              >
                 <Ionicons
-                  name={nextDoseInfo.timeLabel === "due now" ? "alert-circle" : "time-outline"}
+                  name={
+                    nextDoseInfo.timeLabel === "due now"
+                      ? "alert-circle"
+                      : "time-outline"
+                  }
                   size={24}
-                  color={nextDoseInfo.timeLabel === "due now" ? "#FBBF24" : "#A78BFA"}
+                  color={
+                    nextDoseInfo.timeLabel === "due now" ? "#FBBF24" : "#A78BFA"
+                  }
                 />
               </View>
               <View className="ml-3 flex-1">
-                <Text className={`font-semibold ${
-                  nextDoseInfo.timeLabel === "due now" ? "text-amber-300" : "text-purple-300"
-                }`}>
-                  {nextDoseInfo.timeLabel === "due now" ? "Dose Due Now" : `Next dose ${nextDoseInfo.timeLabel}`}
+                <Text
+                  className={`font-semibold ${
+                    nextDoseInfo.timeLabel === "due now"
+                      ? "text-amber-300"
+                      : "text-purple-300"
+                  }`}
+                >
+                  {nextDoseInfo.timeLabel === "due now"
+                    ? "Dose Due Now"
+                    : `Next dose ${nextDoseInfo.timeLabel}`}
                 </Text>
-                <Text className={`text-sm ${
-                  nextDoseInfo.timeLabel === "due now" ? "text-amber-400" : "text-purple-400"
-                }`}>
+                <Text
+                  className={`text-sm ${
+                    nextDoseInfo.timeLabel === "due now"
+                      ? "text-amber-400"
+                      : "text-purple-400"
+                  }`}
+                >
                   {nextDoseInfo.substanceName}
                 </Text>
               </View>
@@ -224,7 +260,9 @@ export default function DashboardScreen() {
                 This Week
               </Text>
               <Text className="text-3xl font-bold text-gray-100 mt-1">
-                {stats?.adherenceRate ? `${Math.round(stats.adherenceRate)}%` : "—"}
+                {stats?.adherenceRate
+                  ? `${Math.round(stats.adherenceRate)}%`
+                  : "—"}
               </Text>
               <Text className="text-gray-400 text-sm">adherence</Text>
             </Card>
@@ -277,7 +315,9 @@ export default function DashboardScreen() {
                     // Navigate to create protocol
                   }}
                 >
-                  <Text className="text-surface-base font-medium">Add Protocol</Text>
+                  <Text className="text-surface-base font-medium">
+                    Add Protocol
+                  </Text>
                 </TouchableOpacity>
               </View>
             </Card>
@@ -293,7 +333,9 @@ export default function DashboardScreen() {
                     <View className="flex-1">
                       <View className="flex-row items-center gap-2">
                         <Text className="font-semibold text-gray-100">
-                          {protocol.template?.name || "Custom Protocol"}
+                          {protocol.name ||
+                            protocol.template?.name ||
+                            "Custom Protocol"}
                         </Text>
                         <Badge variant={getStatusVariant(protocol.status)}>
                           {protocol.status}
@@ -317,7 +359,11 @@ export default function DashboardScreen() {
                         </Text>
                       )}
                     </View>
-                    <Ionicons name="chevron-forward" size={20} color="#6B7280" />
+                    <Ionicons
+                      name="chevron-forward"
+                      size={20}
+                      color="#6B7280"
+                    />
                   </View>
                 </Card>
               </TouchableOpacity>
@@ -342,7 +388,9 @@ export default function DashboardScreen() {
                     <View className="flex-1">
                       <View className="flex-row items-center gap-2">
                         <Text className="font-semibold text-gray-100">
-                          {protocol.template?.name || "Custom Protocol"}
+                          {protocol.name ||
+                            protocol.template?.name ||
+                            "Custom Protocol"}
                         </Text>
                         <Badge variant={getStatusVariant(protocol.status)}>
                           {protocol.status}
@@ -366,7 +414,11 @@ export default function DashboardScreen() {
                         </Text>
                       )}
                     </View>
-                    <Ionicons name="chevron-forward" size={20} color="#6B7280" />
+                    <Ionicons
+                      name="chevron-forward"
+                      size={20}
+                      color="#6B7280"
+                    />
                   </View>
                 </Card>
               </TouchableOpacity>
@@ -384,11 +436,7 @@ export default function DashboardScreen() {
               <Card key={dose.id} className="mb-3">
                 <View className="flex-row items-center">
                   <View className="w-10 h-10 rounded-full bg-green-900/40 items-center justify-center">
-                    <Ionicons
-                      name="checkmark"
-                      size={20}
-                      color="#4ADE80"
-                    />
+                    <Ionicons name="checkmark" size={20} color="#4ADE80" />
                   </View>
                   <View className="ml-3 flex-1">
                     <Text className="font-medium text-gray-100">

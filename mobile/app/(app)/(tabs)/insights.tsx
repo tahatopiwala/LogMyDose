@@ -2,8 +2,8 @@ import React from "react";
 import { View, Text, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { Card } from "../../src/components/ui";
-import { useDoseStats } from "../../src/hooks";
+import { Card } from "../../../src/components/ui";
+import { useDoseStats } from "../../../src/hooks";
 
 export default function InsightsScreen() {
   const { data: weekStats } = useDoseStats("week");
