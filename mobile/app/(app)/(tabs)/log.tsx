@@ -13,7 +13,14 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { useActiveSubstances, useSubstances, useLogDose, useActiveVialsBySubstance, Vial } from "../../../src/hooks";
+import {
+  useActiveSubstances,
+  useSubstances,
+  useLogDose,
+  useLogBatchDoses,
+  useActiveVialsBySubstance,
+  Vial,
+} from "../../../src/hooks";
 import { Card, Button, Input } from "../../../src/components/ui";
 import { ActiveProtocolSubstance } from "../../../src/types/domain";
 
@@ -28,7 +35,14 @@ const SITES_BY_ROUTE: Record<string, string[]> = {
   injection_im: ["Deltoid", "Gluteal", "Ventrogluteal", "Thigh"],
   oral: ["Oral"],
   sublingual: ["Sublingual"],
-  topical: ["Forehead", "Neck", "Shoulders", "Inner Wrist", "Behind Ears", "Chest"],
+  topical: [
+    "Forehead",
+    "Neck",
+    "Shoulders",
+    "Inner Wrist",
+    "Behind Ears",
+    "Chest",
+  ],
   transdermal: ["Upper Arm", "Shoulder", "Upper Back", "Chest", "Hip"],
   nasal: ["Left Nostril", "Right Nostril", "Both Nostrils"],
   iv: ["Antecubital Fossa", "Hand", "Forearm"],
@@ -44,6 +58,12 @@ const getTimeOfDay = (): TimeOfDay => {
   if (hour >= 17 && hour < 21) return "evening";
   return "night";
 };
+
+interface BatchSubstanceEntry {
+  protocolSubstance: ActiveProtocolSubstance;
+  dose: string;
+  enabled: boolean;
+}
 
 interface ProtocolGroup {
   protocol: {
@@ -65,15 +85,26 @@ interface Substance {
 
 export default function LogDoseScreen() {
   const router = useRouter();
-  const { data: protocolSubstances, isLoading: loadingProtocols } = useActiveSubstances();
+  const { data: protocolSubstances, isLoading: loadingProtocols } =
+    useActiveSubstances();
   const { data: allSubstances, isLoading: loadingSubstances } = useSubstances();
   const logDoseMutation = useLogDose();
+  const logBatchMutation = useLogBatchDoses();
 
   // Flow state
   const [logType, setLogType] = useState<LogType>(null);
   const [selectedProtocolSubstance, setSelectedProtocolSubstance] =
     useState<ActiveProtocolSubstance | null>(null);
-  const [selectedSubstance, setSelectedSubstance] = useState<Substance | null>(null);
+  const [selectedSubstance, setSelectedSubstance] = useState<Substance | null>(
+    null,
+  );
+
+  // Batch state
+  const [batchMode, setBatchMode] = useState(false);
+  const [batchSubstances, setBatchSubstances] = useState<BatchSubstanceEntry[]>(
+    [],
+  );
+  const [batchProtocolName, setBatchProtocolName] = useState<string>("");
 
   // Form state
   const [dose, setDose] = useState("");
@@ -89,17 +120,22 @@ export default function LogDoseScreen() {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [fastingState, setFastingState] = useState<FastingState | null>(null);
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>(getTimeOfDay());
-  const [administrationSite, setAdministrationSite] = useState<string | null>(null);
+  const [administrationSite, setAdministrationSite] = useState<string | null>(
+    null,
+  );
   const [needleGauge, setNeedleGauge] = useState<NeedleGauge | null>(null);
-  const [injectionDepth, setInjectionDepth] = useState<InjectionDepth | null>(null);
+  const [injectionDepth, setInjectionDepth] = useState<InjectionDepth | null>(
+    null,
+  );
   const [selectedVial, setSelectedVial] = useState<Vial | null>(null);
 
   // Get the current substance ID for fetching vials
-  const currentSubstanceId = logType === "protocol" && selectedProtocolSubstance
-    ? selectedProtocolSubstance.substanceId
-    : logType === "adhoc" && selectedSubstance
-      ? selectedSubstance.id
-      : undefined;
+  const currentSubstanceId =
+    logType === "protocol" && selectedProtocolSubstance
+      ? selectedProtocolSubstance.substanceId
+      : logType === "adhoc" && selectedSubstance
+        ? selectedSubstance.id
+        : undefined;
 
   // Fetch active vials for the selected substance
   const { data: vialsData } = useActiveVialsBySubstance(currentSubstanceId);
@@ -110,9 +146,16 @@ export default function LogDoseScreen() {
   // Calculate current step
   const currentStep = useMemo(() => {
     if (!logType) return 1;
+    if (batchMode && batchSubstances.length > 0) return 3;
     if (!selectedProtocolSubstance && !selectedSubstance) return 2;
     return 3;
-  }, [logType, selectedProtocolSubstance, selectedSubstance]);
+  }, [
+    logType,
+    selectedProtocolSubstance,
+    selectedSubstance,
+    batchMode,
+    batchSubstances,
+  ]);
 
   // Group protocol substances by protocol
   const protocolGroups = useMemo((): ProtocolGroup[] => {
@@ -147,7 +190,7 @@ export default function LogDoseScreen() {
     return allSubstances.filter(
       (s) =>
         s.name.toLowerCase().includes(search) ||
-        s.aliases?.some((a) => a.toLowerCase().includes(search))
+        s.aliases?.some((a) => a.toLowerCase().includes(search)),
     );
   }, [allSubstances, adHocSearch]);
 
@@ -155,6 +198,71 @@ export default function LogDoseScreen() {
     setSelectedProtocolSubstance(ps);
     setSelectedSubstance(null);
     setDose(String(ps.dose));
+  };
+
+  const handleLogAll = (group: ProtocolGroup) => {
+    const entries: BatchSubstanceEntry[] = group.substances.map((ps) => ({
+      protocolSubstance: ps,
+      dose: String(ps.dose),
+      enabled: true,
+    }));
+    setBatchSubstances(entries);
+    setBatchProtocolName(group.protocol.name || "Unnamed Protocol");
+    setBatchMode(true);
+  };
+
+  const handleBatchDoseChange = (index: number, value: string) => {
+    setBatchSubstances((prev) =>
+      prev.map((entry, i) => (i === index ? { ...entry, dose: value } : entry)),
+    );
+  };
+
+  const handleBatchToggle = (index: number) => {
+    setBatchSubstances((prev) =>
+      prev.map((entry, i) =>
+        i === index ? { ...entry, enabled: !entry.enabled } : entry,
+      ),
+    );
+  };
+
+  const enabledBatchCount = batchSubstances.filter((e) => e.enabled).length;
+
+  const handleBatchLogDose = async () => {
+    const enabledEntries = batchSubstances.filter((e) => e.enabled && e.dose);
+    if (enabledEntries.length === 0) return;
+
+    try {
+      const today = new Date().toISOString().slice(0, 10);
+      const loggedAt =
+        logDate !== today
+          ? new Date(`${logDate}T12:00:00.000Z`).toISOString()
+          : undefined;
+
+      const contextFields = {
+        fastingState: fastingState || undefined,
+        timeOfDay: timeOfDay || undefined,
+      };
+
+      const doses = enabledEntries.map((entry) => ({
+        protocolSubstanceId: entry.protocolSubstance.id,
+        substanceId: entry.protocolSubstance.substanceId,
+        dose: parseFloat(entry.dose),
+        doseUnit: entry.protocolSubstance.doseUnit || undefined,
+        status: "taken" as const,
+        notes: notes || undefined,
+        loggedAt,
+        ...contextFields,
+      }));
+
+      await logBatchMutation.mutateAsync({ doses });
+      Alert.alert(
+        "Success",
+        `${enabledEntries.length} doses logged successfully!`,
+        [{ text: "OK", onPress: () => router.back() }],
+      );
+    } catch {
+      Alert.alert("Error", "Failed to log doses. Please try again.");
+    }
   };
 
   const handleSelectAdHocSubstance = (substance: Substance) => {
@@ -170,9 +278,10 @@ export default function LogDoseScreen() {
     try {
       // Build loggedAt from selected date
       const today = new Date().toISOString().slice(0, 10);
-      const loggedAt = logDate !== today
-        ? new Date(`${logDate}T12:00:00.000Z`).toISOString()
-        : undefined;
+      const loggedAt =
+        logDate !== today
+          ? new Date(`${logDate}T12:00:00.000Z`).toISOString()
+          : undefined;
 
       // Build context fields object
       const contextFields = {
@@ -234,6 +343,10 @@ export default function LogDoseScreen() {
       setNeedleGauge(null);
       setInjectionDepth(null);
       setSelectedVial(null);
+      // Reset batch state
+      setBatchMode(false);
+      setBatchSubstances([]);
+      setBatchProtocolName("");
     } else if (currentStep === 2) {
       setLogType(null);
       setAdHocSearch("");
@@ -244,7 +357,9 @@ export default function LogDoseScreen() {
 
   const currentDoseUnit =
     logType === "protocol" && selectedProtocolSubstance
-      ? selectedProtocolSubstance.doseUnit || selectedProtocolSubstance.substance.doseUnit || "units"
+      ? selectedProtocolSubstance.doseUnit ||
+        selectedProtocolSubstance.substance.doseUnit ||
+        "units"
       : logType === "adhoc" && selectedSubstance
         ? selectedSubstance.doseUnit || "units"
         : "units";
@@ -273,7 +388,11 @@ export default function LogDoseScreen() {
   useEffect(() => {
     if (availableSites.length === 1) {
       setAdministrationSite(availableSites[0]);
-    } else if (availableSites.length > 1 && administrationSite && !availableSites.includes(administrationSite)) {
+    } else if (
+      availableSites.length > 1 &&
+      administrationSite &&
+      !availableSites.includes(administrationSite)
+    ) {
       setAdministrationSite(null);
     }
   }, [availableSites]);
@@ -293,7 +412,9 @@ export default function LogDoseScreen() {
               <Ionicons name="arrow-back" size={24} color="#9CA3AF" />
             </TouchableOpacity>
             <View className="flex-1">
-              <Text className="text-xl font-bold text-gray-100">Log a Dose</Text>
+              <Text className="text-xl font-bold text-gray-100">
+                Log a Dose
+              </Text>
             </View>
             <Text className="text-sm text-gray-400">
               Step {currentStep} of 3
@@ -335,7 +456,9 @@ export default function LogDoseScreen() {
               <View className="gap-4">
                 {/* Protocol Option */}
                 <TouchableOpacity
-                  onPress={() => protocolGroups.length > 0 && setLogType("protocol")}
+                  onPress={() =>
+                    protocolGroups.length > 0 && setLogType("protocol")
+                  }
                   disabled={protocolGroups.length === 0}
                   className={`p-5 rounded-xl border-2 ${
                     protocolGroups.length === 0
@@ -346,26 +469,34 @@ export default function LogDoseScreen() {
                   <View className="flex-row items-start">
                     <View
                       className={`w-12 h-12 rounded-xl items-center justify-center ${
-                        protocolGroups.length === 0 ? "bg-surface-elevated" : "bg-primary-500/20"
+                        protocolGroups.length === 0
+                          ? "bg-surface-elevated"
+                          : "bg-primary-500/20"
                       }`}
                     >
                       <Ionicons
                         name="clipboard-outline"
                         size={24}
-                        color={protocolGroups.length === 0 ? "#6B7280" : "#39FF14"}
+                        color={
+                          protocolGroups.length === 0 ? "#6B7280" : "#39FF14"
+                        }
                       />
                     </View>
                     <View className="ml-4 flex-1">
                       <Text
                         className={`font-semibold text-lg ${
-                          protocolGroups.length === 0 ? "text-gray-500" : "text-gray-100"
+                          protocolGroups.length === 0
+                            ? "text-gray-500"
+                            : "text-gray-100"
                         }`}
                       >
                         Log from Protocol
                       </Text>
                       <Text
                         className={`text-sm mt-1 ${
-                          protocolGroups.length === 0 ? "text-gray-500" : "text-gray-400"
+                          protocolGroups.length === 0
+                            ? "text-gray-500"
+                            : "text-gray-400"
                         }`}
                       >
                         {protocolGroups.length === 0
@@ -374,7 +505,11 @@ export default function LogDoseScreen() {
                       </Text>
                     </View>
                     {protocolGroups.length > 0 && (
-                      <Ionicons name="chevron-forward" size={20} color="#6B7280" />
+                      <Ionicons
+                        name="chevron-forward"
+                        size={20}
+                        color="#6B7280"
+                      />
                     )}
                   </View>
                 </TouchableOpacity>
@@ -386,7 +521,11 @@ export default function LogDoseScreen() {
                 >
                   <View className="flex-row items-start">
                     <View className="w-12 h-12 rounded-xl bg-blue-900/40 items-center justify-center">
-                      <Ionicons name="flash-outline" size={24} color="#60A5FA" />
+                      <Ionicons
+                        name="flash-outline"
+                        size={24}
+                        color="#60A5FA"
+                      />
                     </View>
                     <View className="ml-4 flex-1">
                       <Text className="font-semibold text-lg text-gray-100">
@@ -396,7 +535,11 @@ export default function LogDoseScreen() {
                         Log a one-time dose without tracking
                       </Text>
                     </View>
-                    <Ionicons name="chevron-forward" size={20} color="#6B7280" />
+                    <Ionicons
+                      name="chevron-forward"
+                      size={20}
+                      color="#6B7280"
+                    />
                   </View>
                 </TouchableOpacity>
 
@@ -417,7 +560,11 @@ export default function LogDoseScreen() {
                         Set up a new protocol with tracking
                       </Text>
                     </View>
-                    <Ionicons name="chevron-forward" size={20} color="#6B7280" />
+                    <Ionicons
+                      name="chevron-forward"
+                      size={20}
+                      color="#6B7280"
+                    />
                   </View>
                 </TouchableOpacity>
 
@@ -436,10 +583,25 @@ export default function LogDoseScreen() {
               <View className="gap-4">
                 {protocolGroups.map((group) => (
                   <Card key={group.protocol.id}>
-                    <View className="bg-surface-elevated -mx-4 -mt-4 px-4 py-3 mb-3 border-b border-surface-border rounded-t-xl">
+                    <View className="bg-surface-elevated -mx-4 -mt-4 px-4 py-3 mb-3 border-b border-surface-border rounded-t-xl flex-row items-center justify-between">
                       <Text className="font-medium text-gray-100">
                         {group.protocol.name || "Unnamed Protocol"}
                       </Text>
+                      {group.substances.length > 1 && (
+                        <TouchableOpacity
+                          onPress={() => handleLogAll(group)}
+                          className="flex-row items-center"
+                        >
+                          <Text className="text-primary-400 text-xs font-medium mr-1">
+                            Log All
+                          </Text>
+                          <Ionicons
+                            name="chevron-forward"
+                            size={14}
+                            color="#39FF14"
+                          />
+                        </TouchableOpacity>
+                      )}
                     </View>
                     {group.substances.map((ps, index) => (
                       <TouchableOpacity
@@ -463,7 +625,11 @@ export default function LogDoseScreen() {
                             {ps.frequency?.replace("_", " ") || "as needed"}
                           </Text>
                         </View>
-                        <Ionicons name="chevron-forward" size={20} color="#6B7280" />
+                        <Ionicons
+                          name="chevron-forward"
+                          size={20}
+                          color="#6B7280"
+                        />
                       </TouchableOpacity>
                     ))}
                   </Card>
@@ -497,7 +663,9 @@ export default function LogDoseScreen() {
                       onPress={() => handleSelectAdHocSubstance(substance)}
                       className="px-4 py-2.5 border border-surface-border rounded-lg bg-surface-card"
                     >
-                      <Text className="text-gray-300 text-sm">{substance.name}</Text>
+                      <Text className="text-gray-300 text-sm">
+                        {substance.name}
+                      </Text>
                     </TouchableOpacity>
                   ))}
                   {filteredSubstances.length === 0 && adHocSearch && (
@@ -516,8 +684,285 @@ export default function LogDoseScreen() {
               </View>
             )}
 
+            {/* Step 3: Batch Dose Entry */}
+            {currentStep === 3 && batchMode && (
+              <View className="gap-4">
+                {/* Batch header */}
+                <Card className="bg-primary-500/10 border-primary-500/30">
+                  <View>
+                    <Text className="text-primary-400 text-sm font-medium">
+                      Log All
+                    </Text>
+                    <Text className="font-semibold text-gray-100 text-lg">
+                      {batchProtocolName}
+                    </Text>
+                  </View>
+                </Card>
+
+                {/* Substance rows */}
+                <Card>
+                  {batchSubstances.map((entry, index) => (
+                    <View
+                      key={entry.protocolSubstance.id}
+                      className={`flex-row items-center py-3 ${
+                        index < batchSubstances.length - 1
+                          ? "border-b border-surface-border"
+                          : ""
+                      } ${!entry.enabled ? "opacity-50" : ""}`}
+                    >
+                      {/* Checkbox */}
+                      <TouchableOpacity
+                        onPress={() => handleBatchToggle(index)}
+                        className={`w-6 h-6 rounded border-2 items-center justify-center mr-3 ${
+                          entry.enabled
+                            ? "border-primary-500 bg-primary-500"
+                            : "border-gray-500 bg-transparent"
+                        }`}
+                      >
+                        {entry.enabled && (
+                          <Ionicons name="checkmark" size={16} color="white" />
+                        )}
+                      </TouchableOpacity>
+
+                      {/* Substance name */}
+                      <View className="flex-1">
+                        <Text className="font-medium text-gray-100 text-sm">
+                          {entry.protocolSubstance.substance.name}
+                        </Text>
+                      </View>
+
+                      {/* Editable dose */}
+                      <View className="flex-row items-center">
+                        <TextInput
+                          value={entry.dose}
+                          onChangeText={(value) =>
+                            handleBatchDoseChange(index, value)
+                          }
+                          keyboardType="decimal-pad"
+                          editable={entry.enabled}
+                          className="w-20 px-2 py-1.5 text-right border border-surface-border rounded bg-surface-raised text-gray-100 text-sm"
+                        />
+                        <Text className="text-xs text-gray-500 ml-1 w-10">
+                          {entry.protocolSubstance.doseUnit ||
+                            entry.protocolSubstance.substance.doseUnit ||
+                            "units"}
+                        </Text>
+                      </View>
+                    </View>
+                  ))}
+                </Card>
+
+                {/* Date */}
+                <View>
+                  <Text className="text-gray-300 mb-2 font-medium text-sm">
+                    Date
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => setShowDatePicker(!showDatePicker)}
+                    className="flex-row items-center justify-between border border-surface-border rounded-lg px-4 py-3 bg-surface-raised"
+                  >
+                    <Text className="text-gray-100">
+                      {new Date(logDate + "T00:00:00").toLocaleDateString(
+                        undefined,
+                        {
+                          weekday: "short",
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        },
+                      )}
+                    </Text>
+                    <Ionicons
+                      name="calendar-outline"
+                      size={20}
+                      color="#9CA3AF"
+                    />
+                  </TouchableOpacity>
+                  {showDatePicker && (
+                    <View className="mt-2 border border-surface-border rounded-lg bg-surface-raised p-3">
+                      <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                      >
+                        <View className="flex-row gap-2">
+                          {Array.from({ length: 7 }, (_, i) => {
+                            const d = new Date();
+                            d.setDate(d.getDate() - i);
+                            const val = d.toISOString().slice(0, 10);
+                            const label =
+                              i === 0
+                                ? "Today"
+                                : i === 1
+                                  ? "Yesterday"
+                                  : d.toLocaleDateString(undefined, {
+                                      weekday: "short",
+                                      month: "short",
+                                      day: "numeric",
+                                    });
+                            return (
+                              <TouchableOpacity
+                                key={val}
+                                onPress={() => {
+                                  setLogDate(val);
+                                  setShowDatePicker(false);
+                                }}
+                                className={`py-2 px-4 rounded-lg border ${
+                                  logDate === val
+                                    ? "border-primary-500 bg-primary-500/20"
+                                    : "border-surface-border bg-surface-card"
+                                }`}
+                              >
+                                <Text
+                                  className={`text-sm ${
+                                    logDate === val
+                                      ? "text-primary-400 font-medium"
+                                      : "text-gray-400"
+                                  }`}
+                                >
+                                  {label}
+                                </Text>
+                              </TouchableOpacity>
+                            );
+                          })}
+                        </View>
+                      </ScrollView>
+                    </View>
+                  )}
+                </View>
+
+                {/* Notes */}
+                <Input
+                  label="Notes (optional)"
+                  value={notes}
+                  onChangeText={setNotes}
+                  placeholder="Any observations..."
+                  multiline
+                  numberOfLines={2}
+                  textAlignVertical="top"
+                />
+
+                {/* Advanced Options Toggle */}
+                <TouchableOpacity
+                  onPress={() => setShowAdvanced(!showAdvanced)}
+                  className="flex-row items-center justify-between py-3 px-4 border border-surface-border rounded-lg bg-surface-card"
+                >
+                  <View className="flex-row items-center">
+                    <Ionicons
+                      name="options-outline"
+                      size={20}
+                      color="#9CA3AF"
+                    />
+                    <Text className="text-gray-300 ml-2 font-medium">
+                      Dose Context
+                    </Text>
+                  </View>
+                  <Ionicons
+                    name={showAdvanced ? "chevron-up" : "chevron-down"}
+                    size={20}
+                    color="#6B7280"
+                  />
+                </TouchableOpacity>
+
+                {/* Advanced Options Content */}
+                {showAdvanced && (
+                  <View className="gap-4 p-4 border border-surface-border rounded-lg bg-surface-raised">
+                    {/* Fasting State */}
+                    <View>
+                      <Text className="text-gray-300 mb-2 font-medium text-sm">
+                        Fasting State
+                      </Text>
+                      <View className="flex-row gap-2">
+                        {(["fasted", "fed", "unknown"] as FastingState[]).map(
+                          (state) => (
+                            <TouchableOpacity
+                              key={state}
+                              onPress={() =>
+                                setFastingState(
+                                  fastingState === state ? null : state,
+                                )
+                              }
+                              className={`flex-1 py-2.5 px-3 rounded-lg border ${
+                                fastingState === state
+                                  ? "border-primary-500 bg-primary-500/20"
+                                  : "border-surface-border bg-surface-card"
+                              }`}
+                            >
+                              <Text
+                                className={`text-center text-sm capitalize ${
+                                  fastingState === state
+                                    ? "text-primary-400 font-medium"
+                                    : "text-gray-400"
+                                }`}
+                              >
+                                {state}
+                              </Text>
+                            </TouchableOpacity>
+                          ),
+                        )}
+                      </View>
+                    </View>
+
+                    {/* Time of Day */}
+                    <View>
+                      <Text className="text-gray-300 mb-2 font-medium text-sm">
+                        Time of Day
+                      </Text>
+                      <View className="flex-row gap-2 flex-wrap">
+                        {(
+                          [
+                            "morning",
+                            "afternoon",
+                            "evening",
+                            "night",
+                          ] as TimeOfDay[]
+                        ).map((time) => (
+                          <TouchableOpacity
+                            key={time}
+                            onPress={() => setTimeOfDay(time)}
+                            className={`py-2 px-4 rounded-lg border ${
+                              timeOfDay === time
+                                ? "border-primary-500 bg-primary-500/20"
+                                : "border-surface-border bg-surface-card"
+                            }`}
+                          >
+                            <Text
+                              className={`text-sm capitalize ${
+                                timeOfDay === time
+                                  ? "text-primary-400 font-medium"
+                                  : "text-gray-400"
+                              }`}
+                            >
+                              {time}
+                            </Text>
+                          </TouchableOpacity>
+                        ))}
+                      </View>
+                    </View>
+                  </View>
+                )}
+
+                {/* Actions */}
+                <View className="flex-row gap-3 pt-2">
+                  <TouchableOpacity
+                    onPress={handleBack}
+                    className="flex-1 py-3 px-4 border border-surface-border rounded-lg items-center"
+                  >
+                    <Text className="text-gray-300 font-medium">Back</Text>
+                  </TouchableOpacity>
+                  <Button
+                    onPress={handleBatchLogDose}
+                    loading={logBatchMutation.isPending}
+                    disabled={enabledBatchCount === 0}
+                    className="flex-1"
+                  >
+                    {`Log ${enabledBatchCount} Dose${enabledBatchCount !== 1 ? "s" : ""}`}
+                  </Button>
+                </View>
+              </View>
+            )}
+
             {/* Step 3: Enter Dose Details */}
-            {currentStep === 3 && (
+            {currentStep === 3 && !batchMode && (
               <View className="gap-4">
                 {/* Selected item header */}
                 <Card className="bg-primary-500/10 border-primary-500/30">
@@ -532,7 +977,9 @@ export default function LogDoseScreen() {
                     </Text>
                     {logType === "protocol" && selectedProtocolSubstance && (
                       <Text className="text-gray-400 text-sm">
-                        from {selectedProtocolSubstance.protocol.name || "Unnamed Protocol"}
+                        from{" "}
+                        {selectedProtocolSubstance.protocol.name ||
+                          "Unnamed Protocol"}
                       </Text>
                     )}
                   </View>
@@ -547,7 +994,9 @@ export default function LogDoseScreen() {
                 />
 
                 <View>
-                  <Text className="text-gray-300 mb-2 font-medium text-sm">Unit</Text>
+                  <Text className="text-gray-300 mb-2 font-medium text-sm">
+                    Unit
+                  </Text>
                   <View className="border border-surface-border rounded-lg px-4 py-3 bg-surface-elevated">
                     <Text className="text-gray-400">{currentDoseUnit}</Text>
                   </View>
@@ -556,7 +1005,8 @@ export default function LogDoseScreen() {
                 {logType === "protocol" && selectedProtocolSubstance && (
                   <Text className="text-gray-400 text-xs -mt-2">
                     Protocol dose: {selectedProtocolSubstance.dose}{" "}
-                    {selectedProtocolSubstance.doseUnit || selectedProtocolSubstance.substance.doseUnit}
+                    {selectedProtocolSubstance.doseUnit ||
+                      selectedProtocolSubstance.substance.doseUnit}
                   </Text>
                 )}
 
@@ -572,30 +1022,51 @@ export default function LogDoseScreen() {
 
                 {/* Log Date */}
                 <View>
-                  <Text className="text-gray-300 mb-2 font-medium text-sm">Date</Text>
+                  <Text className="text-gray-300 mb-2 font-medium text-sm">
+                    Date
+                  </Text>
                   <TouchableOpacity
                     onPress={() => setShowDatePicker(!showDatePicker)}
                     className="flex-row items-center justify-between border border-surface-border rounded-lg px-4 py-3 bg-surface-raised"
                   >
                     <Text className="text-gray-100">
-                      {new Date(logDate + "T00:00:00").toLocaleDateString(undefined, {
-                        weekday: "short",
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
+                      {new Date(logDate + "T00:00:00").toLocaleDateString(
+                        undefined,
+                        {
+                          weekday: "short",
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        },
+                      )}
                     </Text>
-                    <Ionicons name="calendar-outline" size={20} color="#9CA3AF" />
+                    <Ionicons
+                      name="calendar-outline"
+                      size={20}
+                      color="#9CA3AF"
+                    />
                   </TouchableOpacity>
                   {showDatePicker && (
                     <View className="mt-2 border border-surface-border rounded-lg bg-surface-raised p-3">
-                      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                      <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                      >
                         <View className="flex-row gap-2">
                           {Array.from({ length: 7 }, (_, i) => {
                             const d = new Date();
                             d.setDate(d.getDate() - i);
                             const val = d.toISOString().slice(0, 10);
-                            const label = i === 0 ? "Today" : i === 1 ? "Yesterday" : d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+                            const label =
+                              i === 0
+                                ? "Today"
+                                : i === 1
+                                  ? "Yesterday"
+                                  : d.toLocaleDateString(undefined, {
+                                      weekday: "short",
+                                      month: "short",
+                                      day: "numeric",
+                                    });
                             return (
                               <TouchableOpacity
                                 key={val}
@@ -664,7 +1135,7 @@ export default function LogDoseScreen() {
                               key={state}
                               onPress={() =>
                                 setFastingState(
-                                  fastingState === state ? null : state
+                                  fastingState === state ? null : state,
                                 )
                               }
                               className={`flex-1 py-2.5 px-3 rounded-lg border ${
@@ -683,7 +1154,7 @@ export default function LogDoseScreen() {
                                 {state}
                               </Text>
                             </TouchableOpacity>
-                          )
+                          ),
                         )}
                       </View>
                     </View>
@@ -737,7 +1208,7 @@ export default function LogDoseScreen() {
                               key={site}
                               onPress={() =>
                                 setAdministrationSite(
-                                  administrationSite === site ? null : site
+                                  administrationSite === site ? null : site,
                                 )
                               }
                               className={`py-2 px-4 rounded-lg border ${
@@ -841,13 +1312,16 @@ export default function LogDoseScreen() {
                           </Text>
                           <View className="flex-row gap-2">
                             {(
-                              ["subcutaneous", "intramuscular"] as InjectionDepth[]
+                              [
+                                "subcutaneous",
+                                "intramuscular",
+                              ] as InjectionDepth[]
                             ).map((depth) => (
                               <TouchableOpacity
                                 key={depth}
                                 onPress={() =>
                                   setInjectionDepth(
-                                    injectionDepth === depth ? null : depth
+                                    injectionDepth === depth ? null : depth,
                                   )
                                 }
                                 className={`flex-1 py-2.5 px-3 rounded-lg border ${
@@ -881,7 +1355,7 @@ export default function LogDoseScreen() {
                                 key={gauge}
                                 onPress={() =>
                                   setNeedleGauge(
-                                    needleGauge === gauge ? null : gauge
+                                    needleGauge === gauge ? null : gauge,
                                   )
                                 }
                                 className={`py-2 px-4 rounded-lg border ${

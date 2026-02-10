@@ -38,7 +38,7 @@ export function useDoses(params: DosesParams = {}) {
     queryKey: ["doses", params],
     queryFn: () =>
       api.get<PaginatedResponse<Dose>>(
-        `/doses${queryString ? `?${queryString}` : ""}`
+        `/doses${queryString ? `?${queryString}` : ""}`,
       ),
   });
 }
@@ -75,17 +75,25 @@ export function useLogDose() {
   });
 }
 
+export function useLogBatchDoses() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { doses: LogDoseData[] }) =>
+      api.post<Dose[]>("/doses/batch", data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["doses"] });
+      queryClient.invalidateQueries({ queryKey: ["protocols"] });
+    },
+  });
+}
+
 export function useUpdateDose() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      id,
-      data,
-    }: {
-      id: string;
-      data: Partial<LogDoseData>;
-    }) => api.put<Dose>(`/doses/${id}`, data),
+    mutationFn: ({ id, data }: { id: string; data: Partial<LogDoseData> }) =>
+      api.put<Dose>(`/doses/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["doses"] });
     },

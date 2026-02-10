@@ -103,6 +103,7 @@ export interface IDoseRepository extends IBaseRepository<
   CreateDoseInput,
   UpdateDoseInput
 > {
+  createMany(data: CreateDoseInput[]): Promise<Dose[]>;
   findManyByPatient(
     options: FindDosesOptions,
   ): Promise<PaginatedResponse<DoseWithSubstance>>;

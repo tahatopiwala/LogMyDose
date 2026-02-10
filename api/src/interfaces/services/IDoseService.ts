@@ -74,6 +74,7 @@ export interface GetStatsQuery {
 
 export interface IDoseService {
   logDose(patientId: string, input: LogDoseInput): Promise<Dose>;
+  logBatchDoses(patientId: string, inputs: LogDoseInput[]): Promise<Dose[]>;
   getDoses(
     patientId: string,
     query: GetDosesQuery,

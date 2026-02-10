@@ -82,7 +82,11 @@ export class DoseService implements IDoseService {
       }
 
       if (vial.patientId !== patientId) {
-        throw new AppError(403, "Vial does not belong to this patient", "FORBIDDEN");
+        throw new AppError(
+          403,
+          "Vial does not belong to this patient",
+          "FORBIDDEN",
+        );
       }
 
       if (vial.status !== "active") {
@@ -120,14 +124,145 @@ export class DoseService implements IDoseService {
     });
 
     // If a vial was used and status is "taken", decrement the vial's remaining amount
-    if (input.vialId && this.vialRepository && (input.status === "taken" || !input.status)) {
+    if (
+      input.vialId &&
+      this.vialRepository &&
+      (input.status === "taken" || !input.status)
+    ) {
       // Convert dose to mcg for decrementing
       // Note: This assumes the dose is in mcg. For other units, conversion may be needed.
       const doseMcg = input.dose;
-      await this.vialRepository.decrementRemaining(input.vialId, new Prisma.Decimal(doseMcg));
+      await this.vialRepository.decrementRemaining(
+        input.vialId,
+        new Prisma.Decimal(doseMcg),
+      );
     }
 
     return dose;
+  }
+
+  async logBatchDoses(
+    patientId: string,
+    inputs: LogDoseInput[],
+  ): Promise<Dose[]> {
+    // Validate all inputs upfront before creating anything
+    const createInputs = [];
+
+    for (const input of inputs) {
+      // Verify substance exists
+      const substance = await this.substanceRepository.findById(
+        input.substanceId,
+      );
+      if (!substance) {
+        throw new AppError(
+          404,
+          `Substance not found: ${input.substanceId}`,
+          "SUBSTANCE_NOT_FOUND",
+        );
+      }
+
+      // Validate protocol substance if provided
+      if (input.protocolSubstanceId) {
+        const protocolSubstance =
+          await this.protocolRepository.findProtocolSubstanceById(
+            input.protocolSubstanceId,
+          );
+
+        if (!protocolSubstance) {
+          throw new AppError(
+            400,
+            "Protocol substance not found",
+            "PROTOCOL_SUBSTANCE_NOT_FOUND",
+          );
+        }
+
+        if (protocolSubstance.protocol.patientId !== patientId) {
+          throw new AppError(
+            403,
+            "Protocol substance does not belong to this patient",
+            "FORBIDDEN",
+          );
+        }
+
+        if (protocolSubstance.protocol.status !== "active") {
+          throw new AppError(
+            400,
+            "Cannot log dose against inactive protocol",
+            "PROTOCOL_NOT_ACTIVE",
+          );
+        }
+      }
+
+      // Validate vial if provided
+      let productId = input.productId;
+      if (input.vialId && this.vialRepository) {
+        const vial = await this.vialRepository.findById(input.vialId);
+
+        if (!vial) {
+          throw new AppError(404, "Vial not found", "VIAL_NOT_FOUND");
+        }
+
+        if (vial.patientId !== patientId) {
+          throw new AppError(
+            403,
+            "Vial does not belong to this patient",
+            "FORBIDDEN",
+          );
+        }
+
+        if (vial.status !== "active") {
+          throw new AppError(400, "Vial is not active", "VIAL_NOT_ACTIVE");
+        }
+
+        if (!productId) {
+          productId = vial.productId;
+        }
+      }
+
+      createInputs.push({
+        patientId,
+        protocolSubstanceId: input.protocolSubstanceId,
+        substanceId: input.substanceId,
+        productId,
+        vialId: input.vialId,
+        dose: input.dose,
+        doseUnit: input.doseUnit || substance.doseUnit || undefined,
+        scheduledAt: input.scheduledAt
+          ? new Date(input.scheduledAt)
+          : undefined,
+        loggedAt: input.loggedAt ? new Date(input.loggedAt) : undefined,
+        status: input.status || "taken",
+        administrationSite: input.administrationSite,
+        notes: input.notes,
+        photoUrl: input.photoUrl,
+        fastingState: input.fastingState,
+        takenWithFood: input.takenWithFood,
+        mealFatContent: input.mealFatContent,
+        timeOfDay: input.timeOfDay,
+        needleGauge: input.needleGauge,
+        injectionDepth: input.injectionDepth,
+      });
+    }
+
+    // Create all doses atomically
+    const doses = await this.doseRepository.createMany(createInputs);
+
+    // Decrement vials for taken doses
+    for (const input of inputs) {
+      if (
+        input.vialId &&
+        this.vialRepository &&
+        (input.status === "taken" || !input.status)
+      ) {
+        const doseMcg = input.dose;
+        await this.vialRepository.decrementRemaining(
+          input.vialId,
+          new Prisma.Decimal(doseMcg),
+        );
+      }
+    }
+
+    return doses;
   }
 
   async getDoses(

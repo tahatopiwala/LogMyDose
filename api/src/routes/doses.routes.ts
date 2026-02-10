@@ -51,6 +51,38 @@ const updateDoseSchema = z.object({
   injectionDepth: z.enum(["subcutaneous", "intramuscular"]).optional(),
 });
 
+const logBatchDoseSchema = z.object({
+  doses: z.array(logDoseSchema).min(1).max(20),
+});
+
+// POST /api/v1/doses/batch
+router.post("/batch", authenticate, requirePatient, async (req, res, next) => {
+  try {
+    const { doses: doseInputs } = logBatchDoseSchema.parse(req.body);
+    const doseService = getContainer().doseService;
+
+    const doses = await doseService.logBatchDoses(req.user!.id, doseInputs);
+
+    for (const dose of doses) {
+      await createAuditLog(req, {
+        action: "dose.log",
+        tableName: "doses",
+        recordId: dose.id,
+        newValues: {
+          substanceId: dose.substanceId,
+          dose: Number(dose.dose),
+          status: dose.status,
+          batch: true,
+        },
+      });
+    }
+
+    res.status(201).json({ doses });
+  } catch (error) {
+    next(error);
+  }
+});
+
 // POST /api/v1/doses
 router.post("/", authenticate, requirePatient, async (req, res, next) => {
   try {

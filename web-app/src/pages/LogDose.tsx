@@ -1,15 +1,36 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiClient } from "../lib/api-client";
-import { ActiveProtocolSubstance, Substance, Dose, Vial } from "../types/domain";
+import {
+  ActiveProtocolSubstance,
+  Substance,
+  Dose,
+  Vial,
+} from "../types/domain";
 import { QuickProtocolModal } from "../components/protocols/QuickProtocolModal";
 
 const SITES_BY_ROUTE: Record<string, string[]> = {
-  injection_subq: ["Subcutaneous - Abdomen", "Subcutaneous - Thigh", "Subcutaneous - Arm"],
-  injection_im: ["Intramuscular - Deltoid", "Intramuscular - Gluteal", "Intramuscular - Ventrogluteal", "Intramuscular - Thigh"],
+  injection_subq: [
+    "Subcutaneous - Abdomen",
+    "Subcutaneous - Thigh",
+    "Subcutaneous - Arm",
+  ],
+  injection_im: [
+    "Intramuscular - Deltoid",
+    "Intramuscular - Gluteal",
+    "Intramuscular - Ventrogluteal",
+    "Intramuscular - Thigh",
+  ],
   oral: ["Oral"],
   sublingual: ["Sublingual"],
-  topical: ["Forehead", "Neck", "Shoulders", "Inner Wrist", "Behind Ears", "Chest"],
+  topical: [
+    "Forehead",
+    "Neck",
+    "Shoulders",
+    "Inner Wrist",
+    "Behind Ears",
+    "Chest",
+  ],
   transdermal: ["Upper Arm", "Shoulder", "Upper Back", "Chest", "Hip"],
   nasal: ["Left Nostril", "Right Nostril", "Both Nostrils"],
   iv: ["Antecubital Fossa", "Hand", "Forearm"],
@@ -31,6 +52,12 @@ const getTimeOfDay = (): TimeOfDay => {
   if (hour >= 17 && hour < 21) return "evening";
   return "night";
 };
+
+interface BatchSubstanceEntry {
+  protocolSubstance: ActiveProtocolSubstance;
+  dose: string;
+  enabled: boolean;
+}
 
 interface ProtocolGroup {
   protocol: {
@@ -57,7 +84,7 @@ export function LogDose() {
   const [selectedProtocolSubstance, setSelectedProtocolSubstance] =
     useState<ActiveProtocolSubstance | null>(null);
   const [selectedSubstance, setSelectedSubstance] = useState<Substance | null>(
-    null
+    null,
   );
 
   // Form state
@@ -68,6 +95,13 @@ export function LogDose() {
   const [submitting, setSubmitting] = useState(false);
   const [adHocSearch, setAdHocSearch] = useState("");
   const [showCustomProtocolModal, setShowCustomProtocolModal] = useState(false);
+
+  // Batch state
+  const [batchMode, setBatchMode] = useState(false);
+  const [batchSubstances, setBatchSubstances] = useState<BatchSubstanceEntry[]>(
+    [],
+  );
+  const [batchProtocolName, setBatchProtocolName] = useState<string>("");
 
   // Date override state
   const [logDate, setLogDate] = useState(() => {
@@ -80,7 +114,9 @@ export function LogDose() {
   const [fastingState, setFastingState] = useState<FastingState | null>(null);
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>(getTimeOfDay());
   const [needleGauge, setNeedleGauge] = useState<NeedleGauge | null>(null);
-  const [injectionDepth, setInjectionDepth] = useState<InjectionDepth | null>(null);
+  const [injectionDepth, setInjectionDepth] = useState<InjectionDepth | null>(
+    null,
+  );
 
   // Vial state
   const [vials, setVials] = useState<Vial[]>([]);
@@ -98,7 +134,7 @@ export function LogDose() {
       const [substancesRes, protocolSubstancesRes] = await Promise.all([
         apiClient.get<{ substances: Substance[] }>("/substances?limit=100"),
         apiClient.get<{ substances: ActiveProtocolSubstance[] }>(
-          "/protocols/my-substances"
+          "/protocols/my-substances",
         ),
       ]);
 
@@ -114,9 +150,16 @@ export function LogDose() {
   // Calculate current step
   const currentStep = useMemo(() => {
     if (!logType) return 1;
+    if (batchMode && batchSubstances.length > 0) return 3;
     if (!selectedProtocolSubstance && !selectedSubstance) return 2;
     return 3;
-  }, [logType, selectedProtocolSubstance, selectedSubstance]);
+  }, [
+    logType,
+    selectedProtocolSubstance,
+    selectedSubstance,
+    batchMode,
+    batchSubstances,
+  ]);
 
   // Group protocol substances by protocol
   const protocolGroups = useMemo((): ProtocolGroup[] => {
@@ -148,7 +191,7 @@ export function LogDose() {
     return substances.filter(
       (s) =>
         s.name.toLowerCase().includes(search) ||
-        s.aliases?.some((a) => a.toLowerCase().includes(search))
+        s.aliases?.some((a) => a.toLowerCase().includes(search)),
     );
   }, [substances, adHocSearch]);
 
@@ -161,6 +204,79 @@ export function LogDose() {
     setSelectedSubstance(null);
     setDose(String(ps.dose));
     setDoseUnit(ps.doseUnit || ps.substance.doseUnit || "");
+  };
+
+  const handleLogAll = (group: ProtocolGroup) => {
+    const entries: BatchSubstanceEntry[] = group.substances.map((ps) => ({
+      protocolSubstance: ps,
+      dose: String(ps.dose),
+      enabled: true,
+    }));
+    setBatchSubstances(entries);
+    setBatchProtocolName(group.protocol.name || "Unnamed Protocol");
+    setBatchMode(true);
+  };
+
+  const handleBatchDoseChange = (index: number, value: string) => {
+    setBatchSubstances((prev) =>
+      prev.map((entry, i) => (i === index ? { ...entry, dose: value } : entry)),
+    );
+  };
+
+  const handleBatchToggle = (index: number) => {
+    setBatchSubstances((prev) =>
+      prev.map((entry, i) =>
+        i === index ? { ...entry, enabled: !entry.enabled } : entry,
+      ),
+    );
+  };
+
+  const enabledBatchCount = batchSubstances.filter((e) => e.enabled).length;
+
+  const handleBatchSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const enabledEntries = batchSubstances.filter((e) => e.enabled && e.dose);
+    if (enabledEntries.length === 0) {
+      setError("Please enable at least one substance");
+      return;
+    }
+
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      const today = new Date().toISOString().slice(0, 10);
+      const loggedAt =
+        logDate !== today
+          ? new Date(`${logDate}T12:00:00.000Z`).toISOString()
+          : undefined;
+
+      const contextFields = {
+        fastingState: fastingState || undefined,
+        timeOfDay: timeOfDay || undefined,
+      };
+
+      const doses = enabledEntries.map((entry) => ({
+        protocolSubstanceId: entry.protocolSubstance.id,
+        substanceId: entry.protocolSubstance.substanceId,
+        dose: Number(entry.dose),
+        doseUnit:
+          entry.protocolSubstance.doseUnit ||
+          entry.protocolSubstance.substance.doseUnit,
+        status: "taken" as const,
+        notes: notes || undefined,
+        loggedAt,
+        ...contextFields,
+      }));
+
+      await apiClient.post<{ doses: Dose[] }>("/doses/batch", { doses });
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to log doses");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleAdHocSubstanceSelect = (substance: Substance) => {
@@ -189,9 +305,10 @@ export function LogDose() {
     try {
       // Build loggedAt from selected date with current time
       const today = new Date().toISOString().slice(0, 10);
-      const loggedAt = logDate !== today
-        ? new Date(`${logDate}T12:00:00.000Z`).toISOString()
-        : undefined;
+      const loggedAt =
+        logDate !== today
+          ? new Date(`${logDate}T12:00:00.000Z`).toISOString()
+          : undefined;
 
       // Build context fields object
       const contextFields = {
@@ -252,6 +369,10 @@ export function LogDose() {
       setNeedleGauge(null);
       setInjectionDepth(null);
       setSelectedVial(null);
+      // Reset batch state
+      setBatchMode(false);
+      setBatchSubstances([]);
+      setBatchProtocolName("");
     } else if (currentStep === 2) {
       setLogType(null);
       setAdHocSearch("");
@@ -269,7 +390,9 @@ export function LogDose() {
     // The protocolSubstances will be updated after fetchData,
     // so we need to wait for the next render to find it
     setTimeout(() => {
-      const newPs = protocolSubstances.find(ps => ps.id === protocolSubstanceId);
+      const newPs = protocolSubstances.find(
+        (ps) => ps.id === protocolSubstanceId,
+      );
       if (newPs) {
         handleProtocolSubstanceSelect(newPs);
       }
@@ -315,11 +438,12 @@ export function LogDose() {
   }, [availableSites]);
 
   // Fetch vials when an injectable substance is selected
-  const currentSubstanceId = logType === "protocol" && selectedProtocolSubstance
-    ? selectedProtocolSubstance.substanceId
-    : logType === "adhoc" && selectedSubstance
-      ? selectedSubstance.id
-      : undefined;
+  const currentSubstanceId =
+    logType === "protocol" && selectedProtocolSubstance
+      ? selectedProtocolSubstance.substanceId
+      : logType === "adhoc" && selectedSubstance
+        ? selectedSubstance.id
+        : undefined;
 
   useEffect(() => {
     if (currentSubstanceId && isInjectable) {
@@ -333,7 +457,7 @@ export function LogDose() {
   const fetchVials = async (substanceId: string) => {
     try {
       const response = await apiClient.get<{ vials: Vial[] }>(
-        `/vials?status=active&substanceId=${substanceId}`
+        `/vials?status=active&substanceId=${substanceId}`,
       );
       setVials(response.vials || []);
     } catch {
@@ -360,9 +484,7 @@ export function LogDose() {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-2">
           <h1 className="text-2xl font-bold text-gray-100">Log Dose</h1>
-          <span className="text-sm text-gray-500">
-            Step {currentStep} of 3
-          </span>
+          <span className="text-sm text-gray-500">Step {currentStep} of 3</span>
         </div>
 
         {/* Step Progress Bar */}
@@ -403,7 +525,9 @@ export function LogDose() {
             <div className="flex items-start gap-4">
               <div
                 className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                  protocolGroups.length === 0 ? "bg-surface-elevated" : "bg-primary-500/20"
+                  protocolGroups.length === 0
+                    ? "bg-surface-elevated"
+                    : "bg-primary-500/20"
                 }`}
               >
                 <svg
@@ -575,10 +699,32 @@ export function LogDose() {
               key={group.protocol.id}
               className="border border-surface-border rounded-xl overflow-hidden"
             >
-              <div className="bg-surface-elevated px-4 py-3 border-b border-surface-border">
+              <div className="bg-surface-elevated px-4 py-3 border-b border-surface-border flex items-center justify-between">
                 <h3 className="font-medium text-gray-100">
                   {group.protocol.name || "Unnamed Protocol"}
                 </h3>
+                {group.substances.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => handleLogAll(group)}
+                    className="text-xs font-medium text-primary-400 hover:text-primary-300 flex items-center gap-1 transition-colors"
+                  >
+                    Log All
+                    <svg
+                      className="w-3.5 h-3.5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </button>
+                )}
               </div>
               <div className="divide-y divide-gray-100">
                 {group.substances.map((ps) => (
@@ -667,8 +813,249 @@ export function LogDose() {
         </div>
       )}
 
+      {/* Step 3: Batch Dose Entry */}
+      {currentStep === 3 && batchMode && (
+        <form onSubmit={handleBatchSubmit} className="space-y-5">
+          {/* Batch header */}
+          <div className="p-4 bg-primary-500/20 border border-primary-200 rounded-xl">
+            <div className="text-sm text-primary-500 font-medium">Log All</div>
+            <div className="font-semibold text-gray-100">
+              {batchProtocolName}
+            </div>
+          </div>
+
+          {/* Substance rows */}
+          <div className="border border-surface-border rounded-xl overflow-hidden divide-y divide-surface-border">
+            {batchSubstances.map((entry, index) => (
+              <div
+                key={entry.protocolSubstance.id}
+                className={`p-4 flex items-center gap-3 ${
+                  entry.enabled
+                    ? "bg-surface-card"
+                    : "bg-surface-raised opacity-60"
+                }`}
+              >
+                {/* Checkbox */}
+                <button
+                  type="button"
+                  onClick={() => handleBatchToggle(index)}
+                  className={`w-6 h-6 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
+                    entry.enabled
+                      ? "border-primary-500 bg-primary-500"
+                      : "border-gray-500 bg-transparent"
+                  }`}
+                >
+                  {entry.enabled && (
+                    <svg
+                      className="w-4 h-4 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={3}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  )}
+                </button>
+
+                {/* Substance name */}
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-gray-100 text-sm">
+                    {entry.protocolSubstance.substance.name}
+                  </div>
+                </div>
+
+                {/* Editable dose */}
+                <div className="flex items-center gap-1">
+                  <input
+                    type="number"
+                    step="any"
+                    value={entry.dose}
+                    onChange={(e) =>
+                      handleBatchDoseChange(index, e.target.value)
+                    }
+                    disabled={!entry.enabled}
+                    className="w-20 px-2 py-1.5 text-right border border-surface-border rounded bg-surface-raised text-gray-100 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 disabled:opacity-50"
+                  />
+                  <span className="text-xs text-gray-500 w-10">
+                    {entry.protocolSubstance.doseUnit ||
+                      entry.protocolSubstance.substance.doseUnit ||
+                      "units"}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Shared fields */}
+          <div>
+            <label
+              htmlFor="batchLogDate"
+              className="block text-sm font-medium text-gray-300"
+            >
+              Date
+            </label>
+            <input
+              type="date"
+              id="batchLogDate"
+              value={logDate}
+              max={new Date().toISOString().slice(0, 10)}
+              onChange={(e) => setLogDate(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-surface-border rounded-lg bg-surface-raised text-gray-100 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="batchNotes"
+              className="block text-sm font-medium text-gray-300"
+            >
+              Notes (optional)
+            </label>
+            <textarea
+              id="batchNotes"
+              rows={2}
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Any observations..."
+              className="mt-1 block w-full px-3 py-2 border border-surface-border rounded-lg bg-surface-raised text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+            />
+          </div>
+
+          {/* Dose Context Accordion */}
+          <div className="border border-surface-border rounded-lg overflow-hidden">
+            <button
+              type="button"
+              onClick={() => setShowAdvanced(!showAdvanced)}
+              className="w-full flex items-center justify-between p-4 bg-surface-card hover:bg-surface-elevated transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <svg
+                  className="w-5 h-5 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+                  />
+                </svg>
+                <span className="text-sm font-medium text-gray-300">
+                  Dose Context
+                </span>
+              </div>
+              <svg
+                className={`w-5 h-5 text-gray-400 transition-transform ${
+                  showAdvanced ? "rotate-180" : ""
+                }`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+
+            {showAdvanced && (
+              <div className="p-4 bg-surface-raised border-t border-surface-border space-y-5">
+                {/* Fasting State */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Fasting State
+                  </label>
+                  <div className="flex gap-2">
+                    {(["fasted", "fed", "unknown"] as FastingState[]).map(
+                      (state) => (
+                        <button
+                          key={state}
+                          type="button"
+                          onClick={() =>
+                            setFastingState(
+                              fastingState === state ? null : state,
+                            )
+                          }
+                          className={`flex-1 py-2 px-3 rounded-lg border text-sm capitalize transition-colors ${
+                            fastingState === state
+                              ? "border-primary-500 bg-primary-500/20 text-primary-400 font-medium"
+                              : "border-surface-border bg-surface-card text-gray-400 hover:bg-surface-elevated"
+                          }`}
+                        >
+                          {state}
+                        </button>
+                      ),
+                    )}
+                  </div>
+                </div>
+
+                {/* Time of Day */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Time of Day
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {(
+                      [
+                        "morning",
+                        "afternoon",
+                        "evening",
+                        "night",
+                      ] as TimeOfDay[]
+                    ).map((time) => (
+                      <button
+                        key={time}
+                        type="button"
+                        onClick={() => setTimeOfDay(time)}
+                        className={`py-2 px-4 rounded-lg border text-sm capitalize transition-colors ${
+                          timeOfDay === time
+                            ? "border-primary-500 bg-primary-500/20 text-primary-400 font-medium"
+                            : "border-surface-border bg-surface-card text-gray-400 hover:bg-surface-elevated"
+                        }`}
+                      >
+                        {time}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-4 pt-2">
+            <button
+              type="button"
+              onClick={handleBack}
+              className="flex-1 py-3 px-4 border border-surface-border rounded-lg text-sm font-medium text-gray-300 hover:bg-surface-elevated transition-colors"
+            >
+              Back
+            </button>
+            <button
+              type="submit"
+              disabled={submitting || enabledBatchCount === 0}
+              className="flex-1 py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-500 hover:bg-primary-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {submitting
+                ? "Logging..."
+                : `Log ${enabledBatchCount} Dose${enabledBatchCount !== 1 ? "s" : ""}`}
+            </button>
+          </div>
+        </form>
+      )}
+
       {/* Step 3: Enter Dose Details */}
-      {currentStep === 3 && (
+      {currentStep === 3 && !batchMode && (
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Selected item header */}
           <div className="flex items-center justify-between p-4 bg-primary-500/20 border border-primary-200 rounded-xl">
@@ -684,7 +1071,8 @@ export function LogDose() {
               {logType === "protocol" && selectedProtocolSubstance && (
                 <div className="text-sm text-gray-500">
                   from{" "}
-                  {selectedProtocolSubstance.protocol.name || "Unnamed Protocol"}
+                  {selectedProtocolSubstance.protocol.name ||
+                    "Unnamed Protocol"}
                 </div>
               )}
             </div>
@@ -839,7 +1227,7 @@ export function LogDose() {
                           type="button"
                           onClick={() =>
                             setFastingState(
-                              fastingState === state ? null : state
+                              fastingState === state ? null : state,
                             )
                           }
                           className={`flex-1 py-2 px-3 rounded-lg border text-sm capitalize transition-colors ${
@@ -850,7 +1238,7 @@ export function LogDose() {
                         >
                           {state}
                         </button>
-                      )
+                      ),
                     )}
                   </div>
                 </div>
@@ -862,7 +1250,12 @@ export function LogDose() {
                   </label>
                   <div className="flex flex-wrap gap-2">
                     {(
-                      ["morning", "afternoon", "evening", "night"] as TimeOfDay[]
+                      [
+                        "morning",
+                        "afternoon",
+                        "evening",
+                        "night",
+                      ] as TimeOfDay[]
                     ).map((time) => (
                       <button
                         key={time}
@@ -959,7 +1352,7 @@ export function LogDose() {
                             type="button"
                             onClick={() =>
                               setInjectionDepth(
-                                injectionDepth === depth ? null : depth
+                                injectionDepth === depth ? null : depth,
                               )
                             }
                             className={`flex-1 py-2 px-3 rounded-lg border text-sm transition-colors ${
@@ -968,7 +1361,9 @@ export function LogDose() {
                                 : "border-surface-border bg-surface-card text-gray-400 hover:bg-surface-elevated"
                             }`}
                           >
-                            {depth === "subcutaneous" ? "SubQ" : "Intramuscular"}
+                            {depth === "subcutaneous"
+                              ? "SubQ"
+                              : "Intramuscular"}
                           </button>
                         ))}
                       </div>
@@ -986,7 +1381,7 @@ export function LogDose() {
                             type="button"
                             onClick={() =>
                               setNeedleGauge(
-                                needleGauge === gauge ? null : gauge
+                                needleGauge === gauge ? null : gauge,
                               )
                             }
                             className={`py-2 px-4 rounded-lg border text-sm transition-colors ${

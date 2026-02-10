@@ -154,6 +154,21 @@ export class DoseRepository implements IDoseRepository {
     });
   }
 
+  async createMany(data: CreateDoseInput[]): Promise<Dose[]> {
+    return this.prisma.$transaction(
+      data.map((d) =>
+        this.prisma.dose.create({
+          data: d,
+          include: {
+            substance: {
+              select: { id: true, name: true, doseUnit: true },
+            },
+          },
+        }),
+      ),
+    );
+  }
+
   async update(id: string, data: UpdateDoseInput): Promise<Dose> {
     return this.prisma.dose.update({
       where: { id },
