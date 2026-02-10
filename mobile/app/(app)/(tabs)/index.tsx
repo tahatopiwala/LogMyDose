@@ -311,9 +311,7 @@ export default function DashboardScreen() {
                 </Text>
                 <TouchableOpacity
                   className="mt-4 bg-primary-500 px-6 py-2 rounded-lg"
-                  onPress={() => {
-                    // Navigate to create protocol
-                  }}
+                  onPress={() => router.push("/protocols/new")}
                 >
                   <Text className="text-surface-base font-medium">
                     Add Protocol

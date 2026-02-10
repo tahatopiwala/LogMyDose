@@ -373,7 +373,7 @@ export function Dashboard() {
               </p>
               {weekStats && (
                 <p className="text-sm text-gray-400 mt-0.5">
-                  {weekStats.takenDoses} of {weekStats.totalDoses} doses
+                  {weekStats.takenDoses} of {weekStats.expectedDoses > 0 ? weekStats.expectedDoses : weekStats.totalDoses} doses
                 </p>
               )}
             </div>

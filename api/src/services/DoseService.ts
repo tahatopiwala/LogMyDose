@@ -21,6 +21,26 @@ import { IVialRepository } from "../interfaces/repositories/IVialRepository.js";
 import { PaginatedResponse } from "../types/index.js";
 import { AppError } from "../middleware/errorHandler.js";
 
+function getDosesPerDay(frequency: string): number {
+  const freq = frequency.toLowerCase();
+  if (freq.includes("3x_daily") || freq.includes("tid")) return 3;
+  if (
+    freq.includes("twice") ||
+    freq.includes("bid") ||
+    freq.includes("2x_daily")
+  )
+    return 2;
+  if (freq.includes("daily") || freq.includes("qd")) return 1;
+  if (freq.includes("every_other_day") || freq.includes("eod")) return 0.5;
+  if (freq.includes("5x_weekly")) return 5 / 7;
+  if (freq.includes("3x_weekly") || freq.includes("tiw")) return 3 / 7;
+  if (freq.includes("2x_weekly") || freq.includes("biw")) return 2 / 7;
+  if (freq.includes("weekly") || freq.includes("qw")) return 1 / 7;
+  if (freq.includes("biweekly") || freq.includes("every_2_weeks")) return 1 / 14;
+  if (freq.includes("monthly")) return 1 / 30;
+  return 0;
+}
+
 export class DoseService implements IDoseService {
   constructor(
     private readonly doseRepository: IDoseRepository,
@@ -362,6 +382,72 @@ export class DoseService implements IDoseService {
       : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
     const endDate = query.endDate ? new Date(query.endDate) : new Date();
 
-    return this.doseRepository.getStats(patientId, startDate, endDate);
+    const [stats, protocolSubstances] = await Promise.all([
+      this.doseRepository.getStats(patientId, startDate, endDate),
+      this.protocolRepository.findActiveProtocolSubstancesByPatient(patientId),
+    ]);
+
+    // Calculate expected doses from protocol schedules
+    const now = new Date();
+    let expectedDoses = 0;
+
+    for (const ps of protocolSubstances) {
+      if (!ps.frequency) continue;
+
+      const dosesPerDay = getDosesPerDay(ps.frequency);
+      if (dosesPerDay === 0) continue;
+
+      const protocolStart = ps.protocol.startDate
+        ? new Date(ps.protocol.startDate)
+        : null;
+      if (!protocolStart) continue;
+
+      const protocolEnd = ps.protocol.endDate
+        ? new Date(ps.protocol.endDate)
+        : null;
+
+      // Clamp to the effective range
+      const effectiveStart = new Date(
+        Math.max(protocolStart.getTime(), startDate.getTime()),
+      );
+      const effectiveEnd = new Date(
+        Math.min(
+          protocolEnd ? protocolEnd.getTime() : now.getTime(),
+          endDate.getTime(),
+          now.getTime(),
+        ),
+      );
+
+      if (effectiveEnd < effectiveStart) continue;
+
+      // Calculate inclusive day count
+      const startDay = new Date(effectiveStart);
+      startDay.setHours(0, 0, 0, 0);
+      const endDay = new Date(effectiveEnd);
+      endDay.setHours(0, 0, 0, 0);
+
+      const daysDiff =
+        Math.round(
+          (endDay.getTime() - startDay.getTime()) / (1000 * 60 * 60 * 24),
+        ) + 1;
+
+      expectedDoses += dosesPerDay * daysDiff;
+    }
+
+    expectedDoses = Math.round(expectedDoses);
+
+    // Recalculate adherence based on expected doses
+    const denominator =
+      expectedDoses > 0 ? expectedDoses : stats.totalDoses;
+    const adherenceRate =
+      denominator > 0
+        ? Math.min(100, (stats.takenDoses / denominator) * 100)
+        : 0;
+
+    return {
+      ...stats,
+      expectedDoses,
+      adherenceRate: Math.round(adherenceRate * 100) / 100,
+    };
   }
 }

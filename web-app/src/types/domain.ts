@@ -172,6 +172,7 @@ export interface Dose {
 
 export interface DoseStats {
   totalDoses: number;
+  expectedDoses: number;
   takenDoses: number;
   missedDoses: number;
   skippedDoses: number;

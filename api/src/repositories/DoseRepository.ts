@@ -228,6 +228,7 @@ export class DoseRepository implements IDoseRepository {
 
     return {
       totalDoses,
+      expectedDoses: 0,
       takenDoses,
       missedDoses,
       skippedDoses: totalDoses - takenDoses - missedDoses,

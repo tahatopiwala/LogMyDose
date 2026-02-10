@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 
 interface ModalProps {
   isOpen: boolean;
@@ -54,7 +55,7 @@ export function Modal({
 
   // If no title provided, render children directly (component provides its own structure)
   if (!title) {
-    return (
+    return createPortal(
       <div
         className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
         onClick={handleBackdropClick}
@@ -65,11 +66,12 @@ export function Modal({
         >
           {children}
         </div>
-      </div>
+      </div>,
+      document.body,
     );
   }
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
       onClick={handleBackdropClick}
@@ -104,6 +106,7 @@ export function Modal({
         {/* Content */}
         <div className="px-6 py-4">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

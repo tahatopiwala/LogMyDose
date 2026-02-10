@@ -90,6 +90,7 @@ export interface FindSideEffectsOptions extends FindManyOptions {
 
 export interface DoseStats {
   totalDoses: number;
+  expectedDoses: number;
   takenDoses: number;
   missedDoses: number;
   skippedDoses: number;

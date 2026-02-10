@@ -10,9 +10,55 @@ interface ProtocolCardProps {
 interface ProtocolStats {
   adherenceRate: number;
   totalDoses: number;
+  expectedDoses: number;
   takenDoses: number;
   nextDoseTime: string | null;
   nextDoseSubstance: string | null;
+}
+
+function getDosesPerDay(frequency: string): number {
+  const freq = frequency.toLowerCase();
+  if (freq.includes("3x_daily") || freq.includes("tid")) return 3;
+  if (freq.includes("twice") || freq.includes("bid") || freq.includes("2x_daily")) return 2;
+  if (freq.includes("daily") || freq.includes("qd")) return 1;
+  if (freq.includes("every_other_day") || freq.includes("eod")) return 0.5;
+  if (freq.includes("5x_weekly")) return 5 / 7;
+  if (freq.includes("3x_weekly") || freq.includes("tiw")) return 3 / 7;
+  if (freq.includes("2x_weekly") || freq.includes("biw")) return 2 / 7;
+  if (freq.includes("weekly") || freq.includes("qw")) return 1 / 7;
+  if (freq.includes("biweekly") || freq.includes("every_2_weeks")) return 1 / 14;
+  if (freq.includes("monthly")) return 1 / 30;
+  return 0;
+}
+
+function calculateExpectedDosesForProtocol(protocol: Protocol): number {
+  if (!protocol.startDate) return 0;
+
+  const now = new Date();
+  const protocolStart = new Date(protocol.startDate);
+  if (protocolStart > now) return 0;
+
+  const protocolEnd = protocol.endDate ? new Date(protocol.endDate) : null;
+  const effectiveEnd = protocolEnd
+    ? new Date(Math.min(protocolEnd.getTime(), now.getTime()))
+    : now;
+
+  const startDay = new Date(protocolStart);
+  startDay.setHours(0, 0, 0, 0);
+  const endDay = new Date(effectiveEnd);
+  endDay.setHours(0, 0, 0, 0);
+
+  const daysDiff =
+    Math.round((endDay.getTime() - startDay.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+
+  let totalExpected = 0;
+  for (const ps of protocol.substances) {
+    if (!ps.frequency) continue;
+    const dosesPerDay = getDosesPerDay(ps.frequency);
+    totalExpected += dosesPerDay * daysDiff;
+  }
+
+  return Math.round(totalExpected);
 }
 
 function calculateProtocolStats(
@@ -26,8 +72,12 @@ function calculateProtocolStats(
 
   const totalDoses = protocolDoses.length;
   const takenDoses = protocolDoses.filter((d) => d.status === "taken").length;
+  const expectedDoses = calculateExpectedDosesForProtocol(protocol);
+
+  // Use expected doses as denominator when available, fallback to logged doses
+  const denominator = expectedDoses > 0 ? expectedDoses : totalDoses;
   const adherenceRate =
-    totalDoses > 0 ? Math.round((takenDoses / totalDoses) * 100) : 0;
+    denominator > 0 ? Math.min(100, Math.round((takenDoses / denominator) * 100)) : 0;
 
   // Calculate next dose based on frequency
   const now = new Date();
@@ -85,6 +135,7 @@ function calculateProtocolStats(
   return {
     adherenceRate,
     totalDoses,
+    expectedDoses,
     takenDoses,
     nextDoseTime,
     nextDoseSubstance,
@@ -232,9 +283,9 @@ export function ProtocolCard({
           <p className="text-2xl font-bold text-blue-300">
             {stats.adherenceRate}%
           </p>
-          {stats.totalDoses > 0 && (
+          {(stats.expectedDoses > 0 || stats.totalDoses > 0) && (
             <p className="text-xs text-blue-400 mt-0.5">
-              {stats.takenDoses}/{stats.totalDoses} doses
+              {stats.takenDoses}/{stats.expectedDoses > 0 ? stats.expectedDoses : stats.totalDoses} doses
             </p>
           )}
         </div>
