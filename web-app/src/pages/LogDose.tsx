@@ -4,13 +4,16 @@ import { apiClient } from "../lib/api-client";
 import { ActiveProtocolSubstance, Substance, Dose, Vial } from "../types/domain";
 import { QuickProtocolModal } from "../components/protocols/QuickProtocolModal";
 
-const INJECTION_SITES = [
-  "Subcutaneous - Abdomen",
-  "Subcutaneous - Thigh",
-  "Subcutaneous - Arm",
-  "Intramuscular - Deltoid",
-  "Intramuscular - Gluteal",
-];
+const SITES_BY_ROUTE: Record<string, string[]> = {
+  injection_subq: ["Subcutaneous - Abdomen", "Subcutaneous - Thigh", "Subcutaneous - Arm"],
+  injection_im: ["Intramuscular - Deltoid", "Intramuscular - Gluteal", "Intramuscular - Ventrogluteal", "Intramuscular - Thigh"],
+  oral: ["Oral"],
+  sublingual: ["Sublingual"],
+  topical: ["Forehead", "Neck", "Shoulders", "Inner Wrist", "Behind Ears", "Chest"],
+  transdermal: ["Upper Arm", "Shoulder", "Upper Back", "Chest", "Hip"],
+  nasal: ["Left Nostril", "Right Nostril", "Both Nostrils"],
+  iv: ["Antecubital Fossa", "Hand", "Forearm"],
+};
 
 type LogType = "protocol" | "adhoc" | null;
 type FastingState = "fasted" | "fed" | "unknown";
@@ -60,7 +63,7 @@ export function LogDose() {
   // Form state
   const [dose, setDose] = useState<string>("");
   const [doseUnit, setDoseUnit] = useState<string>("");
-  const [site, setSite] = useState(INJECTION_SITES[0]);
+  const [site, setSite] = useState("");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [adHocSearch, setAdHocSearch] = useState("");
@@ -210,7 +213,7 @@ export function LogDose() {
             selectedProtocolSubstance.doseUnit ||
             selectedProtocolSubstance.substance.doseUnit,
           status: "taken",
-          administrationSite: site,
+          administrationSite: site || undefined,
           notes: notes || undefined,
           ...contextFields,
         });
@@ -220,7 +223,7 @@ export function LogDose() {
           dose: Number(dose),
           doseUnit: doseUnit || selectedSubstance.doseUnit,
           status: "taken",
-          administrationSite: site,
+          administrationSite: site || undefined,
           notes: notes || undefined,
           ...contextFields,
         });
@@ -240,6 +243,7 @@ export function LogDose() {
       setSelectedSubstance(null);
       setDose("");
       setDoseUnit("");
+      setSite("");
       setLogDate(new Date().toISOString().slice(0, 10));
       // Reset context fields
       setShowAdvanced(false);
@@ -281,17 +285,34 @@ export function LogDose() {
         ? doseUnit || selectedSubstance.doseUnit || "units"
         : "units";
 
-  // Check if the selected substance is injectable
-  const isInjectable = useMemo(() => {
+  // Get the administration route for the selected substance
+  const administrationRoute = useMemo(() => {
     if (logType === "protocol" && selectedProtocolSubstance) {
-      const route = selectedProtocolSubstance.substance.administrationRoute;
-      return route?.includes("injection") || false;
+      return selectedProtocolSubstance.substance.administrationRoute || null;
     }
     if (logType === "adhoc" && selectedSubstance) {
-      return selectedSubstance.administrationRoute?.includes("injection") || false;
+      return selectedSubstance.administrationRoute || null;
     }
-    return false;
+    return null;
   }, [logType, selectedProtocolSubstance, selectedSubstance]);
+
+  // Check if the selected substance is injectable
+  const isInjectable = administrationRoute?.includes("injection") || false;
+
+  // Get administration sites for the current route
+  const availableSites = useMemo(() => {
+    if (!administrationRoute) return [];
+    return SITES_BY_ROUTE[administrationRoute] || [];
+  }, [administrationRoute]);
+
+  // Auto-set site when there's only one option
+  useEffect(() => {
+    if (availableSites.length === 1) {
+      setSite(availableSites[0]);
+    } else if (availableSites.length > 1 && !availableSites.includes(site)) {
+      setSite(availableSites[0]);
+    }
+  }, [availableSites]);
 
   // Fetch vials when an injectable substance is selected
   const currentSubstanceId = logType === "protocol" && selectedProtocolSubstance
@@ -719,27 +740,29 @@ export function LogDose() {
             />
           </div>
 
-          {/* Injection Site */}
-          <div>
-            <label
-              htmlFor="site"
-              className="block text-sm font-medium text-gray-300"
-            >
-              Administration Site
-            </label>
-            <select
-              id="site"
-              value={site}
-              onChange={(e) => setSite(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-surface-border rounded-lg bg-surface-raised text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-            >
-              {INJECTION_SITES.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
-          </div>
+          {/* Administration Site */}
+          {availableSites.length > 1 && (
+            <div>
+              <label
+                htmlFor="site"
+                className="block text-sm font-medium text-gray-300"
+              >
+                Administration Site
+              </label>
+              <select
+                id="site"
+                value={site}
+                onChange={(e) => setSite(e.target.value)}
+                className="mt-1 block w-full px-3 py-2 border border-surface-border rounded-lg bg-surface-raised text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+              >
+                {availableSites.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           {/* Notes */}
           <div>
