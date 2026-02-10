@@ -73,6 +73,7 @@ export interface ActiveProtocolSubstance {
     startDate: string | null;
     endDate: string | null;
     source: string;
+    template?: { id: string; name: string } | null;
   };
 }
 

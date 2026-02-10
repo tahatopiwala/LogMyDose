@@ -173,7 +173,7 @@ export function LogDose() {
         grouped.set(ps.protocol.id, {
           protocol: {
             id: ps.protocol.id,
-            name: ps.protocol.name,
+            name: ps.protocol.name || ps.protocol.template?.name || null,
             status: ps.protocol.status,
           },
           substances: [ps],
@@ -1072,6 +1072,7 @@ export function LogDose() {
                 <div className="text-sm text-gray-500">
                   from{" "}
                   {selectedProtocolSubstance.protocol.name ||
+                    selectedProtocolSubstance.protocol.template?.name ||
                     "Unnamed Protocol"}
                 </div>
               )}

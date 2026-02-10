@@ -121,6 +121,7 @@ export interface ActiveProtocolSubstance extends ProtocolSubstance {
     startDate: Date | null;
     endDate: Date | null;
     source: string;
+    template?: { id: string; name: string } | null;
   };
 }
 

@@ -333,6 +333,12 @@ export class ProtocolRepository implements IProtocolRepository {
             startDate: true,
             endDate: true,
             source: true,
+            template: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
           },
         },
       },

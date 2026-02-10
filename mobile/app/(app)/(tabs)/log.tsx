@@ -171,7 +171,7 @@ export default function LogDoseScreen() {
         grouped.set(ps.protocol.id, {
           protocol: {
             id: ps.protocol.id,
-            name: ps.protocol.name,
+            name: ps.protocol.name || ps.protocol.template?.name || null,
             status: ps.protocol.status,
           },
           substances: [ps],
@@ -979,6 +979,7 @@ export default function LogDoseScreen() {
                       <Text className="text-gray-400 text-sm">
                         from{" "}
                         {selectedProtocolSubstance.protocol.name ||
+                          selectedProtocolSubstance.protocol.template?.name ||
                           "Unnamed Protocol"}
                       </Text>
                     )}
